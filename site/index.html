@@ -76,7 +76,8 @@
   <div class="nav-mask"></div>
 
   <main>
-    <!-- 轮播横幅：banner.service.js 控制（标语为占位，可整体替换） -->
+    <!-- 轮播横幅：内容数据在 site/data/banners.js（管理员维护），
+         由 banner.service.js 读取渲染；此处仅保留外壳与波纹符号 -->
     <section class="banner">
       <!-- “水木”波纹装饰（定义一次，三张幻灯片复用） -->
       <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -90,36 +91,6 @@
         </defs>
       </svg>
 
-      <div class="slide s1 active">
-        <svg class="deco"><use href="#deco-waves"/></svg>
-        <div class="inner">
-          <span class="eyebrow">清华大学水木书院学生科学技术协会</span>
-          <h2>水木科创 · 智启未来</h2>
-          <p>以技术连接水木学子，用代码书写书院科创的崭新篇章。（横幅标语占位）</p>
-          <div class="btns">
-            <a class="btn primary" href="about/index.html">了解科协</a>
-            <a class="btn ghost" href="#tech">浏览技术板块</a>
-          </div>
-        </div>
-      </div>
-      <div class="slide s2">
-        <svg class="deco"><use href="#deco-waves"/></svg>
-        <div class="inner">
-          <span class="eyebrow">SHUIMU S&amp;T ASSOCIATION</span>
-          <h2>求真务实 · 格物致知</h2>
-          <p>从编程语言到机器学习，六大技术板块构筑书院科创知识体系。（横幅标语占位）</p>
-          <div class="btns"><a class="btn primary" href="#tech">进入技术板块</a></div>
-        </div>
-      </div>
-      <div class="slide s3">
-        <svg class="deco"><use href="#deco-waves"/></svg>
-        <div class="inner">
-          <span class="eyebrow">学生科创 · 共同成长</span>
-          <h2>实践 · 分享 · 创造</h2>
-          <p>工具指南、开发实战与科创竞赛资讯持续建设中，敬请期待。（横幅标语占位）</p>
-          <div class="btns"><a class="btn primary" href="contests/index.html">关注科创竞赛</a></div>
-        </div>
-      </div>
       <div class="dots"></div>
     </section>
 
@@ -301,6 +272,7 @@
   <script src="assets/js/services/nav.service.js"></script>
   <script src="assets/js/services/backtop.service.js"></script>
   <script src="assets/js/services/nav-collapse.service.js"></script>
+  <script src="data/banners.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>

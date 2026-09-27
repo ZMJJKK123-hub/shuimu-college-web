@@ -53,6 +53,7 @@ shuimu-web/
 │   └── selftest.html              # 纯函数轻量自测页（浏览器原生断言，零依赖）
 └── site/                          # 站点部署单元（重构后：页面与资源统一收拢于此）
     ├── index.html                 # 首页（书院门户式版面）
+    ├── data/banners.js            # 数据层：首页轮播内容（管理员维护入口）
     ├── about/index.html           # 科协介绍 About（占位页）
     ├── languages/index.html       # 编程语言 Languages（占位页）
     ├── tools/index.html           # 开发工具 Tools（占位页）

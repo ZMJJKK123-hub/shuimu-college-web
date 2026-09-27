@@ -7,7 +7,7 @@
  *   config/site.config.js → infrastructure/errors.js → infrastructure/dom.js
  *   → infrastructure/logger.js → services/banner.service.js
  *   → services/nav.service.js → services/nav-collapse.service.js
- *   → services/backtop.service.js → 本文件
+ *   → services/backtop.service.js → data/banners.js（首页轮播数据）→ 本文件
  * Globals Used: window.SMSK.CONFIG（配置层注入）、document（DOM 根）
  * 挂载：window.SMSK.app（运行时句柄：logger 与服务实例，便于调试/销毁）
  * ============================================================================
@@ -67,7 +67,8 @@ function bootstrap() {
   navCollapseService.start();
 
   // 轮播/返回顶部：非首页或无节点时工厂内部降级为空实现（warn 日志）
-  var bannerService = SMSK.createBannerService(SMSK.qs('.banner'), cfg.banner, logger);
+  var bannerService = SMSK.createBannerService(
+    SMSK.qs('.banner'), cfg.banner, logger, window.SMSK.DATA_BANNERS || []);
   bannerService.start();
   var backtopService =
     SMSK.createBacktopService(SMSK.qs('.backtop'), cfg.backtopThresholdPx, logger);

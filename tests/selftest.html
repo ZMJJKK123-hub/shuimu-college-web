@@ -35,6 +35,7 @@
   <script src="../site/assets/js/services/banner.service.js"></script>
   <script src="../site/assets/js/services/nav.service.js"></script>
   <script src="../site/assets/js/services/nav-collapse.service.js"></script>
+  <script src="../site/data/banners.js"></script>
 
   <script>
     window.SMSK = window.SMSK || {};
@@ -116,6 +117,13 @@
       run('resolve(-3, collapsed) 上滑 → 展开（高灵敏）', function () { assertSame(SMSK.resolveNavState(-3, 'collapsed'), 'expanded'); });
       run('resolve(0, collapsed) 静止 → 维持现状', function () { assertSame(SMSK.resolveNavState(0, 'collapsed'), 'collapsed'); });
       run('resolve(0, expanded) 静止 → 维持现状', function () { assertSame(SMSK.resolveNavState(0, 'expanded'), 'expanded'); });
+
+      // ---- validateBannerSlides：轮播数据契约（管理员四接口） ----
+      run('validate(数据文件本身) 站点真实轮播数据合法', function () { assertSame(SMSK.validateBannerSlides(window.SMSK.DATA_BANNERS), null); });
+      run('validate([]) 空数组报错', function () { assertSame(typeof SMSK.validateBannerSlides([]), 'string'); });
+      run('validate(缺 title) 返回字段路径', function () { assertSame(SMSK.validateBannerSlides([{ organizer: 'x' }]), 'banners[0].title 缺失或为空'); });
+      run('validate(link 缺 href) 返回字段路径', function () { assertSame(SMSK.validateBannerSlides([{ title: 'x', link: { label: 'a' } }]), 'banners[0].link.href 缺失'); });
+      run('validate(选填项全空) 仅标题也合法', function () { assertSame(SMSK.validateBannerSlides([{ title: 'x' }]), null); });
 
       // ---- createLogger：配置契约校验 ----
       run('createLogger("info") 合法级别可创建', function () { assertSame(typeof SMSK.createLogger('info').info, 'function'); });
