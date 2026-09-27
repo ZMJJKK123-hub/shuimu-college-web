@@ -137,10 +137,12 @@
 .mainnav li.active a { background: var(--purple-deep); font-weight: 600; }
 .mainnav li.active a::after { width: 60%; }
 
-/* ---- 清华标识：原图等比缩放（1404×1256），置于主题栏最左，白底与页头相融 ---- */
+/* ---- 清华标识（335×241，白底与页头相融）----
+   嵌在页头容器（.header .container）内部：高度 100% 与主题栏一致，
+   跟随 --header-h 令牌联动；宽度 auto 保持原图宽高比，等比缩放不变形 */
 .thu-mark {
   flex: none;
-  height: 84px;
+  height: 100%;
   width: auto;
   margin-right: 20px;
 }
@@ -184,7 +186,7 @@
   .brand .logo { width: 44px; height: 44px; font-size: 15px; }
   .header-tools .en-link { display: none; }
 
-  .thu-mark { height: 52px; margin-right: 12px; }
+  .thu-mark { margin-right: 12px; }
 
   .nav-toggle { display: flex; }
   .mainnav {
