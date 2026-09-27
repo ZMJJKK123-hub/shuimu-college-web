@@ -1,4 +1,7 @@
-# Phase 1 · 架构设计与接口契约（待确认）
+# Phase 1 · 架构设计与接口契约（前端门户，历史文档）
+
+> **说明**：本文档记录的是**前端门户**（纯静态阶段）的架构与契约，内容仍然有效；
+> 全站总体架构（服务器部署、后端 API、演进路线）以 [ARCHITECTURE.md](ARCHITECTURE.md) 为准。
 
 > 依据 `agent.md` Rule 3「契约先行两阶段法」产出。Phase 2 仅在本文档获得确认后启动。
 
@@ -110,7 +113,6 @@ shuimu-web/
  * @property {'debug'|'info'|'warn'|'error'} logLevel 日志级别
  * @property {BannerConfig} banner
  * @property {number} backtopThresholdPx  返回顶部按钮显隐滚动阈值（像素）
- * @property {string}   storagePrefix     日志/存储键前缀，如 "smsk."
  */
 ```
 

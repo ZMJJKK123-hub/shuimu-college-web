@@ -16,3 +16,15 @@ desktop.ini
 # 内网穿透工具与一键脚本（本机专用，不入库）
 cloudflared*.exe
 start-tunnel.ps1
+
+# 后端（server/，阶段1起）：依赖与构建产物
+node_modules/
+dist/
+coverage/
+
+# 后端敏感配置与本地数据（只存服务器，绝不入库）
+.env
+.env.*
+*.sqlite
+*.sqlite-journal
+*.db
