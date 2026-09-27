@@ -21,7 +21,7 @@
   justify-content: space-between;
   padding: 20px 26px;
   border-bottom: 1px solid var(--line);
-  background: linear-gradient(180deg, #fbf9fe, #fff);
+  background: linear-gradient(180deg, #f9f2fa, #fff);
 }
 .panel-head .t {
   font-size: 20px;

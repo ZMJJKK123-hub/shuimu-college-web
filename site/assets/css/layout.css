@@ -41,7 +41,7 @@
   height: 56px;
   flex: none;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple) 0%, var(--purple-bright) 100%);
+  background: var(--purple);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +49,7 @@
   font-size: 19px;
   font-weight: 700;
   letter-spacing: 1px;
-  box-shadow: 0 4px 12px rgba(109, 0, 204, 0.35);
+  box-shadow: 0 4px 12px rgba(102, 8, 116, 0.35);
 }
 .brand-titles { min-width: 0; }
 .brand-titles .cn {
@@ -96,7 +96,7 @@
   position: sticky;
   top: var(--header-h);
   z-index: 99;
-  box-shadow: 0 4px 14px rgba(46, 11, 82, 0.18);
+  box-shadow: 0 4px 14px rgba(41, 5, 46, 0.18);
 }
 .mainnav .container { height: 100%; display: flex; align-items: center; }
 .mainnav ul { display: flex; height: 100%; }

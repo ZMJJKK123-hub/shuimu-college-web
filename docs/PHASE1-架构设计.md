@@ -9,7 +9,7 @@
 
 ### 1.1 系统定位
 
-本项目为**清华大学水木书院学生科学技术协会官网**，纯静态站点（HTML/CSS/JS，零构建依赖），内容架构参照电子系科协文档站（eesast/docs），视觉与语言风格严格遵循水木书院官网（smc.tsinghua.edu.cn，主色 `#6d00cc` 紫色系）。
+本项目为**清华大学水木书院学生科学技术协会官网**，纯静态站点（HTML/CSS/JS，零构建依赖），内容架构参照电子系科协文档站（eesast/docs），视觉与语言风格严格遵循水木书院官网（smc.tsinghua.edu.cn，清华紫 `#660874`（PANTONE 259C）+ 渐变辅助玫红 `#D93379`）。
 
 站点定位为「展示 + 导航」型门户：首页承担书院门户式版面（横幅、简介、六大技术板块、新闻/公告），七个板块页为占位页，内容后续由科协成员补充。
 
@@ -115,6 +115,7 @@ shuimu-web/
  * @property {'debug'|'info'|'warn'|'error'} logLevel 日志级别
  * @property {BannerConfig} banner
  * @property {number} backtopThresholdPx  返回顶部按钮显隐滚动阈值（像素）
+ * @property {string}   storagePrefix     日志/存储键前缀，如 "smsk."
  */
 ```
 

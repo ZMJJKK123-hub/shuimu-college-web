@@ -10,7 +10,7 @@
   background:
     radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.10), transparent 32%),
     radial-gradient(circle at 10% 85%, rgba(255, 255, 255, 0.08), transparent 30%),
-    linear-gradient(120deg, #3b0a6e 0%, #6d00cc 55%, #8b00f3 100%);
+    linear-gradient(120deg, #3e0646 0%, #660874 55%, #a01e76 100%);
   color: #fff;
   padding: 84px 0 72px;
   overflow: hidden;
@@ -40,8 +40,8 @@
 .placeholder-zone {
   padding: 80px 0 100px;
   background:
-    radial-gradient(circle at 12% 20%, rgba(109, 0, 204, 0.06), transparent 40%),
-    radial-gradient(circle at 88% 80%, rgba(139, 0, 243, 0.07), transparent 45%),
+    radial-gradient(circle at 12% 20%, rgba(102, 8, 116, 0.06), transparent 40%),
+    radial-gradient(circle at 88% 80%, rgba(217, 51, 121, 0.06), transparent 45%),
     #fff;
 }
 
@@ -51,7 +51,7 @@
   margin: 0 auto;
   text-align: center;
   background: #fff;
-  border: 1px dashed #cbb5ea;
+  border: 1px dashed #d8c2e2;
   border-radius: 20px;
   padding: 70px 40px;
   box-shadow: var(--shadow);
@@ -125,7 +125,7 @@
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 7px 20px;
-  box-shadow: 0 2px 8px rgba(109, 0, 204, 0.06);
+  box-shadow: 0 2px 8px rgba(102, 8, 116, 0.06);
 }
 
 /* ---- 响应式（子页组件） ---- */

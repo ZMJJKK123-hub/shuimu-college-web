@@ -57,7 +57,7 @@ shuimu-web/
         └── js/                    # 行为层（经典脚本，全局命名空间 window.SMSK）
             ├── config/site.config.js  # 配置层：站点唯一配置源
             ├── infrastructure/        # 基础设施层：errors / dom / logger
-            ├── services/             # 业务行为层：banner / nav / backtop
+            ├── services/             # 业务行为层：banner / nav / nav-collapse / backtop
             └── main.js               # 组装根：读配置 → 装配服务（引入顺序见其头注）
 ```
 

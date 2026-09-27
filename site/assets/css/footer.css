@@ -36,7 +36,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple), var(--purple-bright));
+  background: var(--purple);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,7 +82,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 18px rgba(109, 0, 204, 0.4);
+  box-shadow: 0 6px 18px rgba(102, 8, 116, 0.4);
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);

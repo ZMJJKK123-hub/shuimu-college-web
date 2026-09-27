@@ -18,9 +18,9 @@
 .banner .slide.active { opacity: 1; }
 
 /* 三张幻灯片的紫色渐变底（对应 s1/s2/s3） */
-.slide.s1 { background: linear-gradient(120deg, #3b0a6e 0%, #6d00cc 55%, #8b00f3 100%); }
-.slide.s2 { background: linear-gradient(120deg, #2e0b52 0%, #5a00a8 50%, #7033a5 100%); }
-.slide.s3 { background: linear-gradient(120deg, #4a0a87 0%, #9700cb 60%, #b44df0 100%); }
+.slide.s1 { background: linear-gradient(120deg, #470651 0%, #660874 55%, #a01e76 100%); }
+.slide.s2 { background: linear-gradient(120deg, #29052e 0%, #470651 50%, #660874 100%); }
+.slide.s3 { background: linear-gradient(120deg, #660874 0%, #a01e76 55%, #d93379 100%); }
 
 /* “水木”意象装饰波纹（SVG 覆盖层） */
 .slide .deco { position: absolute; inset: 0; opacity: 0.35; pointer-events: none; }
