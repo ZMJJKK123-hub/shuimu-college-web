@@ -20,22 +20,22 @@
 | 展示层 Presentation | `*.html` + `assets/css/*` | 页面结构、视觉样式，零业务逻辑 |
 | 业务行为层 Service | `assets/js/services/*` | 页面交互行为（轮播、导航状态、返回顶部） |
 | 基础设施层 Infrastructure | `assets/js/infrastructure/*` | 横切能力：统一日志、DOM 查询/事件工具、自定义错误 |
-| 配置层 Config | `assets/js/config/site.config.js` | 站点唯一配置源（零硬编码：轮播间隔、日志级别等经此注入） |
+| 配置层 Config | `assets/js/config/site.config.ts` | 站点唯一配置源（零硬编码：轮播间隔、日志级别等经此注入） |
 
 ### 1.3 核心数据流
 
 ```mermaid
 flowchart LR
     U[用户浏览器] --> P["*.html 展示层<br/>(按依赖顺序引入 JS)"]
-    P -->|script 标签顺序加载| M["main.js<br/>组装根（Composition Root）"]
-    C["config/site.config.js<br/>SiteConfig 契约"] --> M
-    M --> L["infrastructure/logger.js<br/>统一日志 Logger"]
-    M --> E["infrastructure/errors.js<br/>自定义异常"]
-    M --> S1["services/banner.service.js<br/>轮播"]
-    M --> S2["services/nav.service.js<br/>导航高亮/移动菜单"]
-    M --> S4["services/nav-collapse.service.js<br/>下滑收起/上滑展开"]
-    M --> S3["services/backtop.service.js<br/>返回顶部"]
-    S1 & S2 & S3 -->|"qs/on (dom.js)"| DOM[(页面 DOM)]
+    P -->|script 标签顺序加载| M["main.ts<br/>组装根（Composition Root）"]
+    C["config/site.config.ts<br/>SiteConfig 契约"] --> M
+    M --> L["infrastructure/logger.ts<br/>统一日志 Logger"]
+    M --> E["infrastructure/errors.ts<br/>自定义异常"]
+    M --> S1["services/banner.service.ts<br/>轮播"]
+    M --> S2["services/nav.service.ts<br/>导航高亮/移动菜单"]
+    M --> S4["services/nav-collapse.service.ts<br/>下滑收起/上滑展开"]
+    M --> S3["services/backtop.service.ts<br/>返回顶部"]
+    S1 & S2 & S3 -->|"qs/on (dom.ts)"| DOM[(页面 DOM)]
     S1 & S2 & S3 -->|结构化日志| L
 ```
 
@@ -71,19 +71,20 @@ shuimu-web/
         │   ├── home-tech.css      #   首页：技术板块六宫格
         │   ├── home-news.css      #   首页：新闻/通知双栏面板
         │   └── subpage.css        #   子页：page-banner/占位卡片/主题标签
-        └── js/
+        └── js/                        # TS 源码入库，编译产物 .js 不入库（2026-09-27 起）
+            ├── types.d.ts          # 类型层：window.SMSK 命名空间与共享契约声明
             ├── config/
-            │   └── site.config.js     # 配置层：SiteConfig 契约唯一实现
+            │   └── site.config.ts     # 配置层：SiteConfig 契约唯一实现
             ├── infrastructure/
-            │   ├── logger.js          # 统一日志器（级别语义，替代 console.log）
-            │   ├── dom.js             # DOM 查询/事件绑定工具（纯函数）
-            │   └── errors.js          # 自定义异常（ConfigError/DomError）
+            │   ├── logger.ts          # 统一日志器（级别语义，替代 console.log）
+            │   ├── dom.ts             # DOM 查询/事件绑定工具（纯函数）
+            │   └── errors.ts          # 自定义异常（ConfigError/DomError）
             ├── services/
-            │   ├── banner.service.js  # 首页轮播（含索引纯函数，可自测）
-            │   ├── nav.service.js     # 当前页高亮 + 移动端抽屉菜单
-            │   ├── nav-collapse.service.js # 下滑收起/上滑展开（时长经配置注入）
-            │   └── backtop.service.js # 返回顶部（显隐阈值经配置注入）
-            └── main.js                # 组装根：读配置 → 建 Logger → 装配并启动服务
+            │   ├── banner.service.ts  # 首页轮播（含索引纯函数，可自测）
+            │   ├── nav.service.ts     # 当前页高亮 + 移动端抽屉菜单
+            │   ├── nav-collapse.service.ts # 下滑收起/上滑展开（时长经配置注入）
+            │   └── backtop.service.ts # 返回顶部（显隐阈值经配置注入）
+            └── main.ts                # 组装根：读配置 → 建 Logger → 装配并启动服务
 ```
 
 > 说明：收到协议前产出的 `assets/css/style.css` 草稿已在 Phase 2 拆分为上述 8 个样式模块（原计划 4 个，因 250 行红线进一步细分），内容风格不变，旧文件已删除。
@@ -150,7 +151,7 @@ shuimu-web/
  */
 ```
 
-### 3.3 自定义异常（errors.js）
+### 3.3 自定义异常（errors.ts）
 
 ```js
 /** ConfigError：配置契约违反（缺字段/非法枚举值），携带字段名与实际值上下文 */
@@ -187,7 +188,7 @@ shuimu-web/
  */
 ```
 
-### 3.5 组装根（main.js）
+### 3.5 组装根（main.ts）
 
 ```js
 /** bootstrap —— 读 SiteConfig → createLogger → 依页面标识装配所需服务并启动
@@ -200,7 +201,7 @@ shuimu-web/
 
 1. **文档注释**：所有 JS 文件顶部标注模块职责与加载依赖顺序；每个工厂/纯函数按契约格式注释（职责 / Globals Used / Calls / Args / Returns）。
 2. **文件与函数尺寸**：CSS/JS 单文件核心代码 ≤250 行；函数 ≤40 行（注释不计）。
-3. **零硬编码**：轮播间隔、日志级别、滚动阈值等全部经 `site.config.js` 注入。
+3. **零硬编码**：轮播间隔、日志级别、滚动阈值等全部经 `site.config.ts` 注入。
 4. **日志**：全程使用 `Logger`（info/warn/error 语义化），页面生命周期关键节点输出 INFO。
 5. **错误处理**：配置缺失、关键 DOM 缺失抛自定义异常并附上下文，不静默吞错。
 6. **纯逻辑可测**：`nextIndex`、`resolveActivePage` 独立导出，`tests/selftest.html` 以浏览器原生断言覆盖边界（空列表/越界/路径大小写等）。
@@ -208,7 +209,7 @@ shuimu-web/
 ## 5. Phase 2 交付清单（确认后执行）
 
 1. 拆分样式为 4 个分层 CSS 模块（风格与既有草稿一致：紫色书院门户风）。
-2. 按契约实现 config / infrastructure / services / main.js（JSDoc 类型 + 统一日志）。
+2. 按契约实现 config / infrastructure / services / main.ts（2026-09-27 起为 TypeScript 源码，编译产物 .js 不入库）。
 3. 首页 `index.html` + 7 个板块占位页（同头部导航/页脚，占位卡片 + 主题标签）。
 4. `tests/selftest.html` 纯函数自测；本地起服务验证渲染并截图自检。
 5. `README.md`：目录说明、本地预览方式、后续内容补充指南。

@@ -1,0 +1,29 @@
+#!/bin/sh
+# ============================================================================
+# Git pre-push 钩子：TypeScript 类型检查硬门禁
+# 作用：推送前对 site/（前端）与 server/（后端）分别执行 tsc --noEmit，
+#       存在任何类型错误即中止推送，保证 dev 分支永远类型安全。
+# 启用：仓库已配置 core.hooksPath=hooks（见 docs/ARCHITECTURE.md 工具链一节）；
+#       本目录随仓库版本化，克隆后即生效，无需手动安装。
+# 前提：本机需安装 Node.js 与仓库依赖（根目录 npm install）。
+# ============================================================================
+set -u
+
+echo "[pre-push] 正在执行 TypeScript 类型检查（site + server）……"
+
+if ! npx tsc -p site --noEmit; then
+  echo ""
+  echo "[pre-push] ✗ site/ 存在类型错误，推送已被阻止。"
+  echo "[pre-push]   请修复上述错误后重新推送（本地可运行 npm run typecheck 自查）。"
+  exit 1
+fi
+
+if ! npx tsc -p server --noEmit; then
+  echo ""
+  echo "[pre-push] ✗ server/ 存在类型错误，推送已被阻止。"
+  echo "[pre-push]   请修复上述错误后重新推送（本地可运行 npm run typecheck 自查）。"
+  exit 1
+fi
+
+echo "[pre-push] ✓ 类型检查全部通过，放行推送。"
+exit 0

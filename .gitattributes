@@ -1,0 +1,3 @@
+# Git 钩子脚本必须保持 LF：Windows 下 autocrlf 会把文本文件检为 CRLF，
+# 而 sh 解释器遇到 CRLF 会报 "\r: command not found" 导致钩子失效。
+hooks/* text eol=lf

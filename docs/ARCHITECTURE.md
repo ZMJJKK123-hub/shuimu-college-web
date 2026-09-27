@@ -47,7 +47,9 @@
 shuimu-web/
 ├── agent.md                     # 开发主协议
 ├── README.md
-├── .gitignore
+├── package.json                 # 根工作区：TypeScript 依赖 + typecheck/build 脚本
+├── .gitignore / .gitattributes  # 产物忽略规则 / 钩子脚本 LF 强制
+├── hooks/pre-push               # 版本化 Git 钩子：推送前 TS 类型检查硬门禁
 ├── docs/
 │   ├── ARCHITECTURE.md          # 本文档（总体架构·活文档）
 │   └── PHASE1-架构设计.md        # 前端门户接口契约（历史，仍有效）
@@ -55,9 +57,13 @@ shuimu-web/
 │   └── selftest.html            # 前端纯函数自测页
 ├── site/                        # 【现状·阶段0产物】官网门户（静态，部署单元）
 │   ├── index.html
+│   ├── tsconfig.json            #   前端 TS 编译配置（strict，原位产出 .js）
+│   ├── data/banners.js          #   数据层：轮播内容（后端读写，非编译产物）
+│   ├── admin/                   #   轮播管理页（index.html + assets/admin.ts）
 │   ├── <板块>/index.html         # about/ languages/ tools/ game/ web/
 │   │                            # machine-learning/ contests/
-│   └── assets/{css,js}/         # 前端分层样式与行为脚本
+│   └── assets/{css,js}/         #   样式分层 + 行为层（js/ 内 .ts 源码入库，
+│                                #   types.d.ts 声明 window.SMSK 命名空间契约）
 ├── server/                      # 【阶段1新建】后端应用（NestJS）
 │   ├── src/
 │   │   ├── main.ts              #   启动装配
@@ -103,6 +109,23 @@ shuimu-web/
 - 首页新闻/通知：阶段0~2 维持改 HTML（低频）；阶段3 管理后台就绪后切换为 `/api` 读取，
   切换时仅改数据来源，页面结构不动。
 
+### 5.1 前端 TypeScript 工具链（2026-09-27 起）
+
+前端行为脚本全面 TypeScript 化，**不引入打包器**（Vite/Webpack），纯 `tsc` 原位编译：
+
+| 环节 | 约定 |
+| :--- | :--- |
+| 源码 | `site/assets/js/**/*.ts` + `site/admin/assets/admin.ts` 入库；`types.d.ts` 集中声明 `window.SMSK` 命名空间与共享契约（全局脚本、无模块化，`module: none` 禁止引入 import/export） |
+| 编译 | `npm run build:site`（根 `package.json`，TypeScript 5.9，strict 全开 + `noEmitOnError`），`.ts` 原位产出同名 `.js`，**所有 HTML 的 `<script src>` 引用名不变** |
+| 产物 | 编译 `.js` **不入库**（`.gitignore` 拦截）；克隆/拉取后需先构建才能本地预览（README 有说明）。例外：`site/data/banners.js` 是数据文件（后端读写、管理员维护），正常入库 |
+| 检查 | `npm run typecheck` = site + server 双工程 `--noEmit` |
+| 门禁 | `hooks/pre-push`（仓库已设 `core.hooksPath=hooks`，随克隆生效）：推送前跑双工程类型检查，**任何错误硬拦截**；`.gitattributes` 强制钩子 LF，防 Windows CRLF 破坏 sh 解析 |
+| 迁移取舍 | 管理页内联 `<script>` 同步抽出为 `admin.ts`（纳入类型检查）；运行逻辑迁移前后逐行等价，仅类型化与 `var`→`const/let` |
+
+> 迁移动机与边界：强类型收益在编译期（IDE 提示 + 门禁拦截），运行产物仍是经典脚本——
+> 保持零运行时依赖、`file://` 可开、后续成员免打包概念。若未来门户复杂化（组件化/状态管理），
+> 再评估升级 Vite + 框架整体重构。
+
 ## 6. 安全设计（定案原则）
 
 1. `/admin` 页面公网可达是**既定假设**，安全不靠藏路径：
@@ -136,6 +159,8 @@ shuimu-web/
       原子写回 site/data/banners.js、统一错误体），本地 curl+浏览器双重验证
 - [ ] `deploy/` 部署编排（Dockerfile/compose/nginx）——待服务器环境确定后再创建，本机不预置
 - [x] 管理端最初版：`site/admin/` 表单页（四接口编辑，保存即生效，无账号体系）
+- [x] 前端全量 TypeScript 化：9 个源文件迁 `.ts` + `types.d.ts` 命名空间契约 +
+      管理页脚本抽出；`hooks/pre-push` 类型检查硬门禁上线（详见 §5.1）
 - [ ] `GET /api/health` 健康检查接口 + 单元测试（jest 待接入）
 - [ ] Prisma 接入 SQLite，schema 迁移机制跑通（阶段2 报名系统前完成）
 - [ ] 服务器购置/分配，docker compose 上线（HTTPS 证书）
@@ -187,4 +212,6 @@ shuimu-web/
 - `dev`：日常开发与内容补充，PR 审核后合并；
 - `main`：只收发行版本，服务器只部署 main 产物；
 - 内容（门户文案/板块文档）与代码走同一 PR 流程；
+- 推送门禁：`hooks/pre-push` 对 site/server 双工程做 TypeScript 类型检查，
+  有错即拦（本地可 `npm run typecheck` 自查）；
 - 本机专用文件（cloudflared.exe、start-tunnel.ps1 等）不入库（见 .gitignore）。
