@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     页面：轮播内容管理页（site/admin/index.html）——最初版
+     职责：管理员经表单编辑首页轮播四接口（主办方/标题/介绍/跳转），
+           保存调用后端 PUT /api/banners，即时写回 site/data/banners.js。
+     运行：本地需先启动后端（server/ 下 npm run dev，端口 3000）；
+           线上经 Nginx 同域反代，无需任何配置。
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轮播管理 - 水木书院科协官网</title>
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/layout.css">
+  <link rel="stylesheet" href="../assets/css/footer.css">
+  <style>
+    /* 管理页专属样式（复用 base.css 的清华紫令牌） */
+    body { background: var(--purple-bg); min-height: 100vh; }
+    .admin-wrap { width: min(860px, 94%); margin: 40px auto 80px; }
+    .admin-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
+    .admin-head h1 { font-size: 26px; color: var(--text-dark); letter-spacing: 2px; }
+    .admin-head a { font-size: 14px; color: var(--purple); }
+    .slide-card { background: #fff; border: 1px solid var(--line); border-radius: 14px;
+      padding: 22px 24px; margin-bottom: 18px; box-shadow: var(--shadow); }
+    .slide-card .no { font-size: 13px; color: var(--purple); font-weight: 700; margin-bottom: 12px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 4px; }
+    .field label b { color: var(--text-main); }
+    .field input { width: 100%; box-sizing: border-box; border: 1px solid var(--line);
+      border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: inherit; }
+    .field input:focus { outline: none; border-color: var(--purple); }
+    .link-row { display: flex; gap: 12px; }
+    .link-row .field { flex: 1; }
+    .card-ops { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+    .btn { border: 0; border-radius: 20px; padding: 8px 20px; font-size: 14px;
+      font-family: inherit; cursor: pointer; }
+    .btn.ghost { background: #fff; color: var(--text-sub); border: 1px solid var(--line); }
+    .btn.ghost:hover { color: #d34141; border-color: #d34141; }
+    .btn.primary { background: var(--purple); color: #fff; }
+    .btn.primary:hover { background: var(--purple-hover); }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .status { font-size: 13px; padding: 8px 0; min-height: 20px; }
+    .status.ok { color: #1d9e4a; }
+    .status.err { color: #d34141; }
+    .hint { font-size: 12px; color: var(--text-sub); margin-top: 14px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <div class="admin-head">
+      <h1>首页轮播管理</h1>
+      <a href="../index.html">← 返回官网</a>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn ghost" id="add-slide" type="button">＋ 添加一张</button>
+      <button class="btn primary" id="save" type="button">保存并发布</button>
+    </div>
+    <div class="status" id="status">正在加载……</div>
+    <div id="slides"></div>
+    <p class="hint">
+      字段说明：主办方（选填，留空则不显示该行）；标题必填；介绍选填；跳转选填（留空则无按钮）。<br>
+      保存后首页轮播即时更新（强刷浏览器 Ctrl+F5 可见）。若提示无法连接后端：
+      在 server/ 目录运行 <b>npm run dev</b> 启动后端（端口 3000）。
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      /* API 地址：同域反代（线上）优先；本地静态预览（:8123 等）指向后端 3000 */
+      var API = location.pathname.startsWith('/site/')
+        ? 'http://localhost:3000/api/banners'
+        : '/api/banners';
+      var slidesBox = document.getElementById('slides');
+      var status = document.getElementById('status');
+
+      /** setStatus —— 内部辅助：状态条文案（kind: ok/err/空） */
+      function setStatus(kind, msg) {
+        status.className = 'status' + (kind ? ' ' + kind : '');
+        status.textContent = msg;
+      }
+
+      /** buildCard —— 内部辅助：由一条数据构建一张表单卡（输入：slide 数据、序号） */
+      function buildCard(s, i) {
+        var card = document.createElement('div');
+        card.className = 'slide-card';
+        card.innerHTML =
+          '<div class="no">第 ' + (i + 1) + ' 张</div>' +
+          '<div class="field"><label>主办方（选填）</label><input data-k="organizer" value=""></div>' +
+          '<div class="field"><label><b>标题（必填）</b></label><input data-k="title" value=""></div>' +
+          '<div class="field"><label>介绍（选填）</label><input data-k="description" value=""></div>' +
+          '<div class="link-row">' +
+          '<div class="field"><label>跳转按钮文字（选填）</label><input data-k="linkLabel" value=""></div>' +
+          '<div class="field"><label>跳转链接（选填）</label><input data-k="linkHref" value=""></div>' +
+          '</div>' +
+          '<div class="card-ops"><button class="btn ghost" type="button">删除本张</button></div>';
+        card.querySelector('[data-k="organizer"]').value = s.organizer || '';
+        card.querySelector('[data-k="title"]').value = s.title || '';
+        card.querySelector('[data-k="description"]').value = s.description || '';
+        card.querySelector('[data-k="linkLabel"]').value = (s.link && s.link.label) || '';
+        card.querySelector('[data-k="linkHref"]').value = (s.link && s.link.href) || '';
+        card.querySelector('.card-ops .btn').addEventListener('click', function () {
+          if (slidesBox.children.length <= 1) { setStatus('err', '至少保留一张'); return; }
+          card.remove(); renumber();
+        });
+        return card;
+      }
+
+      /** renumber —— 内部辅助：删除后重排"第 N 张"编号 */
+      function renumber() {
+        Array.prototype.forEach.call(slidesBox.children, function (c, i) {
+          c.querySelector('.no').textContent = '第 ' + (i + 1) + ' 张';
+        });
+      }
+
+      /** collect —— 内部辅助：从表单收集为契约数据（输入无；返回 slides 数组） */
+      function collect() {
+        return Array.prototype.map.call(slidesBox.children, function (c) {
+          var get = function (k) { return c.querySelector('[data-k="' + k + '"]').value.trim(); };
+          var link = null;
+          if (get('linkHref')) {
+            link = { href: get('linkHref') };
+            if (get('linkLabel')) { link.label = get('linkLabel'); }
+          }
+          var slide = { title: get('title') };
+          if (get('organizer')) { slide.organizer = get('organizer'); }
+          if (get('description')) { slide.description = get('description'); }
+          if (link) { slide.link = link; }
+          return slide;
+        });
+      }
+
+      /** loadAll —— 读取后端数据并渲染全部表单卡 */
+      function loadAll() {
+        fetch(API).then(function (r) {
+          if (!r.ok) { throw new Error('HTTP ' + r.status); }
+          return r.json();
+        }).then(function (body) {
+          slidesBox.innerHTML = '';
+          body.slides.forEach(function (s, i) { slidesBox.appendChild(buildCard(s, i)); });
+          setStatus('ok', '已加载 ' + body.slides.length + ' 张（当前线上的内容）');
+        }).catch(function () {
+          slidesBox.innerHTML = '';
+          slidesBox.appendChild(buildCard({ title: '' }, 0));
+          setStatus('err', '无法连接后端——请在 server/ 目录运行 npm run dev 后刷新本页');
+        });
+      }
+
+      document.getElementById('add-slide').addEventListener('click', function () {
+        if (slidesBox.children.length >= 8) { setStatus('err', '最多 8 张'); return; }
+        slidesBox.appendChild(buildCard({ title: '' }, slidesBox.children.length));
+        renumber();
+      });
+
+      document.getElementById('save').addEventListener('click', function () {
+        var slides = collect();
+        if (slides.some(function (s) { return !s.title; })) {
+          setStatus('err', '每张的标题都必填'); return;
+        }
+        setStatus('', '正在保存……');
+        fetch(API, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slides: slides }),
+        }).then(function (r) {
+          if (!r.ok) { return r.json().then(function (e) { throw new Error(e.message || ('HTTP ' + r.status)); }); }
+          return r.json();
+        }).then(function (body) {
+          setStatus('ok', '已保存并发布（' + body.count + ' 张）——首页强刷即可看到');
+        }).catch(function (e) {
+          setStatus('err', '保存失败：' + e.message);
+        });
+      });
+
+      loadAll();
+    })();
+  </script>
+</body>
+</html>

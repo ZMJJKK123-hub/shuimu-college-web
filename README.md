@@ -25,6 +25,18 @@
 
 纯函数自测页：浏览器打开 `tests/selftest.html`，全部用例应显示 PASS。
 
+
+**轮播内容管理（管理员入口）**：
+
+```bash
+# 1) 启动后端（首次先 cd server && npm install）
+cd server && npm run dev        # 端口 3000
+# 2) 浏览器打开 http://localhost:8123/site/admin/
+#    表单编辑四接口（主办方/标题/介绍/跳转）→ 保存即写回 site/data/banners.js
+```
+
+线上（服务器部署后）直接访问 `https://域名/admin/`，无需启动任何本地进程。
+
 ## 目录结构
 
 ```
@@ -35,8 +47,10 @@ shuimu-web/
 │   ├── ARCHITECTURE.md            # 总体架构设计（活文档：后端/部署/演进路线）
 │   └── PHASE1-架构设计.md          # 前端门户接口契约
 ├── tests/selftest.html            # 纯函数自测页（浏览器原生断言）
+├── server/                        # 后端（阶段1起）：NestJS，四层结构，/api/banners
 └── site/                          # 站点部署单元（可整体拷贝部署）
     ├── index.html                 # 首页
+    ├── data/banners.js            # 数据层：首页轮播内容（管理员维护入口）
     ├── about/index.html           # 科协介绍（占位页）
     ├── languages/index.html       # 编程语言（占位页）
     ├── tools/index.html           # 开发工具（占位页）
@@ -68,7 +82,7 @@ shuimu-web/
 
 | 要补充的内容 | 位置 |
 | :--- | :--- |
-| 首页轮播标语（3 张，现为占位） | `site/index.html` 中 `.slide` 区块（整体可替换） |
+| 首页轮播标语（管理员入口） | `site/data/banners.js`——改文字/加幻灯片只编辑此数据文件，无需动 HTML |
 | 科协简介正文与统计数字 | `site/index.html` 的 `#about` 区块 |
 | 六大板块卡片的描述文案 | `site/index.html` 的 `#tech` 区块内各 `.tech-card` |
 | 新闻 / 公告条目 | `site/index.html` 的 `.news-flex` 双栏面板 |

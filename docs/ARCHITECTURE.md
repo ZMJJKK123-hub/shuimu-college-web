@@ -128,14 +128,18 @@ shuimu-web/
 - [x] 仓库建立，dev/main 分支策略确立，第一版推送 dev
 - [x] 总体架构定案并写入本文档
 
-### 阶段 1：后端骨架定型【未开始】
+### 阶段 1：后端骨架定型【进行中 · 2026-09-27 首批落地】
 要求（开工前在此补充细节，完成打勾）：
-- [ ] 新建 `server/`（NestJS+TS），完整四层目录 + 统一日志 + 全局异常过滤器
-- [ ] `GET /api/health` 健康检查接口 + 单元测试
-- [ ] Prisma 接入 SQLite，schema 迁移机制跑通
-- [ ] `deploy/`：docker-compose.yml + nginx.conf（/ 静态、/api 反代、HTTPS 证书）
-- [ ] 服务器购置/分配，门户静态站先独立上线
-- [ ] DTO/接口契约文档补充到本文档 §9（阶段1节）
+- [x] 新建 `server/`（NestJS+TS）：config（全局配置模块）/common（统一异常过滤器）/
+      infrastructure（banners 文件仓储）/modules（banners 业务模块）四层就绪
+- [x] banners 内容接口：GET/PUT `/api/banners`（class-validator DTO 强校验、
+      原子写回 site/data/banners.js、统一错误体），本地 curl+浏览器双重验证
+- [ ] `deploy/` 部署编排（Dockerfile/compose/nginx）——待服务器环境确定后再创建，本机不预置
+- [x] 管理端最初版：`site/admin/` 表单页（四接口编辑，保存即生效，无账号体系）
+- [ ] `GET /api/health` 健康检查接口 + 单元测试（jest 待接入）
+- [ ] Prisma 接入 SQLite，schema 迁移机制跑通（阶段2 报名系统前完成）
+- [ ] 服务器购置/分配，docker compose 上线（HTTPS 证书）
+- [x] DTO/接口契约登记到本文档 §9
 
 ### 阶段 2：报名系统（第一个业务模块）【未开始】
 - [ ] 数据模型：活动/赛事表、报名记录表（含验证状态、时间戳）
@@ -155,7 +159,28 @@ shuimu-web/
 ## 9. 接口契约附录（随阶段补充）
 
 > 各阶段开工时在此登记 DTO 与接口清单（方法/路径/入参/出参/错误码），作为前后端与
-> 测试的共同依据。当前为空——阶段1首次登记。
+> 测试的共同依据。
+
+### 9.1 轮播内容（阶段1 · 已上线本地验证）
+
+**数据契约 BannerSlide（四接口，存储于 site/data/banners.js 数据段，标准 JSON）**
+
+| 字段 | 类型 | 必填 | 说明 |
+| :--- | :--- | :--- | :--- |
+| organizer | string ≤100 | 否 | 主办方（顶部胶囊小字，空则不显示该行） |
+| title | string ≤60 | 是 | 推送标题（大标语） |
+| description | string ≤300 | 否 | 介绍（副文案） |
+| link | {label?: string ≤30, href: string ≤500} | 否 | 跳转按钮（空/null 则无按钮） |
+| （底色主题） | — | — | 无需填写，前端按顺序自动轮换 s1/s2/s3 |
+
+**HTTP 接口**
+
+| 方法 | 路径 | 入参 | 出参 | 错误 |
+| :--- | :--- | :--- | :--- | :--- |
+| GET | /api/banners | — | { slides: BannerSlide[] } | 500 统一错误体 |
+| PUT | /api/banners | { slides: BannerSlide[1..8] } | { saved: true, count, slides } | 400 校验失败（统一错误体） |
+
+统一错误体：{ code, message, timestamp, path }；写入为原子写（临时文件+改名）。
 
 ## 10. Git 工作流（定案）
 
