@@ -34,6 +34,7 @@
   <script src="../site/assets/js/infrastructure/logger.js"></script>
   <script src="../site/assets/js/services/banner.service.js"></script>
   <script src="../site/assets/js/services/nav.service.js"></script>
+  <script src="../site/assets/js/services/nav-collapse.service.js"></script>
 
   <script>
     window.SMSK = window.SMSK || {};
@@ -109,6 +110,12 @@
       run('resolve("") 空路径归一为 index', function () { assertSame(SMSK.resolveActivePage('', NAV_ITEMS), 'index'); });
       run('resolve("/Machine-Learning.HTML") 大小写不敏感', function () { assertSame(SMSK.resolveActivePage('/Machine-Learning.HTML', NAV_ITEMS), 'machine-learning'); });
       run('resolve("/unknown.html") 未命中返回 null', function () { assertSame(SMSK.resolveActivePage('/unknown.html', NAV_ITEMS), null); });
+
+      // ---- resolveNavState：滚动方向 → 导航状态映射 ----
+      run('resolve(+120, expanded) 下滑 → 收起', function () { assertSame(SMSK.resolveNavState(120, 'expanded'), 'collapsed'); });
+      run('resolve(-3, collapsed) 上滑 → 展开（高灵敏）', function () { assertSame(SMSK.resolveNavState(-3, 'collapsed'), 'expanded'); });
+      run('resolve(0, collapsed) 静止 → 维持现状', function () { assertSame(SMSK.resolveNavState(0, 'collapsed'), 'collapsed'); });
+      run('resolve(0, expanded) 静止 → 维持现状', function () { assertSame(SMSK.resolveNavState(0, 'expanded'), 'expanded'); });
 
       // ---- createLogger：配置契约校验 ----
       run('createLogger("info") 合法级别可创建', function () { assertSame(typeof SMSK.createLogger('info').info, 'function'); });

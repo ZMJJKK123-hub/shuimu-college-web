@@ -33,6 +33,7 @@ flowchart LR
     M --> E["infrastructure/errors.js<br/>自定义异常"]
     M --> S1["services/banner.service.js<br/>轮播"]
     M --> S2["services/nav.service.js<br/>导航高亮/移动菜单"]
+    M --> S4["services/nav-collapse.service.js<br/>下滑收起/上滑展开"]
     M --> S3["services/backtop.service.js<br/>返回顶部"]
     S1 & S2 & S3 -->|"qs/on (dom.js)"| DOM[(页面 DOM)]
     S1 & S2 & S3 -->|结构化日志| L
@@ -79,6 +80,7 @@ shuimu-web/
             ├── services/
             │   ├── banner.service.js  # 首页轮播（含索引纯函数，可自测）
             │   ├── nav.service.js     # 当前页高亮 + 移动端抽屉菜单
+            │   ├── nav-collapse.service.js # 下滑收起/上滑展开（时长经配置注入）
             │   └── backtop.service.js # 返回顶部（显隐阈值经配置注入）
             └── main.js                # 组装根：读配置 → 建 Logger → 装配并启动服务
 ```

@@ -28,14 +28,15 @@ function qsa(sel, scope) {
 }
 
 /**
- * on —— 事件绑定（带解绑能力）
- * 输入：target 事件目标；type 事件名；handler 处理函数
+ * on —— 事件绑定（带解绑能力，支持 passive 等监听选项）
+ * 输入：target 事件目标；type 事件名；handler 处理函数；
+ *       options 可选的 addEventListener 选项（如滚动监听传 { passive: true }）
  * 返回：解绑函数（服务 destroy 时调用以清理监听，防内存泄漏）
  */
-function on(target, type, handler) {
-  target.addEventListener(type, handler);
+function on(target, type, handler, options) {
+  target.addEventListener(type, handler, options);
   return function () {
-    target.removeEventListener(type, handler);
+    target.removeEventListener(type, handler, options);
   };
 }
 

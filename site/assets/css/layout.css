@@ -125,6 +125,15 @@
 }
 .mainnav li a:hover { background: var(--purple-deep); }
 .mainnav li a:hover::after { width: 60%; }
+
+/* ---- 导航条滚动收起（nav-collapse.service.js 切换 .collapsed）----
+   仅桌面端：收起 = 上移自身高度、滑入不透明页头（z-index 更高）之后隐藏；
+   过渡时长由服务从配置注入 inline style（配置层是唯一取值源）；
+   transform 过渡天然可打断，中途反向从当前位置平滑回滑 */
+@media (min-width: 901px) {
+  .mainnav { will-change: transform; }
+  .mainnav.collapsed { transform: translateY(-100%); }
+}
 .mainnav li.active a { background: var(--purple-deep); font-weight: 600; }
 .mainnav li.active a::after { width: 60%; }
 

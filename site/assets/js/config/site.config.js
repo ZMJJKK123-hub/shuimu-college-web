@@ -16,8 +16,10 @@ window.SMSK = window.SMSK || {};
  * @property {Object} banner                    轮播配置（契约见 banner.service.js）
  * @property {number}  banner.intervalMs        自动播放间隔（毫秒）
  * @property {boolean} banner.autoplay          是否自动播放
- * @property {number}  backtopThresholdPx       返回顶部按钮显隐滚动阈值（像素）
- * @property {string}  storagePrefix            日志/本地存储键前缀（避免多站冲突）
+ * @property {Object} navCollapse               导航收起配置（契约见 nav-collapse.service.js）
+ * @property {number} navCollapse.durationMs    下滑收起/上滑展开的过渡时长（毫秒）
+ * @property {number} backtopThresholdPx        返回顶部按钮显隐滚动阈值（像素）
+ * @property {string} storagePrefix             日志/本地存储键前缀（避免多站冲突）
  */
 
 /** @type {SiteConfig} 站点全局配置实例（修改参数只改这里） */
@@ -26,6 +28,9 @@ window.SMSK.CONFIG = {
   banner: {
     intervalMs: 5000,
     autoplay: true
+  },
+  navCollapse: {
+    durationMs: 500
   },
   backtopThresholdPx: 320,
   storagePrefix: 'smsk.'

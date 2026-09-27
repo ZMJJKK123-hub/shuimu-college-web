@@ -1,7 +1,7 @@
 # 清华大学水木书院学生科学技术协会 官网（架构占位版）
 
 水木书院科协官方网站。**内容架构**参照电子系科协文档站（[eesast/docs](https://github.com/eesast/docs)），
-**视觉与语言风格**严格遵循[水木书院官网](https://smc.tsinghua.edu.cn/)（紫色 `#6d00cc` 门户风格：
+**视觉与语言风格**严格遵循[水木书院官网](https://smc.tsinghua.edu.cn/)（清华紫 `#660874`（PANTONE 259C）门户风格，渐变辅助玫红 `#D93379`：
 中文主标题 + 英文副标题、“更多”链接、正式书院语体）。
 
 当前版本：**首页完整可用，七个板块页均为占位页**，内容待科协成员按下方指引补充。
@@ -90,7 +90,7 @@ shuimu-web/
 
 ## 风格参考
 
-- 视觉规范来源：[水木书院官网](https://smc.tsinghua.edu.cn/)（主色 `#6d00cc`，
+- 视觉规范来源：[水木书院官网](https://smc.tsinghua.edu.cn/)（主色清华紫 `#660874`（辅助玫红 `#D93379`），
   中文主标题+英文副标题版式，页脚含书院门户式信息栏）
 - 内容架构来源：[电子系科协文档站](https://docs.eesast.com/)
   （Languages / Tools / Game / Web / Machine Learning / Contests 板块划分）
