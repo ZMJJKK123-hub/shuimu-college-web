@@ -1,0 +1,111 @@
+/* ==========================================================================
+   base.css —— 设计令牌 + Reset + 通用组件
+   分层：样式层 / 基础模块，被其余全部样式模块依赖
+   引入顺序：base.css → layout.css → footer.css
+     → 首页：home.css → home-about.css → home-tech.css → home-news.css
+     → 子页：subpage.css
+   设计令牌取自水木书院官网（smc.tsinghua.edu.cn）紫色系
+   ========================================================================== */
+
+/* ---- 设计令牌（Design Tokens）：全站唯一取色/取值来源 ---- */
+:root {
+  /* 主色（取自水木书院官网） */
+  --purple: #6d00cc;          /* 主紫：导航、链接、强调 */
+  --purple-deep: #5a00a8;     /* 深紫：hover 态、激活态底色 */
+  --purple-bright: #8b00f3;   /* 亮紫：渐变辅助色 */
+  --purple-hover: #9700cb;    /* 紫色 hover */
+  --purple-bg: #f7f3fc;       /* 浅紫底：隔断区块背景 */
+  --purple-dark: #2e0b52;     /* 暗紫：顶条背景 */
+  --purple-footer: #26123f;   /* 页脚深紫 */
+
+  /* 文字色 */
+  --text-main: #333333;       /* 正文 */
+  --text-dark: #1d1d1f;       /* 标题 */
+  --text-sub: #838383;        /* 辅助说明 */
+  --text-light: #ffffff;      /* 反白文字 */
+
+  /* 线条与阴影 */
+  --line: #e9e2f5;            /* 分割线/描边 */
+  --shadow: 0 8px 24px rgba(109, 0, 204, 0.10);
+  --shadow-hover: 0 14px 36px rgba(109, 0, 204, 0.18);
+
+  /* 布局尺寸 */
+  --container: 1200px;        /* 内容最大宽度 */
+  --header-h: 96px;           /* 页头高度（移动端由 layout.css 覆写） */
+  --nav-h: 56px;              /* 主导航高度 */
+
+  --font-stack: "PingFang SC", "Microsoft YaHei", "微软雅黑",
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---- Reset ---- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-stack);
+  color: var(--text-main);
+  background: var(--text-light, #fff);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; color: inherit; }
+ul, ol { list-style: none; }
+img { max-width: 100%; display: block; border: 0; }
+button { font-family: inherit; cursor: pointer; border: 0; background: none; }
+
+/* ---- 通用容器 ---- */
+.container { width: min(var(--container), 92%); margin: 0 auto; }
+
+/* ---- 通用板块间距：.alt 为浅紫隔断底 ---- */
+.section { padding: 72px 0; }
+.section.alt { background: var(--purple-bg); }
+
+/* ---- 通用板块标题：中文主标题 + 英文副标题 + “更多” ---- */
+.sec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+.sec-head .left .bar {
+  width: 42px;
+  height: 4px;
+  background: var(--purple);
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+.sec-head .cn {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: 2px;
+  display: inline-block;
+}
+.sec-head .en {
+  font-size: 14px;
+  color: var(--text-sub);
+  letter-spacing: 1.5px;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.sec-head .more {
+  flex: none;
+  font-size: 14px;
+  color: var(--purple);
+  border: 1px solid var(--purple);
+  border-radius: 20px;
+  padding: 6px 20px;
+  transition: all 0.25s;
+}
+.sec-head .more:hover { background: var(--purple); color: #fff; }
+
+/* ---- 小屏通用覆写（组件各自媒体查询见所属模块） ---- */
+@media (max-width: 620px) {
+  .sec-head { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .section { padding: 52px 0; }
+  .sec-head .cn { font-size: 24px; }
+}

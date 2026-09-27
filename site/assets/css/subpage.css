@@ -1,0 +1,137 @@
+/* ==========================================================================
+   subpage.css —— 子页专属区块：页面横幅 / 占位卡片 / 主题标签
+   分层：样式层 / 子页模块；依赖 base.css + layout.css
+   引入顺序：base.css → layout.css → 本文件（除 index.html 外的页面引入）
+   ========================================================================== */
+
+/* ---- 子页横幅：紫色渐变 + 面包屑 + 板块名（中英双语） ---- */
+.page-banner {
+  position: relative;
+  background:
+    radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.10), transparent 32%),
+    radial-gradient(circle at 10% 85%, rgba(255, 255, 255, 0.08), transparent 30%),
+    linear-gradient(120deg, #3b0a6e 0%, #6d00cc 55%, #8b00f3 100%);
+  color: #fff;
+  padding: 84px 0 72px;
+  overflow: hidden;
+}
+.page-banner .inner { position: relative; }
+.page-banner .crumbs {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 14px;
+  letter-spacing: 1px;
+}
+.page-banner .crumbs a:hover { color: #fff; text-decoration: underline; }
+.page-banner h1 {
+  font-size: 38px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.page-banner .sub {
+  font-size: 14px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ---- 占位内容区：浅紫晕染底 ---- */
+.placeholder-zone {
+  padding: 80px 0 100px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(109, 0, 204, 0.06), transparent 40%),
+    radial-gradient(circle at 88% 80%, rgba(139, 0, 243, 0.07), transparent 45%),
+    #fff;
+}
+
+/* ---- 占位卡片：内容建设中的统一外观 ---- */
+.placeholder-card {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+  background: #fff;
+  border: 1px dashed #cbb5ea;
+  border-radius: 20px;
+  padding: 70px 40px;
+  box-shadow: var(--shadow);
+}
+.placeholder-card .icon {
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 28px;
+  border-radius: 50%;
+  background: var(--purple-bg);
+  color: var(--purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.placeholder-card .icon svg { width: 44px; height: 44px; }
+.placeholder-card h2 {
+  font-size: 28px;
+  color: var(--text-dark);
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+.placeholder-card .en {
+  font-size: 13px;
+  color: var(--text-sub);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.placeholder-card p {
+  color: #666;
+  font-size: 15.5px;
+  max-width: 520px;
+  margin: 0 auto 10px;
+}
+.placeholder-card .note {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--purple);
+  background: var(--purple-bg);
+  border-radius: 18px;
+  padding: 6px 20px;
+}
+.placeholder-card .btn {
+  display: inline-block;
+  margin-top: 30px;
+  background: var(--purple);
+  color: #fff;
+  padding: 11px 36px;
+  border-radius: 26px;
+  font-size: 15px;
+  letter-spacing: 2px;
+  transition: background 0.25s;
+}
+.placeholder-card .btn:hover { background: var(--purple-hover); }
+
+/* ---- 板块主题标签（后续真实内容的挂载位） ---- */
+.topic-list {
+  max-width: 760px;
+  margin: 46px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.topic-list span {
+  font-size: 14px;
+  color: var(--text-main);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 7px 20px;
+  box-shadow: 0 2px 8px rgba(109, 0, 204, 0.06);
+}
+
+/* ---- 响应式（子页组件） ---- */
+@media (max-width: 620px) {
+  .page-banner { padding: 56px 0 48px; }
+  .page-banner h1 { font-size: 28px; }
+  .placeholder-card { padding: 48px 22px; }
+  .placeholder-zone { padding: 52px 0 72px; }
+}

@@ -1,0 +1,104 @@
+/* ==========================================================================
+   footer.css —— 页脚（四栏信息 + 版权条）与返回顶部按钮
+   分层：样式层 / 布局模块；依赖 base.css 的设计令牌
+   引入顺序：base.css → layout.css → 本文件 →（首页或子页专属模块）
+   ========================================================================== */
+
+/* ---- 页脚（深紫）：四栏信息 ---- */
+.footer { background: var(--purple-footer); color: rgba(255, 255, 255, 0.82); }
+.footer-main { padding: 56px 0 40px; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 40px;
+}
+.footer h4 {
+  color: #fff;
+  font-size: 17px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 10px;
+}
+.footer h4::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 30px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--purple-bright);
+}
+.footer .about p { font-size: 14px; line-height: 1.9; }
+.footer .logo-line { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.footer .logo-line .mini {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--purple-bright));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer .logo-line .t { font-size: 17px; color: #fff; letter-spacing: 2px; }
+.footer ul li { margin-bottom: 10px; font-size: 14px; }
+.footer ul a { transition: color 0.2s, padding-left 0.2s; }
+.footer ul a:hover { color: #fff; padding-left: 4px; }
+.footer .contact li { display: flex; gap: 10px; align-items: flex-start; }
+.footer .contact svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  margin-top: 5px;
+  color: var(--purple-hover);
+}
+
+/* ---- 版权条 ---- */
+.footer-bar {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 20px 0;
+  font-size: 13px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+}
+.footer-bar a { color: rgba(255, 255, 255, 0.65); }
+.footer-bar a:hover { color: #fff; }
+.footer-bar .sep { margin: 0 10px; opacity: 0.4; }
+
+/* ---- 返回顶部（backtop.service.js 控制显隐） ---- */
+.backtop {
+  position: fixed;
+  right: 28px;
+  bottom: 34px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(109, 0, 204, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  z-index: 90;
+}
+.backtop.show { opacity: 1; visibility: visible; transform: none; }
+.backtop:hover { background: var(--purple-hover); }
+.backtop svg { width: 20px; height: 20px; }
+
+/* ---- 响应式（页脚与返回顶部） ---- */
+@media (max-width: 1080px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 620px) {
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .backtop { right: 18px; bottom: 22px; }
+}

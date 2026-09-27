@@ -1,0 +1,81 @@
+/* ==========================================================================
+   home-tech.css —— 首页专属：技术板块六宫格
+   分层：样式层 / 首页模块；依赖 base.css + layout.css
+   引入顺序（仅 index.html）：… → home-about.css → 本文件 → home-news.css
+   ========================================================================== */
+
+/* ---- 六宫格布局 ---- */
+.tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.tech-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 34px 30px 28px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+.tech-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--purple), var(--purple-bright));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.tech-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+  border-color: transparent;
+}
+.tech-card:hover::before { transform: scaleX(1); }
+
+/* 卡片图标：浅紫底，hover 时渐变填充 */
+.tech-card .icon {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  background: var(--purple-bg);
+  color: var(--purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+.tech-card:hover .icon {
+  background: linear-gradient(135deg, var(--purple), var(--purple-bright));
+  color: #fff;
+}
+.tech-card .icon svg { width: 30px; height: 30px; }
+
+/* 卡片标题（中文 + 英文副题）与描述 */
+.tech-card h3 { font-size: 21px; color: var(--text-dark); letter-spacing: 1px; margin-bottom: 4px; }
+.tech-card .en {
+  font-size: 12px;
+  color: var(--text-sub);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.tech-card p { font-size: 14.5px; color: #666; margin-bottom: 18px; min-height: 50px; }
+.tech-card .go { font-size: 14px; color: var(--purple); font-weight: 600; letter-spacing: 1px; }
+.tech-card .go i { font-style: normal; transition: margin 0.25s; }
+.tech-card:hover .go i { margin-left: 6px; }
+
+/* ---- 响应式（六宫格） ---- */
+@media (max-width: 900px) {
+  .tech-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 620px) {
+  .tech-grid { grid-template-columns: 1fr; }
+  .tech-card { padding: 26px 22px 22px; }
+  .tech-card p { min-height: 0; }
+}

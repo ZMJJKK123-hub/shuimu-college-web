@@ -1,0 +1,60 @@
+/* ==========================================================================
+   home-about.css —— 首页专属：科协简介（左文案 + 右数据统计卡）
+   分层：样式层 / 首页模块；依赖 base.css + layout.css
+   引入顺序（仅 index.html）：… → home.css → 本文件 → home-tech.css → home-news.css
+   ========================================================================== */
+
+/* ---- 简介双栏：左文案 + 右统计 ---- */
+.about-flex { display: flex; gap: 56px; align-items: center; }
+.about-flex .text { flex: 1.15; min-width: 0; }
+.about-flex .text .lead {
+  font-size: 18px;
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+.about-flex .text p { color: #555; margin-bottom: 12px; text-align: justify; }
+.about-flex .text .btn {
+  display: inline-block;
+  margin-top: 22px;
+  background: var(--purple);
+  color: #fff;
+  padding: 11px 32px;
+  border-radius: 26px;
+  font-size: 15px;
+  letter-spacing: 2px;
+  transition: background 0.25s;
+}
+.about-flex .text .btn:hover { background: var(--purple-hover); }
+
+/* ---- 数据统计卡（2×2） ---- */
+.about-flex .stats { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 26px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s;
+}
+.stat-card:hover { transform: translateY(-4px); }
+.stat-card .num {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--purple);
+  font-family: Georgia, serif;
+}
+.stat-card .num small { font-size: 16px; margin-left: 2px; }
+.stat-card .label { font-size: 14px; color: var(--text-sub); margin-top: 4px; }
+
+/* ---- 响应式（简介区） ---- */
+@media (max-width: 900px) {
+  .about-flex { flex-direction: column; gap: 34px; }
+}
+
+@media (max-width: 620px) {
+  .about-flex .stats { width: 100%; }
+  .stat-card { padding: 20px 14px; }
+}

@@ -1,0 +1,102 @@
+/* ==========================================================================
+   home.css —— 首页专属：轮播横幅
+   分层：样式层 / 首页模块；依赖 base.css + layout.css
+   引入顺序（仅 index.html）：base.css → layout.css → footer.css
+     → 本文件 → home-about.css → home-tech.css → home-news.css
+   ========================================================================== */
+
+/* ---- 轮播横幅（banner.service.js 控制 .slide.active 切换） ---- */
+.banner { position: relative; height: 520px; overflow: hidden; }
+.banner .slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  display: flex;
+  align-items: center;
+}
+.banner .slide.active { opacity: 1; }
+
+/* 三张幻灯片的紫色渐变底（对应 s1/s2/s3） */
+.slide.s1 { background: linear-gradient(120deg, #3b0a6e 0%, #6d00cc 55%, #8b00f3 100%); }
+.slide.s2 { background: linear-gradient(120deg, #2e0b52 0%, #5a00a8 50%, #7033a5 100%); }
+.slide.s3 { background: linear-gradient(120deg, #4a0a87 0%, #9700cb 60%, #b44df0 100%); }
+
+/* “水木”意象装饰波纹（SVG 覆盖层） */
+.slide .deco { position: absolute; inset: 0; opacity: 0.35; pointer-events: none; }
+
+.slide .inner {
+  position: relative;
+  width: min(var(--container), 92%);
+  margin: 0 auto;
+  color: #fff;
+  max-width: 760px;
+}
+.slide .eyebrow {
+  display: inline-block;
+  font-size: 14px;
+  letter-spacing: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 20px;
+  padding: 5px 18px;
+  margin-bottom: 26px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.slide h2 {
+  font-size: 46px;
+  letter-spacing: 6px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.25);
+}
+.slide p {
+  font-size: 17px;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 38px;
+}
+.slide .btns { display: flex; gap: 18px; flex-wrap: wrap; }
+.slide .btn {
+  display: inline-block;
+  padding: 12px 34px;
+  border-radius: 28px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  transition: all 0.25s;
+}
+.slide .btn.primary { background: #fff; color: var(--purple); font-weight: 600; }
+.slide .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); }
+.slide .btn.ghost { border: 1px solid rgba(255, 255, 255, 0.7); color: #fff; }
+.slide .btn.ghost:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* 指示点（由 banner.service.js 依幻灯片数量动态生成） */
+.banner .dots {
+  position: absolute;
+  bottom: 26px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  z-index: 5;
+}
+.banner .dots button {
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  transition: background 0.3s;
+}
+.banner .dots button.active { background: #fff; }
+
+/* ---- 响应式（轮播） ---- */
+@media (max-width: 900px) {
+  .banner { height: 420px; }
+  .slide h2 { font-size: 32px; letter-spacing: 3px; }
+}
+
+@media (max-width: 620px) {
+  .slide h2 { font-size: 26px; }
+  .slide p { font-size: 15px; }
+  .slide .eyebrow { letter-spacing: 2px; font-size: 12px; }
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     页面：纯函数自测页（tests/selftest.html）——不属于正式站点页面
+     职责：对 banner/nav 服务导出的纯函数与 logger 契约做边界断言，
+           结果渲染到页面（零依赖，双击即可运行）。
+     依赖：../site/assets/js/services/{banner,nav}.service.js 的纯函数导出；
+           ../site/assets/js/infrastructure/{errors,logger}.js 的契约校验。
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>纯函数自测 - 水木书院科协官网</title>
+  <style>
+    body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; margin: 40px auto; max-width: 720px; color: #333; }
+    h1 { font-size: 22px; color: #6d00cc; margin-bottom: 6px; }
+    .summary { font-size: 14px; color: #838383; margin-bottom: 24px; }
+    .case { padding: 10px 14px; border: 1px solid #e9e2f5; border-radius: 8px; margin-bottom: 8px; font-size: 14px; }
+    .case.pass { background: #f2fbf5; border-color: #bfe8cc; }
+    .case.fail { background: #fdf2f2; border-color: #f0c4c4; }
+    .case .mark { font-weight: 700; margin-right: 8px; }
+    .case.pass .mark { color: #1d9e4a; }
+    .case.fail .mark { color: #d34141; }
+    code { background: #f7f3fc; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>纯函数自测（Selftest）</h1>
+  <p class="summary">覆盖 nextIndex / resolveActivePage / createLogger 契约的输入边界与分支路径。</p>
+  <div id="results"></div>
+
+  <!-- 被测模块：仅引入纯函数与契约所需文件（加载顺序见各文件头注） -->
+  <script src="../site/assets/js/infrastructure/errors.js"></script>
+  <script src="../site/assets/js/infrastructure/logger.js"></script>
+  <script src="../site/assets/js/services/banner.service.js"></script>
+  <script src="../site/assets/js/services/nav.service.js"></script>
+
+  <script>
+    window.SMSK = window.SMSK || {};
+    (function (SMSK) {
+      'use strict';
+
+      var passed = 0;
+      var failed = 0;
+
+      /**
+       * run —— 内部辅助：执行单个断言用例并渲染结果
+       * 输入：label 用例说明；fn 断言函数（抛错即失败）
+       * 返回：无；单一职责：用例执行与 DOM 结果渲染
+       */
+      function run(label, fn) {
+        var box = document.getElementById('results');
+        var div = document.createElement('div');
+        try {
+          fn();
+          passed++;
+          div.className = 'case pass';
+          div.innerHTML = '<span class="mark">PASS</span>' + label;
+        } catch (e) {
+          failed++;
+          div.className = 'case fail';
+          div.innerHTML = '<span class="mark">FAIL</span>' + label +
+            ' —— <code>' + (e && e.message ? e.message : String(e)) + '</code>';
+        }
+        box.appendChild(div);
+      }
+
+      /**
+       * assertSame —— 内部辅助：严格相等断言
+       * 输入：actual 实际值；expected 期望值
+       */
+      function assertSame(actual, expected) {
+        if (actual !== expected) {
+          throw new Error('期望 ' + JSON.stringify(expected) + '，实际 ' + JSON.stringify(actual));
+        }
+      }
+
+      /**
+       * assertThrows —— 内部辅助：断言指定函数抛出给定类型异常
+       * 输入：fn 待测函数；ErrorType 期望的异常构造器
+       */
+      function assertThrows(fn, ErrorType) {
+        try { fn(); } catch (e) {
+          if (!(e instanceof ErrorType)) {
+            throw new Error('抛出了 ' + e.name + '，期望 ' + ErrorType.name);
+          }
+          return;
+        }
+        throw new Error('未抛出异常，期望 ' + ErrorType.name);
+      }
+
+      var NAV_ITEMS = [
+        { id: 'index', label: '首页', href: 'index.html' },
+        { id: 'languages', label: '编程语言', href: 'languages.html' },
+        { id: 'machine-learning', label: '机器学习', href: 'machine-learning.html' }
+      ];
+
+      // ---- nextIndex：环形索引推算 ----
+      run('nextIndex(0, 3) 常规前进', function () { assertSame(SMSK.nextIndex(0, 3), 1); });
+      run('nextIndex(2, 3) 末尾回绕', function () { assertSame(SMSK.nextIndex(2, 3), 0); });
+      run('nextIndex(0, 1) 单张恒为 0', function () { assertSame(SMSK.nextIndex(0, 1), 0); });
+      run('nextIndex(0, 0) 空列表返回 -1', function () { assertSame(SMSK.nextIndex(0, 0), -1); });
+      run('nextIndex(5, -2) 非法总数返回 -1', function () { assertSame(SMSK.nextIndex(5, -2), -1); });
+
+      // ---- resolveActivePage：路径 → 导航 id 映射 ----
+      run('resolve("/languages.html") 命中板块页', function () { assertSame(SMSK.resolveActivePage('/languages.html', NAV_ITEMS), 'languages'); });
+      run('resolve("/") 根路径归一为 index', function () { assertSame(SMSK.resolveActivePage('/', NAV_ITEMS), 'index'); });
+      run('resolve("/index.html") 归一为 index', function () { assertSame(SMSK.resolveActivePage('/index.html', NAV_ITEMS), 'index'); });
+      run('resolve("") 空路径归一为 index', function () { assertSame(SMSK.resolveActivePage('', NAV_ITEMS), 'index'); });
+      run('resolve("/Machine-Learning.HTML") 大小写不敏感', function () { assertSame(SMSK.resolveActivePage('/Machine-Learning.HTML', NAV_ITEMS), 'machine-learning'); });
+      run('resolve("/unknown.html") 未命中返回 null', function () { assertSame(SMSK.resolveActivePage('/unknown.html', NAV_ITEMS), null); });
+
+      // ---- createLogger：配置契约校验 ----
+      run('createLogger("info") 合法级别可创建', function () { assertSame(typeof SMSK.createLogger('info').info, 'function'); });
+      run('createLogger("verbose") 非法级别抛 ConfigError', function () { assertThrows(function () { SMSK.createLogger('verbose'); }, SMSK.ConfigError); });
+
+      // ---- 汇总 ----
+      var summary = document.querySelector('.summary');
+      summary.textContent = '共 ' + (passed + failed) + ' 个用例：' + passed + ' 通过，' + failed + ' 失败。';
+      summary.style.color = failed === 0 ? '#1d9e4a' : '#d34141';
+      summary.style.fontWeight = '700';
+    })(window.SMSK);
+  </script>
+</body>
+</html>
