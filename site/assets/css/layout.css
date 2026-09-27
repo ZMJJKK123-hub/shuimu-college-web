@@ -27,12 +27,14 @@
   top: 0;
   z-index: 100;
 }
+/* 页头通栏布局（其余区块仍用居中 .container）：
+   校徽贴视口左缘 → 站名紧随 → 工具按键推至右侧 */
 .header .container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: var(--header-h);
   gap: 24px;
+  width: 100%;
 }
 
 .brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
@@ -69,25 +71,28 @@
   text-overflow: ellipsis;
 }
 
-/* ---- 页头右侧工具按钮（English / 搜索，均为占位入口） ---- */
-.header-tools { display: flex; align-items: center; gap: 14px; flex: none; }
+/* ---- 页头右上角工具按键（English / 搜索，均为占位入口）----
+   贴框上侧不悬浮：去掉圆角边框，三根短竖线隔出文字按键 | English | 搜索 | */
+.header-tools {
+  display: flex;
+  align-items: center;
+  flex: none;
+  align-self: flex-start;
+  margin: 12px 20px 0 auto;
+}
 .header-tools .tool-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--text-main);
-  padding: 8px 14px;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  transition: all 0.25s;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--text-sub);
+  padding: 2px 12px;
+  border-left: 1px solid var(--line);
+  transition: color 0.2s;
 }
-.header-tools .tool-btn:hover {
-  color: var(--purple);
-  border-color: var(--purple);
-  background: var(--purple-bg);
-}
-.header-tools .tool-btn svg { width: 15px; height: 15px; }
+.header-tools .tool-btn:last-child { border-right: 1px solid var(--line); }
+.header-tools .tool-btn:hover { color: var(--purple); }
+.header-tools .tool-btn svg { width: 13px; height: 13px; }
 
 /* ---- 主导航（紫色横条，吸顶于页头之下） ---- */
 .mainnav {
@@ -185,6 +190,7 @@
   .brand-titles .cn { font-size: 20px; }
   .brand .logo { width: 44px; height: 44px; font-size: 15px; }
   .header-tools .en-link { display: none; }
+  .header-tools { margin: 10px 14px 0 auto; }
 
   .thu-mark { margin-right: 12px; }
 
