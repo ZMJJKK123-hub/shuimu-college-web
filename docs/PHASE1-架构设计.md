@@ -115,7 +115,6 @@ shuimu-web/
  * @property {'debug'|'info'|'warn'|'error'} logLevel 日志级别
  * @property {BannerConfig} banner
  * @property {number} backtopThresholdPx  返回顶部按钮显隐滚动阈值（像素）
- * @property {string}   storagePrefix     日志/存储键前缀，如 "smsk."
  */
 ```
 

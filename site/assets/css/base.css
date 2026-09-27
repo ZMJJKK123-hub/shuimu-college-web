@@ -22,7 +22,6 @@
   --text-main: #333333;       /* 正文 */
   --text-dark: #1d1d1f;       /* 标题 */
   --text-sub: #838383;        /* 辅助说明 */
-  --text-light: #ffffff;      /* 反白文字 */
 
   /* 线条与阴影 */
   --line: #e9e2f5;            /* 分割线/描边 */
@@ -46,7 +45,7 @@ html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-stack);
   color: var(--text-main);
-  background: var(--text-light, #fff);
+  background: #fff;
   font-size: 16px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
