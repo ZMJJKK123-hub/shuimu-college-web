@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  * 模块：首页板块专属 / 轮播服务（index/assets/banner.service.ts）
- * 职责：按数据层（site/data/banners.js，四接口契约）渲染首页 .banner 的
+ * 职责：按数据层（site/index/data/banners.js，四接口契约）渲染首页 .banner 的
  *       幻灯片，并接管自动播放与指示点交互（切换 .slide.active）。
  *       契约：organizer(选填)/title(必填)/description(选填)/link(选填)；
  *       底色主题按顺序自动轮换 s1/s2/s3，管理员无需关心。
@@ -157,7 +157,7 @@ function _renderDots(slideEls: HTMLElement[], dotsWrap: HTMLElement | null,
  * @param root   轮播根节点（.banner）；null 时返回空实现（非首页）
  * @param config 轮播配置（来自 SiteConfig.banner）
  * @param logger 统一日志器
- * @param slides 轮播数据（来自 site/data/banners.js；unknown 交由契约校验）
+ * @param slides 轮播数据（来自 site/index/data/banners.js；unknown 交由契约校验）
  * @throws SMSK.ConfigError 配置或数据契约不合法时（错误带字段路径）
  */
 function createBannerService(

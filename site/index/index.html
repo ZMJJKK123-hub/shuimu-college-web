@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!-- ============================================================
-     页面：首页（site/index.html）｜页面标识 data-page="index"
+     页面：首页（site/index/index.html）｜页面标识 data-page="index"
      结构：顶条 → 页头 → 主导航 → 轮播（数据驱动）→ 新闻/公告 → 页脚
      板块：编程语言介绍 / 开发工具 / Web 开发 / 学校资源 / 关于我们（纯资料站定位）
-     依赖：assets/css/{base,layout,home}.css + assets/js/main.js 装配
+     依赖：../assets/css 公用样式 + index/index.css + ../assets/js 公用脚本装配
      ============================================================ -->
 <html lang="zh-CN">
 <head>
@@ -11,10 +11,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>清华大学水木书院学生科学技术协会 - 首页</title>
   <meta name="description" content="清华大学水木书院学生科学技术协会官方网站：编程语言、开发工具、Web 开发与学校资源资料。">
-  <link rel="stylesheet" href="assets/css/common/base.css">
-  <link rel="stylesheet" href="assets/css/common/layout.css">
-  <link rel="stylesheet" href="assets/css/common/footer.css">
-  <link rel="stylesheet" href="assets/css/index/index.css">
+  <link rel="stylesheet" href="../assets/css/common/base.css">
+  <link rel="stylesheet" href="../assets/css/common/layout.css">
+  <link rel="stylesheet" href="../assets/css/common/footer.css">
+  <link rel="stylesheet" href="../assets/css/index/index.css">
 </head>
 <body data-page="index">
 
@@ -33,7 +33,7 @@
   <!-- 页头：徽标 + 站名 + 右侧工具（搜索/English 为占位入口） -->
   <header class="header">
     <div class="container">
-      <img class="thu-mark" src="assets/img/thu-logo.png" alt="清华大学">
+      <img class="thu-mark" src="../assets/img/thu-logo.png" alt="清华大学">
       <a class="brand" href="index.html">
         <span class="logo">水木</span>
         <span class="brand-titles">
@@ -60,18 +60,18 @@
     <div class="container">
       <ul id="nav-list">
         <li data-page="index"><a href="index.html">书院主页</a></li>
-        <li data-page="languages"><a href="languages/index.html">编程语言介绍</a></li>
-        <li data-page="tools"><a href="tools/index.html">开发工具</a></li>
-        <li data-page="web"><a href="web/index.html">Web 开发</a></li>
-        <li data-page="essentials"><a href="essentials/index.html">学校资源</a></li>
-        <li data-page="about"><a href="about/index.html">关于我们</a></li>
+        <li data-page="languages"><a href="../languages/index.html">编程语言介绍</a></li>
+        <li data-page="tools"><a href="../tools/index.html">开发工具</a></li>
+        <li data-page="web"><a href="../web/index.html">Web 开发</a></li>
+        <li data-page="essentials"><a href="../essentials/index.html">学校资源</a></li>
+        <li data-page="about"><a href="../about/index.html">关于我们</a></li>
       </ul>
     </div>
   </nav>
   <div class="nav-mask"></div>
 
   <main>
-    <!-- 轮播横幅：内容数据在 site/data/banners.js（管理员维护），
+    <!-- 轮播横幅：内容数据在 site/index/data/banners.js（管理员维护），
          由 banner.service.js 读取渲染；此处仅保留外壳与波纹符号 -->
     <section class="banner">
       <!-- “水木”波纹装饰（定义一次，三张幻灯片复用） -->
@@ -144,9 +144,9 @@
           <div>
             <h4>快速导航</h4>
             <ul>
-              <li><a href="languages/index.html">编程语言介绍</a></li>
-              <li><a href="essentials/index.html">学校资源</a></li>
-              <li><a href="about/index.html">关于我们</a></li>
+              <li><a href="../languages/index.html">编程语言介绍</a></li>
+              <li><a href="../essentials/index.html">学校资源</a></li>
+              <li><a href="../about/index.html">关于我们</a></li>
               <li><a href="index.html">书院主页</a></li>
             </ul>
           </div>
@@ -182,15 +182,15 @@
   </a>
 
   <!-- 组装根：按依赖顺序加载（顺序不可调换，详见 main.js 头注） -->
-  <script src="assets/js/config/site.config.js"></script>
-  <script src="assets/js/infrastructure/errors.js"></script>
-  <script src="assets/js/infrastructure/dom.js"></script>
-  <script src="assets/js/infrastructure/logger.js"></script>
-  <script src="index/assets/banner.service.js"></script>
-  <script src="assets/js/services/nav.service.js"></script>
-  <script src="assets/js/services/backtop.service.js"></script>
-  <script src="assets/js/services/nav-collapse.service.js"></script>
+  <script src="../assets/js/config/site.config.js"></script>
+  <script src="../assets/js/infrastructure/errors.js"></script>
+  <script src="../assets/js/infrastructure/dom.js"></script>
+  <script src="../assets/js/infrastructure/logger.js"></script>
+  <script src="assets/banner.service.js"></script>
+  <script src="../assets/js/services/nav.service.js"></script>
+  <script src="../assets/js/services/backtop.service.js"></script>
+  <script src="../assets/js/services/nav-collapse.service.js"></script>
   <script src="data/banners.js"></script>
-  <script src="assets/js/main.js"></script>
+  <script src="../assets/js/main.js"></script>
 </body>
 </html>

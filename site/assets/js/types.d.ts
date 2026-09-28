@@ -31,7 +31,7 @@ interface BannerLink {
   href: string;
 }
 
-/** BannerSlide —— 首页轮播单张数据的四接口契约（与 site/data/banners.js 对应）
+/** BannerSlide —— 首页轮播单张数据的四接口契约（与 site/index/data/banners.js 对应）
  *  title 必填；organizer/description 选填；link 选填（null 表示显式无链接） */
 interface BannerSlide {
   organizer?: string;

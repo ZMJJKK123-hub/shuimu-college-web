@@ -14,7 +14,7 @@ import * as fs from 'fs';
 export interface ServerConfig {
   /** HTTP 监听端口（env PORT，默认 3000） */
   port: number;
-  /** 轮播数据文件绝对路径（env BANNERS_FILE，默认 <仓库根>/site/data/banners.js） */
+  /** 轮播数据文件绝对路径（env BANNERS_FILE，默认 <仓库根>/site/index/data/banners.js） */
   bannersFile: string;
   /** 允许跨域调用的来源（env CORS_ORIGINS 逗号分隔，默认本机静态服务） */
   corsOrigins: string[];
@@ -23,10 +23,10 @@ export interface ServerConfig {
 /**
  * defaultBannersFile —— 计算数据文件默认路径
  * 输入：无（基于本文件位置；src 与 dist 下深度一致，两者均指向仓库根）
- * 返回：<仓库根>/site/data/banners.js 绝对路径
+ * 返回：<仓库根>/site/index/data/banners.js 绝对路径
  */
 function defaultBannersFile(): string {
-  return path.resolve(__dirname, '../../../site/data/banners.js');
+  return path.resolve(__dirname, '../../../site/index/data/banners.js');
 }
 
 /**

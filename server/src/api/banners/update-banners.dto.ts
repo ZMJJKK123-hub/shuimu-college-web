@@ -2,7 +2,7 @@
  * ============================================================================
  * 模块：API 板块 / 轮播内容 DTO（server/src/api/banners/update-banners.dto.ts）
  * 职责：定义 PUT /api/banners 的入参契约（class-validator 强类型校验，
- *       与前端 site/data/banners.js 的四接口契约一一对应）。
+ *       与前端 site/index/data/banners.js 的四接口契约一一对应）。
  * 依赖：class-validator / class-transformer（声明式校验与嵌套转换）。
  * ============================================================================
  */

@@ -2,7 +2,7 @@
  * ============================================================================
  * 模块：管理页脚本（admin/assets/admin.ts）——轮播内容管理页逻辑
  * 职责：从后端 GET /api/banners 加载轮播数据渲染表单卡（四接口），
- *       管理员编辑/增删后 PUT 保存，后端原子写回 site/data/banners.js。
+ *       管理员编辑/增删后 PUT 保存，后端原子写回 site/index/data/banners.js。
  * 说明：本页为独立页面（不依赖站内 SMSK 各服务），仅复用全局数据契约类型
  *       （BannerSlide/BannerLink 见 assets/js/types.d.ts）；
  *       编译产物 admin/assets/admin.js 由 index.html 引用。

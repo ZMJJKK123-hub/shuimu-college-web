@@ -59,6 +59,8 @@ shuimu-web/
 │   ├── index.html
 │   ├── tsconfig.json            #   前端 TS 编译配置（strict，原位产出 .js）
 │   ├── data/banners.js          #   数据层：轮播内容（后端读写，非编译产物）
+│   ├── index/                   #   首页板块（自包含：index.html + assets/banner.service.ts
+│   │                            #   + data/banners.js 轮播数据——2026-09-28 归位）
 │   ├── admin/                   #   轮播管理页（index.html + assets/admin.ts）
 │   ├── <板块>/index.html         # 【2026-09-28 纯资料站】languages/ tools/ web/
 │   │                            # essentials/（学校资源）about/（关于我们）
@@ -128,7 +130,7 @@ shuimu-web/
 | :--- | :--- |
 | 源码 | `site/assets/js/**/*.ts` + `site/admin/assets/admin.ts` 入库；`types.d.ts` 集中声明 `window.SMSK` 命名空间与共享契约（全局脚本、无模块化，`module: none` 禁止引入 import/export） |
 | 编译 | `npm run build:site`（根 `package.json`，TypeScript 5.9，strict 全开 + `noEmitOnError`），`.ts` 原位产出同名 `.js`，**所有 HTML 的 `<script src>` 引用名不变** |
-| 产物 | 编译 `.js` **不入库**（`.gitignore` 拦截）；克隆/拉取后需先构建才能本地预览（README 有说明）。例外：`site/data/banners.js` 是数据文件（后端读写、管理员维护），正常入库 |
+| 产物 | 编译 `.js` **不入库**（`.gitignore` 拦截）；克隆/拉取后需先构建才能本地预览（README 有说明）。例外：`site/index/data/banners.js` 是数据文件（后端读写、管理员维护），正常入库 |
 | 检查 | `npm run typecheck` = site + server 双工程 `--noEmit` |
 | 门禁 | `hooks/pre-push`（仓库已设 `core.hooksPath=hooks`，随克隆生效）：推送前跑双工程类型检查，**任何错误硬拦截**；`.gitattributes` 强制钩子 LF，防 Windows CRLF 破坏 sh 解析 |
 | 迁移取舍 | 管理页内联 `<script>` 同步抽出为 `admin.ts`（纳入类型检查）；运行逻辑迁移前后逐行等价，仅类型化与 `var`→`const/let` |
@@ -167,7 +169,7 @@ shuimu-web/
 - [x] 新建 `server/`（NestJS+TS）：config（全局配置模块）/common（统一异常过滤器）/
       infrastructure（banners 文件仓储）/modules（banners 业务模块）四层就绪
 - [x] banners 内容接口：GET/PUT `/api/banners`（class-validator DTO 强校验、
-      原子写回 site/data/banners.js、统一错误体），本地 curl+浏览器双重验证
+      原子写回 site/index/data/banners.js、统一错误体），本地 curl+浏览器双重验证
 - [ ] `deploy/` 部署编排（Dockerfile/compose/nginx）——待服务器环境确定后再创建，本机不预置
 - [x] 管理端最初版：`site/admin/` 表单页（四接口编辑，保存即生效，无账号体系）
 - [x] 前端全量 TypeScript 化：9 个源文件迁 `.ts` + `types.d.ts` 命名空间契约 +
@@ -199,7 +201,7 @@ shuimu-web/
 
 ### 9.1 轮播内容（阶段1 · 已上线本地验证）
 
-**数据契约 BannerSlide（四接口，存储于 site/data/banners.js 数据段，标准 JSON）**
+**数据契约 BannerSlide（四接口，存储于 site/index/data/banners.js 数据段，标准 JSON）**
 
 | 字段 | 类型 | 必填 | 说明 |
 | :--- | :--- | :--- | :--- |

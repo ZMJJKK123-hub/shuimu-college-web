@@ -28,7 +28,7 @@ npm run build:site   # 编译 site/ 下全部 .ts → 同名 .js（原位生成�
    ```bash
    cd site
    python -m http.server 8080
-   # 浏览器访问 http://localhost:8080/
+   # 浏览器访问 http://localhost:8080/index/
    ```
 
 改任何 `.ts` 后重新执行 `npm run build:site` 并刷新页面；推送时 `hooks/pre-push`
@@ -44,7 +44,7 @@ npm run build:site   # 编译 site/ 下全部 .ts → 同名 .js（原位生成�
 # 1) 启动后端（首次先 cd server && npm install）
 cd server && npm run dev        # 端口 3000
 # 2) 浏览器打开 http://localhost:8123/site/admin/
-#    表单编辑四接口（主办方/标题/介绍/跳转）→ 保存即写回 site/data/banners.js
+#    表单编辑四接口（主办方/标题/介绍/跳转）→ 保存即写回 site/index/data/banners.js
 ```
 
 线上（服务器部署后）直接访问 `https://域名/admin/`，无需启动任何本地进程。
@@ -64,9 +64,10 @@ shuimu-web/
 ├── tests/selftest.html            # 纯函数自测页（浏览器原生断言）
 ├── server/                        # 后端（阶段1起）：NestJS，按 API 板块组织（src/api/），/api/banners
 └── site/                          # 站点部署单元（可整体拷贝部署）
-    ├── index.html                 # 首页（书院主页）
-    ├── index/assets/banner.ts     # 首页专属脚本：轮播服务（板块下沉，产物 .js 不入库）
-    ├── data/banners.js            # 数据层：首页轮播内容（管理员维护入口，非编译产物）
+    ├── index/                     # 首页板块（书院主页，自包含：页面+专属脚本+专属数据）
+    │   ├── index.html             #   首页
+    │   ├── assets/banner.service.ts  #   首页专属脚本：轮播服务（产物 .js 不入库）
+    │   └── data/banners.js        #   首页专属数据：轮播内容（管理员维护入口，非编译产物）
     ├── admin/                     # 轮播管理页（表单 → PUT /api/banners）
     │   ├── index.html
     │   └── assets/admin.ts        # 管理页脚本源码（编译产物 admin.js 不入库）
@@ -101,10 +102,10 @@ shuimu-web/
 
 | 要补充的内容 | 位置 |
 | :--- | :--- |
-| 首页轮播标语（管理员入口） | `site/data/banners.js`——改文字/加幻灯片只编辑此数据文件，无需动 HTML |
-| 科协简介正文与统计数字 | `site/index.html` 的 `#about` 区块 |
+| 首页轮播标语（管理员入口） | `site/index/data/banners.js`——改文字/加幻灯片只编辑此数据文件，无需动 HTML |
+| 科协简介正文与统计数字 | `site/about/index.html`（关于我们页，2026-09-28 自首页迁入） |
 | 六大板块卡片的描述文案 | `site/index.html` 的 `#tech` 区块内各 `.tech-card` |
-| 新闻 / 公告条目 | `site/index.html` 的 `.news-flex` 双栏面板 |
+| 新闻 / 公告条目 | `site/index/index.html` 的 `.news-flex` 双栏面板 |
 | 板块页正式内容 | 对应 `site/<板块>/index.html` 的 `.placeholder-zone` 区域 |
 | 板块主题标签（子主题入口） | 对应 `site/<板块>/index.html` 的 `.topic-list` |
 | 板块图片/附件 | 放在对应板块文件夹内（如 `site/languages/images/`），页内相对引用 |
