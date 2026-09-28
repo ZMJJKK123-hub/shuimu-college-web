@@ -9,7 +9,8 @@
  * ============================================================================
  */
 import {
-  ConflictException, Inject, Injectable, Logger, UnauthorizedException,
+  BadRequestException, ConflictException, Inject, Injectable, Logger,
+  NotFoundException, UnauthorizedException,
 } from '@nestjs/common';
 import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { AccountRecord, SessionRecord, USER_REPOSITORY } from './user.repository';
@@ -19,6 +20,9 @@ const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 /** TOKEN_PREFIX —— 用户令牌前缀（管理员令牌为 "a."；前缀不符的令牌直接判无效） */
 const TOKEN_PREFIX = 'u.';
+
+/** AVATAR_MAX_BYTES —— 头像解码后大小上限（1MB；裁剪输出 256×256 PNG 通常远小于此） */
+const AVATAR_MAX_BYTES = 1024 * 1024;
 
 /**
  * UserService —— 普通用户业务服务
@@ -36,6 +40,8 @@ export class UserService {
       writeAccounts(accounts: AccountRecord[]): void;
       readSessions(): SessionRecord[];
       writeSessions(sessions: SessionRecord[]): void;
+      readAvatar(account: string): { data: Buffer; mime: string } | null;
+      writeAvatar(account: string, data: Buffer, ext: 'png' | 'jpg'): void;
     },
   ) {}
 
@@ -90,6 +96,42 @@ export class UserService {
       throw new UnauthorizedException('登录已失效，请重新登录');
     }
     return { account };
+  }
+
+  /**
+   * getAvatar —— 读取当前用户头像（仅本人，凭令牌）
+   * @throws UnauthorizedException 令牌无效；NotFoundException 尚未设置头像
+   */
+  getAvatar(token: string): { data: Buffer; mime: string } {
+    const { account } = this.requireSession(token);
+    const avatar = this.repository.readAvatar(account);
+    if (!avatar) {
+      throw new NotFoundException('尚未设置头像');
+    }
+    return avatar;
+  }
+
+  /**
+   * saveAvatar —— 保存当前用户头像（base64 → 格式/大小校验 → 落盘）
+   * 格式契约：仅 PNG / JPG(JPEG)（魔数校验，杜绝伪造扩展名）；解码后 ≤ 1MB
+   * @throws UnauthorizedException 令牌无效；BadRequestException 格式或大小非法
+   */
+  saveAvatar(token: string, imageBase64: string): { saved: boolean } {
+    const { account } = this.requireSession(token);
+    const data = Buffer.from(imageBase64, 'base64');
+    if (data.length === 0 || data.length > AVATAR_MAX_BYTES) {
+      throw new BadRequestException('头像图片解码后须在 1MB 以内');
+    }
+    const isPng = data.length > 8 &&
+      data[0] === 0x89 && data[1] === 0x50 && data[2] === 0x4e && data[3] === 0x47;
+    const isJpeg = data.length > 3 &&
+      data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff;
+    if (!isPng && !isJpeg) {
+      throw new BadRequestException('仅支持 JPG/JPEG/PNG 格式的图片');
+    }
+    this.repository.writeAvatar(account, data, isPng ? 'png' : 'jpg');
+    this.logger.log(`用户头像已更新: ${account}（${data.length}B）`);
+    return { saved: true };
   }
 
   /** _openSession —— 清理过期会话后登记新会话并返回令牌 */

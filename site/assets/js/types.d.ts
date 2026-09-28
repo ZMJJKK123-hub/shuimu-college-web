@@ -98,6 +98,18 @@ interface AuthApi {
   logout(): void;
 }
 
+/** AvatarApi —— 头像能力（avatar.service.ts 挂载到 window.SMSK.avatar，内容页加载） */
+interface AvatarApi {
+  /** 拉取当前登录用户头像，返回可用的 objectURL（无头像/失败返回 null） */
+  load(token: string): Promise<string | null>;
+  /** 把已加载的头像图替换进页头默认字母头像（未登录/未加载则不动） */
+  enhance(): void;
+  /** 打开"更改头像"编辑器（文件选择 → 圆形裁剪 → 上传） */
+  openEditor(): void;
+  /** 以给定图片文件直接进入编辑器（openEditor 的内部入口，供自动化测试） */
+  editFile(file: File): void;
+}
+
 /** AppHandle —— main.ts 装配完成后的运行时句柄（调试/销毁入口） */
 interface AppHandle {
   logger: Logger;
@@ -147,6 +159,8 @@ interface SMSKNamespace {
   validateCredential: typeof validateCredential;
   createAuthService?: typeof createAuthService;
   auth?: AuthApi;
+  /** 头像（user/assets/avatar.service.ts，内容页先于 auth.service 加载；可选降级） */
+  avatar?: AvatarApi;
   /** 运行时句柄（main.ts 装配完成后挂载） */
   app?: AppHandle;
 }

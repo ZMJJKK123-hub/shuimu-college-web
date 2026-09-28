@@ -10,6 +10,7 @@
 import 'reflect-metadata';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { loadConfig } from './config/configuration';
 import { UnifiedExceptionFilter } from './common/unified-exception.filter';
@@ -21,7 +22,10 @@ import { UnifiedExceptionFilter } from './common/unified-exception.filter';
  */
 async function bootstrap(): Promise<void> {
   const config = loadConfig();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // JSON 请求体上限提高到 2MB：默认 100KB 会让头像上传（base64 ≤1.4M 字符）
+  // 在解析层抛非 HTTP 异常（统一过滤器兜成 500）；放宽后由 DTO MaxLength 正常 400
+  app.useBodyParser('json', { limit: '2mb' });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new UnifiedExceptionFilter());
   app.enableCors({ origin: config.corsOrigins });

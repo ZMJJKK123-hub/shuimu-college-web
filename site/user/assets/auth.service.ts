@@ -106,8 +106,13 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
     if (state) {
       area.innerHTML =
         '<div class="header-user">' +
-        '<a class="user-avatar" href="#" data-act="placeholder" data-tip="更改头像" title="更改头像（建设中，点击暂无跳转）">' +
+        '<span class="avatar-wrap">' +
+        '<a class="user-avatar" href="#" data-act="change-avatar" title="更改头像">' +
         escapeHtml(state.account.charAt(0).toUpperCase()) + '</a>' +
+        '<div class="avatar-menu">' +
+        '<a href="#" data-act="change-avatar" title="上传新头像">更改头像</a>' +
+        '</div>' +
+        '</span>' +
         '<div class="user-name" tabindex="0">' +
         escapeHtml(state.account) +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>' +
@@ -144,9 +149,19 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
     logger.info('auth', '已退出登录');
   }
 
+  /** loadAvatarIfPossible —— 渲染登录态后异步拉取头像替换默认字母（avatar.service 未加载则跳过） */
+  function loadAvatarIfPossible(): void {
+    if (!state || !SMSK.avatar) { return; }
+    const avatarApi: AvatarApi = SMSK.avatar;
+    const token = state.token;
+    avatarApi.load(token).then(function (url: string | null): void {
+      if (url) { avatarApi.enhance(); }
+    });
+  }
+
   return {
     start: function (): void {
-      // 菜单点击（事件委托）：退出登录执行登出；占位入口（用户信息/设置/更改头像）仅阻止默认行为
+      // 菜单点击（事件委托）：退出登录执行登出；更改头像打开编辑器；其余占位入口仅阻止默认行为
       unbinds.push(SMSK.on(root, 'click', function (ev: Event): void {
         const target = ev.target as Element | null;
         const closest = target && target.closest ? target.closest.bind(target) : null;
@@ -155,6 +170,12 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
         if (logoutBtn) {
           ev.preventDefault();
           doLogout();
+          return;
+        }
+        const changeAvatarBtn = closest('[data-act="change-avatar"]');
+        if (changeAvatarBtn) {
+          ev.preventDefault();
+          if (SMSK.avatar) { SMSK.avatar.openEditor(); }
           return;
         }
         const placeholder = closest('[data-act="placeholder"]');
@@ -172,8 +193,12 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
               logger.info('auth', '登录态已失效，自动清除');
             }
             render();
+            loadAvatarIfPossible();
           })
-          .catch(function (): void { render(); });
+          .catch(function (): void {
+            render();
+            loadAvatarIfPossible();
+          });
       } else {
         render();
       }

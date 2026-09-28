@@ -41,3 +41,17 @@ export class SignoutDto {
   @MaxLength(128)
   token!: string;
 }
+
+/** UpdateAvatarDto —— PUT /api/user/avatar 请求体：更新头像
+ * image 为 base64（无 data: 前缀）；解码后大小与图片格式由 service 再校验 */
+export class UpdateAvatarDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(128)
+  token!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(1400000)
+  image!: string;
+}

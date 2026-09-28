@@ -238,7 +238,6 @@
 
 /* 默认头像：紫色渐变圆 + 账号首字母（无上传功能时的默认形象） */
 .user-avatar {
-  position: relative;
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -253,28 +252,6 @@
   transition: filter 0.2s;
 }
 .user-avatar:hover { filter: brightness(1.12); }
-
-/* 头像悬停提示："更改头像"气泡 */
-.user-avatar::after {
-  content: attr(data-tip);
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--purple-dark);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1;
-  padding: 6px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.15s, visibility 0.15s;
-  z-index: 60;
-}
-.user-avatar:hover::after { opacity: 1; visibility: visible; }
 
 /* 用户名：悬停触发器（下拉菜单挂在名下） */
 .user-name {
@@ -338,3 +315,143 @@
   color: var(--text-sub);
 }
 .user-menu .menu-logout:hover { background: #fdf2f2; color: #d34141; }
+
+/* 头像悬停白框菜单（与用户名下拉同款；鼠标从头像下移到菜单不消失） */
+.avatar-wrap { position: relative; display: flex; }
+.avatar-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 120px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(102, 8, 116, 0.16);
+  padding: 6px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+  z-index: 50;
+}
+.avatar-wrap:hover .avatar-menu,
+.avatar-wrap:focus-within .avatar-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.avatar-menu a {
+  display: block;
+  padding: 9px 18px;
+  font-size: 13.5px;
+  color: var(--text-main);
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.avatar-menu a:hover { background: var(--purple-bg); color: var(--purple); }
+
+/* 悬停桥：填补菜单与触发器之间的 8px 间隙，保证鼠标下移路径不断链（划不到的根因） */
+.user-menu::before, .avatar-menu::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
+/* 已上传头像：整圆填充字母位 */
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- 更改头像：圆形裁剪弹层（avatar.service.js 构建） ---- */
+.avatar-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(29, 29, 31, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 200;
+}
+.avatar-card {
+  width: 380px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  padding: 30px 28px 24px;
+}
+.avatar-card .avatar-head { text-align: center; margin-bottom: 18px; }
+.avatar-card .avatar-head h3 { font-size: 20px; color: var(--text-dark); letter-spacing: 2px; }
+.avatar-card .avatar-head .sub {
+  font-size: 11px;
+  color: var(--text-sub);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+.crop-stage {
+  display: flex;
+  justify-content: center;
+}
+.crop-stage canvas {
+  border-radius: 12px;
+  touch-action: none;
+  cursor: grab;
+  max-width: 100%;
+}
+.crop-stage canvas:active { cursor: grabbing; }
+.avatar-zoom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+.avatar-zoom input {
+  flex: 1;
+  accent-color: var(--purple);
+}
+.avatar-hint {
+  font-size: 12px;
+  color: var(--text-sub);
+  text-align: center;
+  margin-top: 12px;
+  line-height: 1.7;
+}
+.avatar-msg {
+  font-size: 13px;
+  margin-top: 10px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  line-height: 1.6;
+}
+.avatar-msg.err { color: #c0392b; background: #fdf0ef; }
+.avatar-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+.avatar-btn {
+  border: 0;
+  border-radius: 20px;
+  padding: 9px 24px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.avatar-btn.ghost { background: #fff; color: var(--text-sub); border: 1px solid var(--line); }
+.avatar-btn.ghost:hover { color: var(--text-main); }
+.avatar-btn.primary { background: var(--purple); color: #fff; }
+.avatar-btn.primary:hover { background: var(--purple-hover); }
+.avatar-btn:disabled { opacity: 0.6; cursor: default; }

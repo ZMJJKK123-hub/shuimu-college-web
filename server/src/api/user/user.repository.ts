@@ -86,6 +86,36 @@ export class UserFileRepository {
     this._atomicWrite(this._sessionsFile(), JSON.stringify({ sessions }, null, 2) + '\n');
   }
 
+  /**
+   * readAvatar —— 读取用户头像文件
+   * 返回：{ data: 文件字节, mime } ；未设置头像返回 null（先查 .png 再查 .jpg）
+   */
+  readAvatar(account: string): { data: Buffer; mime: string } | null {
+    const png = this._avatarFile(account, 'png');
+    if (fs.existsSync(png)) {
+      return { data: fs.readFileSync(png), mime: 'image/png' };
+    }
+    const jpg = this._avatarFile(account, 'jpg');
+    if (fs.existsSync(jpg)) {
+      return { data: fs.readFileSync(jpg), mime: 'image/jpeg' };
+    }
+    return null;
+  }
+
+  /** writeAvatar —— 原子写回用户头像（先写临时文件再改名，扩展名按实际格式） */
+  writeAvatar(account: string, data: Buffer, ext: 'png' | 'jpg'): void {
+    // 换格式上传时清掉旧扩展名的残留文件，保证 readAvatar 命中唯一
+    const other = this._avatarFile(account, ext === 'png' ? 'jpg' : 'png');
+    if (fs.existsSync(other)) { fs.unlinkSync(other); }
+    this._atomicWrite(this._avatarFile(account, ext), data);
+    this.logger.log(`已写回用户头像 ${account}.${ext}（${data.length}B）`);
+  }
+
+  private _avatarFile(account: string, ext: 'png' | 'jpg'): string {
+    // 账号已过 DTO 层 ^[A-Za-z0-9]{4,30}$ 校验，作文件名无路径穿越风险
+    return path.join(this.userDataDir, 'avatars', account + '.' + ext);
+  }
+
   private _accountsFile(): string {
     return path.join(this.userDataDir, 'accounts.json');
   }
@@ -95,10 +125,11 @@ export class UserFileRepository {
   }
 
   /**
-   * _atomicWrite —— 确保数据目录存在后原子写（先写临时文件再改名，避免写坏已有数据文件）
+   * _atomicWrite —— 确保目标文件所在目录存在后原子写（先写临时文件再改名，避免写坏已有数据文件）
+   * 输入：content 文本（JSON）或二进制（头像图片）；目录按文件实际路径创建（含 avatars/ 子目录）
    */
-  private _atomicWrite(file: string, content: string): void {
-    fs.mkdirSync(this.userDataDir, { recursive: true });
+  private _atomicWrite(file: string, content: string | Buffer): void {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
     const tmp = file + '.tmp';
     fs.writeFileSync(tmp, content, 'utf-8');
     fs.renameSync(tmp, file);
