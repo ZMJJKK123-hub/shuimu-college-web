@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     页面：管理员登录页（site/administrator/index.html）
+     职责：管理控制台入口——校验管理员账号密码（POST /api/administrator/signin），
+           成功后携管理员令牌进入 site/admin/ 轮播管理页。
+           触发方式：① 直接访问 site/admin/ 未登录时自动跳转至本页
+                     ② 普通登录页（user/signin.html）的"管理员登录"入口
+     风格：深紫暗色控制台（与普通用户登录的浅色极简卡刻意区分）
+     运行：本地需先启动后端（server/ 下 npm run dev，端口 3000）；
+           线上经 Nginx 同域反代，无需任何配置。
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理员登录 - 水木书院科协管理控制台</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="../assets/css/common/base.css">
+  <link rel="stylesheet" href="../assets/css/administrator/administrator.css">
+</head>
+<body class="admin-login">
+
+  <div class="gate-card">
+    <div class="gate-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+    </div>
+    <div class="gate-head">
+      <h1>管理控制台</h1>
+      <div class="sub">Administrator Sign In</div>
+    </div>
+    <form id="auth-form" novalidate>
+      <div class="gate-fields">
+        <div class="gate-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+          <input id="account" type="text" placeholder="管理员账号" autocomplete="username" maxlength="30">
+        </div>
+        <div class="gate-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          <input id="password" type="password" placeholder="密码" autocomplete="current-password" maxlength="64">
+        </div>
+      </div>
+      <p class="gate-msg" id="msg" hidden></p>
+      <button class="gate-submit" id="submit" type="submit">进入控制台</button>
+    </form>
+    <div class="gate-foot">
+      <a href="../index/index.html">← 返回官网首页</a>
+    </div>
+  </div>
+
+  <!-- 页面逻辑已抽出为 TypeScript 源码（assets/administrator.ts），
+       经 tsc 编译产出本文件引用的 assets/administrator.js（产物不入库，本地构建） -->
+  <script src="assets/administrator.js"></script>
+</body>
+</html>

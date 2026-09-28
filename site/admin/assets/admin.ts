@@ -1,10 +1,14 @@
 /**
  * ============================================================================
  * 模块：管理页脚本（admin/assets/admin.ts）——轮播内容管理页逻辑
- * 职责：从后端 GET /api/banners 加载轮播数据渲染表单卡（四接口），
- *       管理员编辑/增删后 PUT 保存，后端原子写回 site/index/data/banners.js。
+ * 职责：① 登录门槛：启动时校验管理员令牌（GET /api/administrator/me），
+ *         未登录/失效一律跳转 site/administrator/ 登录页；
+ *       ② 业务：从后端 GET /api/banners 加载轮播数据渲染表单卡（四接口），
+ *         管理员编辑/增删后 PUT 保存（请求体附管理员令牌），后端原子写回
+ *         site/index/data/banners.js。
  * 说明：本页为独立页面（不依赖站内 SMSK 各服务），仅复用全局数据契约类型
  *       （BannerSlide/BannerLink 见 assets/js/types.d.ts）；
+ *       管理员登录态键 SMSK_ADMIN_AUTH 与 administrator.ts 写入方一致；
  *       编译产物 admin/assets/admin.js 由 index.html 引用。
  * 运行：本地需先启动后端（server/ 下 npm run dev，端口 3000）；
  *       线上经 Nginx 同域反代，无需任何配置。
@@ -21,6 +25,12 @@ interface SaveResponseBody {
   count: number;
 }
 
+/** AdminAuth —— 管理员登录态（localStorage 键 SMSK_ADMIN_AUTH） */
+interface AdminAuth {
+  token: string;
+  account: string;
+}
+
 /** 状态条文案类型（'' = 中性） */
 type StatusKind = '' | 'ok' | 'err';
 
@@ -28,6 +38,11 @@ type StatusKind = '' | 'ok' | 'err';
 const API: string = location.pathname.startsWith('/site/')
   ? 'http://localhost:3000/api/banners'
   : '/api/banners';
+
+/** ADMIN_API —— 管理员接口地址（登录门槛校验与登出用） */
+const ADMIN_API: string = location.pathname.startsWith('/site/')
+  ? 'http://localhost:3000/api/administrator'
+  : '/api/administrator';
 
 /** requiredEl —— 内部辅助：按 id 取关键节点，缺失即显式抛错（不静默吞错） */
 function requiredEl(id: string): HTMLElement {
@@ -50,6 +65,25 @@ function setStatus(kind: StatusKind, msg: string): void {
 /** errMsg —— 内部辅助：未知异常转可读文案（catch 参数按 unknown 处理） */
 function errMsg(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
+}
+
+/** readAdminAuth —— 内部辅助：安全读取管理员登录态（损坏存量数据视为未登录） */
+function readAdminAuth(): AdminAuth | null {
+  try {
+    const raw = localStorage.getItem('SMSK_ADMIN_AUTH');
+    if (!raw) { return null; }
+    const parsed = JSON.parse(raw) as Partial<AdminAuth>;
+    if (typeof parsed.token !== 'string' || typeof parsed.account !== 'string') { return null; }
+    return parsed as AdminAuth;
+  } catch (_e) {
+    return null;
+  }
+}
+
+/** gotoLogin —— 内部辅助：清除本地管理员态并跳转管理员登录页 */
+function gotoLogin(): void {
+  localStorage.removeItem('SMSK_ADMIN_AUTH');
+  location.href = '../administrator/index.html';
 }
 
 /** fieldOf —— 内部辅助：取表单卡内指定 data-k 的输入框
@@ -113,9 +147,11 @@ function collect(): BannerSlide[] {
   });
 }
 
-/** loadAll —— 读取后端数据并渲染全部表单卡；失败降级为一张空卡并提示 */
+/** loadAll —— 读取后端数据并渲染全部表单卡（GET 亦统一附管理员令牌参数）；失败降级为一张空卡并提示 */
 function loadAll(): void {
-  fetch(API).then(function (r) {
+  const auth = readAdminAuth();
+  const query = auth ? '?token=' + encodeURIComponent(auth.token) : '';
+  fetch(API + query).then(function (r) {
     if (!r.ok) { throw new Error('HTTP ' + r.status); }
     return r.json() as Promise<BannersResponseBody>;
   }).then(function (body) {
@@ -125,6 +161,36 @@ function loadAll(): void {
   }).catch(function () {
     slidesBox.innerHTML = '';
     slidesBox.appendChild(buildCard({ title: '' }, 0));
+    setStatus('err', '无法连接后端——请在 server/ 目录运行 npm run dev 后刷新本页');
+  });
+}
+
+/**
+ * guardAdmin —— 登录门槛（启动入口）
+ * 流程：无本地令牌 → 跳登录页；有令牌 → GET /api/administrator/me 校验，
+ *       失效（401）→ 跳登录页；通过 → 页头显示当前管理员、绑定登出，放行业务。
+ * 说明：后端不可达时不跳转（避免与登录页互相踢成死循环），仅在状态条提示。
+ */
+function guardAdmin(): void {
+  const auth = readAdminAuth();
+  if (!auth) { gotoLogin(); return; }
+  fetch(ADMIN_API + '/me?token=' + encodeURIComponent(auth.token)).then(function (r: Response): void {
+    if (!r.ok) { gotoLogin(); return; }
+    const accountEl = document.getElementById('admin-account');
+    if (accountEl) { accountEl.textContent = '当前管理员：' + auth.account; }
+    const logoutEl = document.getElementById('admin-logout');
+    if (logoutEl) {
+      logoutEl.addEventListener('click', function (ev: Event): void {
+        ev.preventDefault();
+        fetch(ADMIN_API + '/signout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: auth.token })
+        }).then(function (): void { gotoLogin(); }, function (): void { gotoLogin(); });
+      });
+    }
+    loadAll();
+  }).catch(function (): void {
     setStatus('err', '无法连接后端——请在 server/ 目录运行 npm run dev 后刷新本页');
   });
 }
@@ -141,23 +207,36 @@ saveBtn.addEventListener('click', function () {
     setStatus('err', '每张的标题都必填');
     return;
   }
+  const auth = readAdminAuth();
+  if (!auth) {
+    setStatus('err', '管理员登录已失效，即将跳转登录页……');
+    setTimeout(gotoLogin, 1200);
+    return;
+  }
   setStatus('', '正在保存……');
   fetch(API, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ slides: slides })
-  }).then(function (r) {
+    body: JSON.stringify({ slides: slides, token: auth.token })
+  }).then(function (r: Response): Promise<SaveResponseBody> | undefined {
+    if (r.status === 401) {
+      setStatus('err', '管理员登录已失效，即将跳转登录页……');
+      setTimeout(gotoLogin, 1200);
+      return undefined;
+    }
     if (!r.ok) {
-      return r.json().then(function (e) {
-        throw new Error(errMsg(e) || 'HTTP ' + r.status);
+      return r.json().then(function (e: unknown): never {
+        const body = e as { message?: string };
+        throw new Error((body && body.message) || ('HTTP ' + r.status));
       });
     }
     return r.json() as Promise<SaveResponseBody>;
-  }).then(function (body) {
+  }).then(function (body: SaveResponseBody | undefined): void {
+    if (!body) { return; }
     setStatus('ok', '已保存并发布（' + body.count + ' 张）——首页强刷即可看到');
   }).catch(function (e) {
     setStatus('err', '保存失败：' + errMsg(e));
   });
 });
 
-loadAll();
+guardAdmin();

@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <!-- ============================================================
      页面：轮播内容管理页（site/admin/index.html）——最初版
-     职责：管理员经表单编辑首页轮播四接口（主办方/标题/介绍/跳转），
-           保存调用后端 PUT /api/banners，即时写回 site/index/data/banners.js。
+     职责：需管理员登录（未登录/令牌失效自动跳转 ../administrator/ 登录页）；
+           管理员经表单编辑首页轮播四接口（主办方/标题/介绍/跳转），
+           保存调用后端 PUT /api/banners（附管理员令牌），
+           即时写回 site/index/data/banners.js。
      运行：本地需先启动后端（server/ 下 npm run dev，端口 3000）；
            线上经 Nginx 同域反代，无需任何配置。
      ============================================================ -->
@@ -21,6 +23,11 @@
   <div class="admin-wrap">
     <div class="admin-head">
       <h1>首页轮播管理</h1>
+      <div class="admin-session">
+        <span id="admin-account"></span>
+        <a href="#" id="admin-logout" title="退出当前管理员">退出</a>
+        <a href="../administrator/index.html" title="前往管理员登录页">切换账号</a>
+      </div>
       <a href="../index/index.html">← 返回官网</a>
     </div>
 
