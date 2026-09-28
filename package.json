@@ -1,0 +1,14 @@
+{
+  "name": "shuimu-college-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "清华大学水木书院学生科学技术协会官方网站（monorepo：site 前端 TS 源码 + server NestJS 后端）",
+  "scripts": {
+    "build:site": "tsc -p site",
+    "typecheck": "tsc -p site --noEmit && tsc -p server --noEmit",
+    "build": "npm run build:site && npm --prefix server run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

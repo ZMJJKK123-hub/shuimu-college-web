@@ -5,6 +5,7 @@
   "description": "清华大学水木书院科协官网后端（阶段1骨架：轮播内容管理 /api/banners）",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "start": "node dist/main.js",
     "dev": "ts-node-dev --respawn --transpile-only src/main.ts"
   },
