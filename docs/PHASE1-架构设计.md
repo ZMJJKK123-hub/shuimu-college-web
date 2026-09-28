@@ -57,10 +57,9 @@ shuimu-web/
     ├── about/index.html           # 科协介绍 About（占位页）
     ├── languages/index.html       # 编程语言 Languages（占位页）
     ├── tools/index.html           # 开发工具 Tools（占位页）
-    ├── game/index.html            # 游戏开发 Game（占位页）
     ├── web/index.html             # Web 开发 Web（占位页）
-    ├── machine-learning/index.html# 机器学习 Machine Learning（占位页）
-    ├── contests/index.html        # 科创竞赛 Contests（占位页）
+    ├── essentials/index.html      # 学校资源 School Resources（占位页）
+    ├── about/index.html           # 关于我们 About Us（科协简介）
     └── assets/                    # 全站共享资源（板块私有资源放各板块文件夹）
         ├── css/                   # 样式层（2026-09-28 合并精简：无行数上限，不为拆而拆）
         │   ├── base.css           #   设计令牌（CSS 变量）+ reset + 通用组件

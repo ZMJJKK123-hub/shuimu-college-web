@@ -130,6 +130,10 @@
 }
 .mainnav li a:hover { background: var(--purple-deep); }
 .mainnav li a:hover::after { width: 60%; }
+/* 首个导航项贴内容容器左缘（去默认左内边距；仅桌面横条，抽屉模式不适用） */
+@media (min-width: 901px) {
+  .mainnav li:first-child a { padding-left: 0; }
+}
 
 /* ---- 导航条滚动收起（nav-collapse.service.js 切换 .collapsed）----
    仅桌面端：收起 = 上移自身高度、滑入不透明页头（z-index 更高）之后隐藏；

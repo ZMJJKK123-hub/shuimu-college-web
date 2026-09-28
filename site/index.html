@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <!-- ============================================================
      页面：首页（site/index.html）｜页面标识 data-page="index"
-     结构：顶条 → 页头 → 主导航 → 轮播 → 科协简介 → 资料板块
-           → 新闻/公告 → 页脚（均含占位内容，待科协成员补充）
-     板块：编程语言介绍 / 开发工具 / Web 开发 / 学校必备（纯资料站定位）
+     结构：顶条 → 页头 → 主导航 → 轮播（数据驱动）→ 新闻/公告 → 页脚
+     板块：编程语言介绍 / 开发工具 / Web 开发 / 学校资源 / 关于我们（纯资料站定位）
      依赖：assets/css/{base,layout,home}.css + assets/js/main.js 装配
      ============================================================ -->
 <html lang="zh-CN">
@@ -11,7 +10,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>清华大学水木书院学生科学技术协会 - 首页</title>
-  <meta name="description" content="清华大学水木书院学生科学技术协会官方网站：编程语言、开发工具、Web 开发与学校必备资料。">
+  <meta name="description" content="清华大学水木书院学生科学技术协会官方网站：编程语言、开发工具、Web 开发与学校资源资料。">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/layout.css">
   <link rel="stylesheet" href="assets/css/footer.css">
@@ -64,7 +63,8 @@
         <li data-page="languages"><a href="languages/index.html">编程语言介绍</a></li>
         <li data-page="tools"><a href="tools/index.html">开发工具</a></li>
         <li data-page="web"><a href="web/index.html">Web 开发</a></li>
-        <li data-page="essentials"><a href="essentials/index.html">学校必备</a></li>
+        <li data-page="essentials"><a href="essentials/index.html">学校资源</a></li>
+        <li data-page="about"><a href="about/index.html">关于我们</a></li>
       </ul>
     </div>
   </nav>
@@ -89,72 +89,7 @@
       <div class="dots"></div>
     </section>
 
-    <!-- 科协简介（文案与数据均为占位） -->
-    <section class="section" id="about">
-      <div class="container">
-        <div class="sec-head">
-          <div class="left">
-            <div class="bar"></div>
-            <span class="cn">科协简介</span>
-            <div class="en">About Us</div>
-          </div>
-          <a class="more" href="#about">了解更多</a>
-        </div>
-        <div class="about-flex">
-          <div class="text">
-            <p class="lead">立足水木书院，服务书院学子科创成长。（占位导语）</p>
-            <p>水木书院学生科学技术协会是面向书院全体学生的科创组织，围绕编程语言介绍、开发工具、Web 开发与学校必备四大资料板块，持续整理学习指南与实用资料，服务书院学子的学业与科创需求。（简介正文占位，待补充）</p>
-            <p>协会秉持“实践·分享·创造”的理念，为书院学子提供从入门到进阶的技术成长路径，助力书院“AI 驱动的工程+管理”特色人才培养。（简介正文占位，待补充）</p>
-            <a class="btn" href="#tech">进入资料板块</a>
-          </div>
-          <div class="stats">
-            <div class="stat-card"><div class="num">4</div><div class="label">资料板块（已搭建）</div></div>
-            <div class="stat-card"><div class="num">20<small>+</small></div><div class="label">知识主题（占位）</div></div>
-            <div class="stat-card"><div class="num">100<small>+</small></div><div class="label">科协成员（占位）</div></div>
-            <div class="stat-card"><div class="num">每学期</div><div class="label">多场技术沙龙（占位）</div></div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- 资料板块四宫格（纯资料站定位：编程语言介绍/开发工具/Web开发/学校必备） -->
-    <section class="section alt" id="tech">
-      <div class="container">
-        <div class="sec-head">
-          <div class="left">
-            <div class="bar"></div>
-            <span class="cn">资料板块</span>
-            <div class="en">Resource Sections</div>
-          </div>
-        </div>
-        <div class="tech-grid">
-          <a class="tech-card" href="languages/index.html">
-            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/></svg></div>
-            <h3>编程语言介绍</h3><div class="en">Languages</div>
-            <p>主流编程语言的入门与进阶指南。（板块描述占位）</p>
-            <span class="go">进入板块 <i>→</i></span>
-          </a>
-          <a class="tech-card" href="tools/index.html">
-            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-            <h3>开发工具</h3><div class="en">Tools</div>
-            <p>实用开发工具与效率技巧合集。（板块描述占位）</p>
-            <span class="go">进入板块 <i>→</i></span>
-          </a>
-          <a class="tech-card" href="web/index.html">
-            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg></div>
-            <h3>Web 开发</h3><div class="en">Web Development</div>
-            <p>网站建设与云端服务实践指南。（板块描述占位）</p>
-            <span class="go">进入板块 <i>→</i></span>
-          </a>
-          <a class="tech-card" href="essentials/index.html">
-            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div>
-            <h3>学校必备</h3><div class="en">School Essentials</div>
-            <p>校园学习生活常用资源与办事指南。（板块描述占位）</p>
-            <span class="go">进入板块 <i>→</i></span>
-          </a>
-        </div>
-      </div>
-    </section>
 
     <!-- 新闻动态 + 通知公告（条目均为占位） -->
     <section class="section">
@@ -210,9 +145,9 @@
             <h4>快速导航</h4>
             <ul>
               <li><a href="languages/index.html">编程语言介绍</a></li>
-              <li><a href="index.html#tech">资料板块</a></li>
-              <li><a href="essentials/index.html">学校必备</a></li>
-              <li><a href="index.html#about">科协简介</a></li>
+              <li><a href="essentials/index.html">学校资源</a></li>
+              <li><a href="about/index.html">关于我们</a></li>
+              <li><a href="index.html">书院主页</a></li>
             </ul>
           </div>
           <div>

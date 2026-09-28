@@ -1,9 +1,9 @@
 /* ==========================================================================
-   home.css —— 首页专属样式（合并版：轮播 + 科协简介 + 资料板块 + 新闻公告）
+   home.css —— 首页专属样式（轮播横幅 + 新闻公告双栏）
    分层：样式层 / 首页模块；依赖 base.css + layout.css
    引入位置（仅 index.html）：base.css → layout.css → footer.css → 本文件
-   说明：2026-09-28 起按"无行数上限、不为拆而拆"规则合并原四个首页
-         样式文件（home/about/tech/news），区块间以分节注释隔离。
+   说明：2026-09-28 首页精简——科协简介迁入关于我们页（样式移至 subpage.css），
+         板块宫格区块移除；本文件只保留首页仍在使用的样式。
    ========================================================================== */
 
 /* ######################## 1. 轮播横幅 ######################## */
@@ -89,121 +89,7 @@
 }
 .banner .dots button.active { background: #fff; }
 
-/* ######################## 2. 科协简介（左文案 + 右数据统计卡） ######################## */
-
-/* ---- 简介双栏：左文案 + 右统计 ---- */
-.about-flex { display: flex; gap: 56px; align-items: center; }
-.about-flex .text { flex: 1.15; min-width: 0; }
-.about-flex .text .lead {
-  font-size: 18px;
-  color: var(--text-dark);
-  font-weight: 600;
-  margin-bottom: 16px;
-  letter-spacing: 1px;
-}
-.about-flex .text p { color: #555; margin-bottom: 12px; text-align: justify; }
-.about-flex .text .btn {
-  display: inline-block;
-  margin-top: 22px;
-  background: var(--purple);
-  color: #fff;
-  padding: 11px 32px;
-  border-radius: 26px;
-  font-size: 15px;
-  letter-spacing: 2px;
-  transition: background 0.25s;
-}
-.about-flex .text .btn:hover { background: var(--purple-hover); }
-
-/* ---- 数据统计卡（2×2） ---- */
-.about-flex .stats { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.stat-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 26px 20px;
-  text-align: center;
-  box-shadow: var(--shadow);
-  transition: transform 0.25s;
-}
-.stat-card:hover { transform: translateY(-4px); }
-.stat-card .num {
-  font-size: 34px;
-  font-weight: 700;
-  color: var(--purple);
-  font-family: Georgia, serif;
-}
-.stat-card .num small { font-size: 16px; margin-left: 2px; }
-.stat-card .label { font-size: 14px; color: var(--text-sub); margin-top: 4px; }
-
-/* ######################## 3. 资料板块四宫格 ######################## */
-
-/* ---- 四宫格布局（板块精简后 4 张卡，两列对称） ---- */
-.tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
-.tech-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 34px 30px 28px;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-  display: block;
-}
-.tech-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--purple), var(--purple-bright));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s;
-}
-.tech-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-hover);
-  border-color: transparent;
-}
-.tech-card:hover::before { transform: scaleX(1); }
-
-/* 卡片图标：浅紫底，hover 时渐变填充 */
-.tech-card .icon {
-  width: 62px;
-  height: 62px;
-  border-radius: 16px;
-  background: var(--purple-bg);
-  color: var(--purple);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  transition: all 0.3s;
-}
-.tech-card:hover .icon {
-  background: linear-gradient(135deg, var(--purple), var(--purple-bright));
-  color: #fff;
-}
-.tech-card .icon svg { width: 30px; height: 30px; }
-
-/* 卡片标题（中文 + 英文副题）与描述 */
-.tech-card h3 { font-size: 21px; color: var(--text-dark); letter-spacing: 1px; margin-bottom: 4px; }
-.tech-card .en {
-  font-size: 12px;
-  color: var(--text-sub);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.tech-card p { font-size: 14.5px; color: #666; margin-bottom: 18px; min-height: 50px; }
-.tech-card .go { font-size: 14px; color: var(--purple); font-weight: 600; letter-spacing: 1px; }
-.tech-card .go i { font-style: normal; transition: margin 0.25s; }
-.tech-card:hover .go i { margin-left: 6px; }
-
-/* ######################## 4. 新闻动态 + 通知公告 双栏面板 ######################## */
+/* ######################## 2. 新闻动态 + 通知公告 双栏面板 ######################## */
 
 /* ---- 双栏布局 ---- */
 .news-flex { display: grid; grid-template-columns: 1.25fr 1fr; gap: 44px; }
@@ -325,12 +211,11 @@
 .notice-item a:hover { color: var(--purple); }
 .notice-item .date { flex: none; font-size: 13px; color: var(--text-sub); }
 
-/* ######################## 5. 首页响应式汇总 ######################## */
+/* ######################## 3. 首页响应式汇总 ######################## */
 
 @media (max-width: 900px) {
   .banner { height: 420px; }
   .slide h2 { font-size: 32px; letter-spacing: 3px; }
-  .about-flex { flex-direction: column; gap: 34px; }
   .news-flex { grid-template-columns: 1fr; gap: 28px; }
 }
 
@@ -338,9 +223,4 @@
   .slide h2 { font-size: 26px; }
   .slide p { font-size: 15px; }
   .slide .eyebrow { letter-spacing: 2px; font-size: 12px; }
-  .about-flex .stats { width: 100%; }
-  .stat-card { padding: 20px 14px; }
-  .tech-grid { grid-template-columns: 1fr; }
-  .tech-card { padding: 26px 22px 22px; }
-  .tech-card p { min-height: 0; }
 }

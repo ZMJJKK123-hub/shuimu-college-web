@@ -11,7 +11,7 @@ window.SMSK.DATA_BANNERS = [
     "description": "以技术连接水木学子，用代码书写书院科创的崭新篇章。（横幅标语占位）",
     "link": {
       "label": "了解科协",
-      "href": "#about"
+      "href": "about/index.html"
     }
   }
 ];

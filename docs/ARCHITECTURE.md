@@ -60,8 +60,8 @@ shuimu-web/
 │   ├── tsconfig.json            #   前端 TS 编译配置（strict，原位产出 .js）
 │   ├── data/banners.js          #   数据层：轮播内容（后端读写，非编译产物）
 │   ├── admin/                   #   轮播管理页（index.html + assets/admin.ts）
-│   ├── <板块>/index.html         # 【2026-09-28 精简为纯资料站】languages/ tools/
-│   │                            # web/ essentials/（书院主页+四板块导航）
+│   ├── <板块>/index.html         # 【2026-09-28 纯资料站】languages/ tools/ web/
+│   │                            # essentials/（学校资源）about/（关于我们）
 │   └── assets/{css,js}/         #   样式分层 + 行为层（js/ 内 .ts 源码入库，
 │                                #   types.d.ts 声明 window.SMSK 命名空间契约）
 ├── server/                      # 【阶段1新建】后端应用（NestJS）
