@@ -5,6 +5,7 @@
 中文主标题 + 英文副标题、“更多”链接、正式书院语体）。
 
 当前版本：**首页为轮播 + 新闻公告；四个资料板块页为占位页，关于我们页承载科协简介**（书院主页 + 编程语言介绍/开发工具/Web开发/学校资源/关于我们），内容待科协成员按下方指引补充。
+已上线**账号体系**：普通用户注册/登录（`site/user/` + `/api/user`，注册仅需账号密码）与管理员登录（`site/administrator/` + `/api/administrator`，两套体系核心类完全独立、会话分文件存储，防提权）。
 
 > **架构总纲**：全站采用「静态门户 + 后端 API + 渐进业务」架构，部署于自建服务器
 >（Nginx 同域反代，阶段2起提供报名等业务接口）。总体设计、演进路线与各阶段验收
@@ -42,11 +43,15 @@ npm run build:site   # 编译 site/ 下全部 .ts → 同名 .js（原位生成�
 
 ```bash
 # 1) 启动后端（首次先 cd server && npm install）
-cd server && npm run dev        # 端口 3000
+cd server && npm run dev        # 端口 3000；首次访问管理接口时自动创建
+                                # user_data/ 与 administrator_data/（运行时数据，不入库）
 # 2) 浏览器打开 http://localhost:8123/site/admin/
-#    表单编辑四接口（主办方/标题/介绍/跳转）→ 保存即写回 site/index/data/banners.js
+#    未登录会自动跳转 ../administrator/ 管理员登录页
+# 3) 登录默认管理员：账号 admin，密码 admin123456（首次运行自动种子，建议尽快更换）
+#    登录后表单编辑四接口（主办方/标题/介绍/跳转）→ 保存即写回 site/index/data/banners.js
 ```
 
+管理员登录页也可从普通登录页（`site/user/signin.html`）底部的「管理员登录」入口进入。
 线上（服务器部署后）直接访问 `https://域名/admin/`，无需启动任何本地进程。
 
 ## 目录结构
@@ -62,13 +67,23 @@ shuimu-web/
 │   ├── ARCHITECTURE.md            # 总体架构设计（活文档：后端/部署/演进路线/TS 工具链）
 │   └── PHASE1-架构设计.md          # 前端门户接口契约
 ├── tests/selftest.html            # 纯函数自测页（浏览器原生断言）
-├── server/                        # 后端（阶段1起）：NestJS，按 API 板块组织（src/api/），/api/banners
+├── user_data/                     # 普通用户运行时数据（账号哈希+会话，服务端自动创建，不入库）
+├── administrator_data/            # 管理员运行时数据（账号哈希+会话，服务端自动创建，不入库）
+├── server/                        # 后端（阶段1起）：NestJS，按 API 板块组织（src/api/）
+│   │                              #   现有板块：banners（轮播）/ user（用户）/ administrator（管理员）
 └── site/                          # 站点部署单元（可整体拷贝部署）
     ├── index/                     # 首页板块（书院主页，自包含：页面+专属脚本+专属数据）
     │   ├── index.html             #   首页
     │   ├── assets/banner.service.ts  #   首页专属脚本：轮播服务（产物 .js 不入库）
     │   └── data/banners.js        #   首页专属数据：轮播内容（管理员维护入口，非编译产物）
-    ├── admin/                     # 轮播管理页（表单 → PUT /api/banners）
+    ├── user/                      # 用户板块（登录/注册页，自包含）
+    │   ├── signin.html            #   账号登录页（卡片底部挂管理员登录入口）
+    │   ├── signup.html            #   注册页（账号+密码+确认密码）
+    │   └── assets/                #   auth.service.ts（全站页头登录态）+ signin/signup.ts（表单）
+    ├── administrator/             # 管理员登录页（深色控制台风格，独立工具页）
+    │   ├── index.html
+    │   └── assets/administrator.ts
+    ├── admin/                     # 轮播管理页（需管理员登录；表单 → PUT /api/banners 附令牌）
     │   ├── index.html
     │   └── assets/admin.ts        # 管理页脚本源码（编译产物 admin.js 不入库）
     ├── languages/index.html       # 编程语言介绍（占位页）
@@ -86,6 +101,8 @@ shuimu-web/
         │   ├── web/               #   Web 开发板块：web.css（空占位）
         │   ├── essentials/        #   学校资源板块：essentials.css（空占位）
         │   ├── about/             #   关于我们板块：about.css（简介双栏/统计卡）
+        │   ├── user/              #   用户板块：user.css（登录/注册极简卡片）
+        │   ├── administrator/     #   管理员板块：administrator.css（深色控制台登录卡）
         │   └── admin/             #   管理页板块：admin.css（自内联抽出）
         └── js/                    # 全站公用行为层（TS 源码入库，编译 .js 不入库）
             ├── types.d.ts             # 类型层：window.SMSK 命名空间与共享契约
@@ -104,7 +121,6 @@ shuimu-web/
 | :--- | :--- |
 | 首页轮播标语（管理员入口） | `site/index/data/banners.js`——改文字/加幻灯片只编辑此数据文件，无需动 HTML |
 | 科协简介正文与统计数字 | `site/about/index.html`（关于我们页，2026-09-28 自首页迁入） |
-| 六大板块卡片的描述文案 | `site/index.html` 的 `#tech` 区块内各 `.tech-card` |
 | 新闻 / 公告条目 | `site/index/index.html` 的 `.news-flex` 双栏面板 |
 | 板块页正式内容 | 对应 `site/<板块>/index.html` 的 `.placeholder-zone` 区域 |
 | 板块主题标签（子主题入口） | 对应 `site/<板块>/index.html` 的 `.topic-list` |

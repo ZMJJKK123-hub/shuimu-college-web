@@ -56,16 +56,19 @@ shuimu-web/
 ├── tests/
 │   └── selftest.html            # 前端纯函数自测页
 ├── site/                        # 【现状·阶段0产物】官网门户（静态，部署单元）
-│   ├── index.html
 │   ├── tsconfig.json            #   前端 TS 编译配置（strict，原位产出 .js）
-│   ├── data/banners.js          #   数据层：轮播内容（后端读写，非编译产物）
 │   ├── index/                   #   首页板块（自包含：index.html + assets/banner.service.ts
 │   │                            #   + data/banners.js 轮播数据——2026-09-28 归位）
-│   ├── admin/                   #   轮播管理页（index.html + assets/admin.ts）
+│   ├── user/                    #   用户板块（2026-09-28）：signin.html / signup.html
+│   │                            #   + assets/{auth.service,signin,signup}.ts（登录注册）
+│   ├── administrator/           #   管理员登录页（2026-09-28，深色控制台，独立工具页）
+│   ├── admin/                   #   轮播管理页（需管理员登录；index.html + assets/admin.ts）
 │   ├── <板块>/index.html         # 【2026-09-28 纯资料站】languages/ tools/ web/
 │   │                            # essentials/（学校资源）about/（关于我们）
 │   └── assets/{css,js}/         #   样式分层 + 行为层（js/ 内 .ts 源码入库，
 │                                #   types.d.ts 声明 window.SMSK 命名空间契约）
+├── user_data/                   # 普通用户运行时数据（服务端自动创建，不入库）
+├── administrator_data/          # 管理员运行时数据（服务端自动创建，不入库）
 ├── server/                      # 【阶段1新建】后端应用（NestJS）
 │   ├── src/
 │   │   ├── main.ts              #   启动装配
@@ -76,11 +79,14 @@ shuimu-web/
 │   │       │                    #   垂直切分（package-by-feature）：
 │   │       │                    #   一个 API 的 controller/service/repository/dto
 │   │       │                    #   全部收拢在同目录，加新 API = 加新文件夹
-│   │       ├── banners/         #     已上线：轮播（文件仓储，阶段2 换 Prisma 仅改此夹）
+│   │       ├── banners/         #     已上线：轮播（文件仓储，PUT 需管理员令牌；
+│   │       │                    #     阶段2 换 Prisma 仅改此夹）
+│   │       ├── user/            #     已上线：普通用户注册/登录/登出/会话（文件仓储）
+│   │       ├── administrator/   #     已上线：管理员登录/登出/会话（与 user 核心类
+│   │       │                    #     完全独立实现，令牌 "a."/"u." 前缀隔离，防提权）
 │   │       ├── health/          #     阶段1：健康检查
 │   │       ├── registrations/   #     阶段2：报名
 │   │       ├── events/          #     阶段2：活动/赛事管理
-│   │       ├── auth/            #     阶段3：账号与 JWT
 │   │       └── admin/           #     阶段3：管理端聚合接口
 │   ├── prisma/schema.prisma     #   数据库 schema（契约）
 │   ├── test/                    #   单元/接口测试
@@ -171,7 +177,12 @@ shuimu-web/
 - [x] banners 内容接口：GET/PUT `/api/banners`（class-validator DTO 强校验、
       原子写回 site/index/data/banners.js、统一错误体），本地 curl+浏览器双重验证
 - [ ] `deploy/` 部署编排（Dockerfile/compose/nginx）——待服务器环境确定后再创建，本机不预置
-- [x] 管理端最初版：`site/admin/` 表单页（四接口编辑，保存即生效，无账号体系）
+- [x] 管理端最初版：`site/admin/` 表单页（四接口编辑，保存即生效；2026-09-28 起挂管理员登录门槛）
+- [x] 账号体系基础版（2026-09-28）：`api/user`（注册即登录/登录/登出/me，scrypt 加盐哈希、
+      "u." 前缀令牌 7 天有效，数据落 user_data/）+ `api/administrator`（默认管理员
+      admin/admin123456 首次运行种子，"a." 前缀令牌，数据落 administrator_data/；
+      两套核心类完全独立，PUT /api/banners 仅认管理员令牌）；
+      前端 `site/user/`（登录/注册极简卡 + 全站页头登录态）+ `site/administrator/`（深色登录页）
 - [x] 前端全量 TypeScript 化：9 个源文件迁 `.ts` + `types.d.ts` 命名空间契约 +
       管理页脚本抽出；`hooks/pre-push` 类型检查硬门禁上线（详见 §5.1）
 - [ ] `GET /api/health` 健康检查接口 + 单元测试（jest 待接入）
@@ -187,8 +198,8 @@ shuimu-web/
 - [ ] 数据库每日备份脚本上线
 - [ ] 契约：DTO 定义与接口清单补充到 §9
 
-### 阶段 3：账号体系与管理后台【未开始】
-- [ ] auth 模块：干事账号、JWT 签发/刷新、角色权限
+### 阶段 3：账号体系与管理后台【基础账号已上线 · 2026-09-28，见阶段1清单与 §9.2/9.3】
+- [ ] 账号体系进阶：管理员创建管理员/默认口令更换、令牌刷新与角色权限
 - [ ] `admin-web/` SPA（登录页 + 名单管理 + 活动编辑）
 - [ ] 首页新闻切换为 API 数据源（见 §5）
 - [ ] 审计日志查询界面
@@ -215,10 +226,38 @@ shuimu-web/
 
 | 方法 | 路径 | 入参 | 出参 | 错误 |
 | :--- | :--- | :--- | :--- | :--- |
-| GET | /api/banners | — | { slides: BannerSlide[] } | 500 统一错误体 |
-| PUT | /api/banners | { slides: BannerSlide[1..8] } | { saved: true, count, slides } | 400 校验失败（统一错误体） |
+| GET | /api/banners | —（可选 ?token=，公开读不校验） | { slides: BannerSlide[] } | 500 统一错误体 |
+| PUT | /api/banners | { slides: BannerSlide[1..8], token: 管理员令牌 } | { saved: true, count, slides } | 400 校验失败；401 非管理员令牌/未登录 |
 
 统一错误体：{ code, message, timestamp, path }；写入为原子写（临时文件+改名）。
+
+### 9.2 普通用户（2026-09-28 · 已上线本地验证）
+
+**格式契约**（前后端同规则，前端 SMSK.validateCredential 自测覆盖）：
+账号 `^[A-Za-z0-9]{4,30}$`；密码 6~64 位。无手机/邮箱等任何验证渠道。
+存储：`user_data/accounts.json`（scrypt 盐+哈希，绝不落明文）+ `user_data/sessions.json`
+（令牌 "u."+randomBytes(32).hex，7 天有效，登出即删）。
+
+| 方法 | 路径 | 入参 | 出参 | 错误 |
+| :--- | :--- | :--- | :--- | :--- |
+| POST | /api/user/signup | { account, password } | { saved: true, token, account }（注册即登录） | 400 格式非法；409 账号已注册 |
+| POST | /api/user/signin | { account, password } | { success: true, token, account } | 401 账号或密码错误 |
+| POST | /api/user/signout | { token } | { success: true } | — |
+| GET | /api/user/me | ?token= | { account } | 401 令牌无效/过期 |
+
+### 9.3 管理员（2026-09-28 · 已上线本地验证）
+
+**与 user 板块核心类完全独立实现**（service/repository/会话文件互不共享）：
+`administrator_data/accounts.json`（首次运行种子默认管理员 admin/admin123456）+
+`administrator_data/sessions.json`（令牌 "a." 前缀，7 天有效）。用户令牌在管理员
+校验上永远 401（前缀与会话存储双重隔离，防提权）。无公开注册接口；
+"管理员创建管理员"为后续扩展。
+
+| 方法 | 路径 | 入参 | 出参 | 错误 |
+| :--- | :--- | :--- | :--- | :--- |
+| POST | /api/administrator/signin | { account, password } | { success: true, token, account } | 401 账号或密码错误 |
+| POST | /api/administrator/signout | { token } | { success: true } | — |
+| GET | /api/administrator/me | ?token= | { account } | 401 令牌无效/过期 |
 
 ## 10. Git 工作流（定案）
 
