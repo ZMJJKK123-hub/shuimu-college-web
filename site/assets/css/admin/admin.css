@@ -1,0 +1,34 @@
+/* ==========================================================================
+   admin.css —— 轮播管理页专属样式（自 admin/index.html 内联 <style> 抽出）
+   归属：css/admin/（仅 site/admin/index.html 引入）
+   依赖：common/base.css 的清华紫设计令牌
+   ========================================================================== */
+    /* 管理页专属样式（复用 base.css 的清华紫令牌） */
+    body { background: var(--purple-bg); min-height: 100vh; }
+    .admin-wrap { width: min(860px, 94%); margin: 40px auto 80px; }
+    .admin-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
+    .admin-head h1 { font-size: 26px; color: var(--text-dark); letter-spacing: 2px; }
+    .admin-head a { font-size: 14px; color: var(--purple); }
+    .slide-card { background: #fff; border: 1px solid var(--line); border-radius: 14px;
+      padding: 22px 24px; margin-bottom: 18px; box-shadow: var(--shadow); }
+    .slide-card .no { font-size: 13px; color: var(--purple); font-weight: 700; margin-bottom: 12px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 4px; }
+    .field label b { color: var(--text-main); }
+    .field input { width: 100%; box-sizing: border-box; border: 1px solid var(--line);
+      border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: inherit; }
+    .field input:focus { outline: none; border-color: var(--purple); }
+    .link-row { display: flex; gap: 12px; }
+    .link-row .field { flex: 1; }
+    .card-ops { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+    .btn { border: 0; border-radius: 20px; padding: 8px 20px; font-size: 14px;
+      font-family: inherit; cursor: pointer; }
+    .btn.ghost { background: #fff; color: var(--text-sub); border: 1px solid var(--line); }
+    .btn.ghost:hover { color: #d34141; border-color: #d34141; }
+    .btn.primary { background: var(--purple); color: #fff; }
+    .btn.primary:hover { background: var(--purple-hover); }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .status { font-size: 13px; padding: 8px 0; min-height: 20px; }
+    .status.ok { color: #1d9e4a; }
+    .status.err { color: #d34141; }
+    .hint { font-size: 12px; color: var(--text-sub); margin-top: 14px; line-height: 1.8; }

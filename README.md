@@ -76,12 +76,19 @@ shuimu-web/
     ├── about/index.html           # 关于我们（科协简介，自首页迁入）
     ├── tsconfig.json              # 前端 TS 编译配置（strict 全开，原位产出 .js）
     └── assets/                    # 全站共享资源（各板块如需图片，放各自文件夹内）
-        ├── css/                   # 样式层（2026-09-28 合并精简，无行数上限规则）
-        │   ├── base.css           #   设计令牌 + reset + 通用板块标题
-        │   ├── layout.css         #   顶条/页头/主导航/移动端抽屉
-        │   ├── footer.css         #   页脚/版权条/返回顶部
-        │   ├── home.css           #   首页：轮播横幅/新闻公告
-        │   └── subpage.css        #   子页：横幅与占位卡片
+        ├── css/                   # 样式层（2026-09-28 板块化目录：同名文件夹 + common 公用）
+        │   ├── common/            #   全站公用
+        │   │   ├── base.css       #     设计令牌 + reset + 通用组件
+        │   │   ├── layout.css     #     顶条/页头/主导航/移动端抽屉
+        │   │   └── footer.css     #     页脚/版权条/返回顶部
+        │   ├── home/              #   首页板块
+        │   │   └── home.css       #     轮播横幅/新闻公告
+        │   ├── subpage/           #   板块占位子页共用
+        │   │   └── subpage.css    #     子页横幅/占位卡片/主题标签
+        │   ├── about/             #   关于我们板块
+        │   │   └── about.css      #     科协简介双栏/统计卡
+        │   └── admin/             #   管理页板块
+        │       └── admin.css      #     管理表单样式（自内联抽出）
         └── js/                    # 行为层（TS 源码入库，编译 .js 不入库）
             ├── types.d.ts             # 类型层：window.SMSK 命名空间与共享契约
             ├── config/site.config.ts  # 配置层：站点唯一配置源

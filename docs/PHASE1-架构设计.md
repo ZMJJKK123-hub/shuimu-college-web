@@ -61,12 +61,19 @@ shuimu-web/
     ├── essentials/index.html      # 学校资源 School Resources（占位页）
     ├── about/index.html           # 关于我们 About Us（科协简介）
     └── assets/                    # 全站共享资源（板块私有资源放各板块文件夹）
-        ├── css/                   # 样式层（2026-09-28 合并精简：无行数上限，不为拆而拆）
-        │   ├── base.css           #   设计令牌（CSS 变量）+ reset + 通用组件
-        │   ├── layout.css         #   顶栏/页头/主导航/移动端抽屉
-        │   ├── footer.css         #   页脚四栏/版权条/返回顶部
-        │   ├── home.css           #   首页合一：轮播/简介/板块宫格/新闻公告
-        │   └── subpage.css        #   子页：page-banner/占位卡片/主题标签
+        ├── css/                   # 样式层（2026-09-28 板块化目录：同名文件夹 + common 公用）
+        │   ├── common/            #   全站公用
+        │   │   ├── base.css       #     设计令牌 + reset + 通用组件
+        │   │   ├── layout.css     #     顶条/页头/主导航/移动端抽屉
+        │   │   └── footer.css     #     页脚/版权条/返回顶部
+        │   ├── home/              #   首页板块
+        │   │   └── home.css       #     轮播横幅/新闻公告
+        │   ├── subpage/           #   板块占位子页共用
+        │   │   └── subpage.css    #     子页横幅/占位卡片/主题标签
+        │   ├── about/             #   关于我们板块
+        │   │   └── about.css      #     科协简介双栏/统计卡
+        │   └── admin/             #   管理页板块
+        │       └── admin.css      #     管理表单样式（自内联抽出）
         └── js/                        # TS 源码入库，编译产物 .js 不入库（2026-09-27 起）
             ├── types.d.ts          # 类型层：window.SMSK 命名空间与共享契约声明
             ├── config/
