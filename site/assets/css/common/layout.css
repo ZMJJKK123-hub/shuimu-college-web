@@ -201,7 +201,6 @@
   :root { --header-h: 72px; }
   .brand-titles .cn { font-size: 20px; }
   .brand .logo { width: 44px; height: 44px; font-size: 15px; }
-  .header-tools .en-link { display: none; }
   .header-tools { margin: 10px 14px 0 auto; }
 
   .thu-mark { margin-right: 12px; }

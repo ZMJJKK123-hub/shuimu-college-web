@@ -31,7 +31,7 @@
     </div>
   </div>
 
-  <!-- 页头：徽标 + 站名 + 右侧工具（搜索/English 为占位入口） -->
+  <!-- 页头：徽标 + 站名 + 右侧工具（登录态由 auth.service.js 渲染于 .auth-area） -->
   <header class="header">
     <div class="container">
       <img class="thu-mark" src="../assets/img/thu-logo.png" alt="清华大学">
@@ -43,14 +43,6 @@
         </span>
       </a>
       <div class="header-tools">
-        <a class="tool-btn en-link" href="#" title="英文版建设中（占位）">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"/></svg>
-          English
-        </a>
-        <a class="tool-btn" href="#" title="站内搜索建设中（占位）">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          搜索
-        </a>
         <span class="auth-area">
           <a class="tool-btn" href="../user/signin.html" title="账号登录">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
