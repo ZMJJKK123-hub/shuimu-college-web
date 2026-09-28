@@ -9,6 +9,9 @@
     .admin-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
     .admin-head h1 { font-size: 26px; color: var(--text-dark); letter-spacing: 2px; }
     .admin-head a { font-size: 14px; color: var(--purple); }
+    /* 管理员状态条（登录门槛通过后由 admin.js 填充/绑定） */
+    .admin-session { display: flex; align-items: baseline; gap: 14px; margin-left: auto; margin-right: 18px; }
+    .admin-session span { font-size: 13px; color: var(--text-sub); }
     .slide-card { background: #fff; border: 1px solid var(--line); border-radius: 14px;
       padding: 22px 24px; margin-bottom: 18px; box-shadow: var(--shadow); }
     .slide-card .no { font-size: 13px; color: var(--purple); font-weight: 700; margin-bottom: 12px; }
