@@ -11,25 +11,7 @@ window.SMSK.DATA_BANNERS = [
     "description": "以技术连接水木学子，用代码书写书院科创的崭新篇章。（横幅标语占位）",
     "link": {
       "label": "了解科协",
-      "href": "about/index.html"
-    }
-  },
-  {
-    "organizer": "SHUIMU S&T ASSOCIATION",
-    "title": "求真务实 · 格物致知",
-    "description": "从编程语言到机器学习，六大技术板块构筑书院科创知识体系。（横幅标语占位）",
-    "link": {
-      "label": "进入技术板块",
-      "href": "#tech"
-    }
-  },
-  {
-    "organizer": "学生科创 · 共同成长",
-    "title": "实践 · 分享 · 创造",
-    "description": "工具指南、开发实战与科创竞赛资讯持续建设中，敬请期待。（横幅标语占位）",
-    "link": {
-      "label": "关注科创竞赛",
-      "href": "contests/index.html"
+      "href": "#about"
     }
   }
 ];
