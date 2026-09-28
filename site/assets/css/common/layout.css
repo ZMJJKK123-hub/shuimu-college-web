@@ -9,7 +9,12 @@
   background: var(--purple-dark);
   color: rgba(255, 255, 255, 0.75);
   font-size: 13px;
+  height: 34px;
+  overflow: hidden;
+  transition: height 0.3s ease;
 }
+/* 一次性收起：滚出视口后由 topbar.service.js 加 .gone，高度归零且不再重现 */
+.topbar.gone { height: 0; }
 .topbar .container {
   display: flex;
   justify-content: space-between;

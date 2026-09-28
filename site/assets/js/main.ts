@@ -7,7 +7,7 @@
  *   assets/js: config/site.config.js → infrastructure/errors.js
  *   → infrastructure/dom.js → infrastructure/logger.js
  *   → services/nav.service.js → services/nav-collapse.service.js
- *   → services/backtop.service.js
+ *   → services/topbar.service.js → services/backtop.service.js
  *   → 各内容页另载 user/assets/auth.service.js（登录态，全站内容页）
  *   → 首页另载 index/assets/banner.service.js（板块专属）
  *     与 data/banners.js（轮播数据）→ 本文件
@@ -69,6 +69,10 @@ function bootstrap(): void {
     SMSK.createNavCollapseService(SMSK.qs('.mainnav'), cfg.navCollapse, logger);
   navCollapseService.start();
 
+  // 顶部欢迎条：一次性收起服务（滚出视口后永久隐藏，全站内容页生效）
+  const topbarService = SMSK.createTopbarService(SMSK.qs('.topbar'), logger);
+  topbarService.start();
+
   // 轮播：首页专属服务（index/assets/banner.service.js 与 data/banners.js 仅首页加载），
   // 未加载该服务的页面降级为空实现（与"无轮播节点返回空实现"同语义）
   const bannerService: ServiceLifecycle = SMSK.createBannerService
@@ -93,6 +97,7 @@ function bootstrap(): void {
     services: {
       nav: navService,
       navCollapse: navCollapseService,
+      topbar: topbarService,
       banner: bannerService,
       auth: authService,
       backtop: backtopService

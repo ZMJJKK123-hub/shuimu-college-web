@@ -104,6 +104,7 @@ interface AppHandle {
   services: {
     nav: NavServiceApi;
     navCollapse: ServiceLifecycle;
+    topbar: ServiceLifecycle;
     banner: ServiceLifecycle;
     auth: ServiceLifecycle;
     backtop: ServiceLifecycle;
@@ -138,6 +139,8 @@ interface SMSKNamespace {
   /** 导航收起（services/nav-collapse.service.ts 挂载） */
   resolveNavState: typeof resolveNavState;
   createNavCollapseService: typeof createNavCollapseService;
+  /** 顶部欢迎条一次性收起（services/topbar.service.ts 挂载） */
+  createTopbarService: typeof createTopbarService;
   /** 返回顶部（services/backtop.service.ts 挂载） */
   createBacktopService: typeof createBacktopService;
   /** 登录态（user/assets/auth.service.ts，全站内容页加载；main.ts 对未加载页降级空实现） */

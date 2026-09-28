@@ -108,7 +108,7 @@ shuimu-web/
             ├── types.d.ts             # 类型层：window.SMSK 命名空间与共享契约
             ├── config/site.config.ts  # 配置层：站点唯一配置源
             ├── infrastructure/        # 基础设施层：errors / dom / logger
-            ├── services/             # 业务行为层：banner / nav / nav-collapse / backtop
+            ├── services/             # 业务行为层：nav / nav-collapse / topbar / backtop
             └── main.ts               # 组装根：读配置 → 装配服务（加载顺序见其头注）
 ```
 
