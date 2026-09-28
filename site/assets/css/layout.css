@@ -130,9 +130,13 @@
 }
 .mainnav li a:hover { background: var(--purple-deep); }
 .mainnav li a:hover::after { width: 60%; }
-/* 首个导航项贴内容容器左缘（去默认左内边距；仅桌面横条，抽屉模式不适用） */
+/* 首个导航项贴内容容器左缘（去默认左内边距；仅桌面横条，抽屉模式不适用）。
+   注意：左内边距归零后盒子宽度 = 文字 + 右内边距（不对称），
+   下划线（::after 按 left:50% 盒心居中）会右偏半个右内边距，
+   故首项下划线同步左移 13px（= 26px / 2）对齐文字中心。 */
 @media (min-width: 901px) {
   .mainnav li:first-child a { padding-left: 0; }
+  .mainnav li:first-child a::after { left: calc(50% - 13px); }
 }
 
 /* ---- 导航条滚动收起（nav-collapse.service.js 切换 .collapsed）----
