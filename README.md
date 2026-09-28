@@ -5,7 +5,7 @@
 中文主标题 + 英文副标题、“更多”链接、正式书院语体）。
 
 当前版本：**首页为轮播 + 新闻公告；四个资料板块页为占位页，关于我们页承载科协简介**（书院主页 + 编程语言介绍/开发工具/Web开发/学校资源/关于我们），内容待科协成员按下方指引补充。
-已上线**账号体系**：普通用户注册/登录（`site/user/` + `/api/user`，注册仅需账号密码）与管理员登录（`site/administrator/` + `/api/administrator`，两套体系核心类完全独立、会话分文件存储，防提权）。
+已上线**账号体系**：普通用户注册/登录 + 头像上传（`site/user/` + `/api/user`，注册仅需账号密码；页头登录后为头像+悬停下拉菜单，支持圆形裁剪上传 JPG/JPEG/PNG）与管理员登录（`site/administrator/` + `/api/administrator`，两套体系核心类完全独立、会话分文件存储，防提权）。
 
 > **架构总纲**：全站采用「静态门户 + 后端 API + 渐进业务」架构，部署于自建服务器
 >（Nginx 同域反代，阶段2起提供报名等业务接口）。总体设计、演进路线与各阶段验收
@@ -24,16 +24,20 @@ npm run build:site   # 编译 site/ 下全部 .ts → 同名 .js（原位生成�
 
 构建完成后两种方式任选：
 
-1. 直接双击 `site/index.html`（`file://` 打开即可正常浏览）；
+1. 直接双击 `site/index/index.html`（`file://` 打开即可正常浏览；`site/` 为部署单元，页面均在板块文件夹内）；
 2. 本地服务（推荐）：
    ```bash
    cd site
    python -m http.server 8080
-   # 浏览器访问 http://localhost:8080/index/
+   # 浏览器访问 http://localhost:8080/index/index.html
    ```
 
 改任何 `.ts` 后重新执行 `npm run build:site` 并刷新页面；推送时 `hooks/pre-push`
 钩子会自动做全量类型检查（详见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) §5）。
+
+> **账号类功能需后端在跑**：登录/注册/头像/轮播管理都调用 `/api`。本地静态预览时
+> 前端自动识别（`location.pathname` 含 `/site/` 时指向 `http://localhost:3000`），
+> 因此需另开终端 `cd server && npm run dev`；纯浏览门户页面则无需后端。
 
 纯函数自测页：浏览器打开 `tests/selftest.html`，全部用例应显示 PASS（自测加载的也是
 编译产物，同样需先构建）。
@@ -79,7 +83,8 @@ shuimu-web/
     ├── user/                      # 用户板块（登录/注册页，自包含）
     │   ├── signin.html            #   账号登录页（卡片底部挂管理员登录入口）
     │   ├── signup.html            #   注册页（账号+密码+确认密码）
-    │   └── assets/                #   auth.service.ts（全站页头登录态）+ signin/signup.ts（表单）
+    │   └── assets/                #   auth.service.ts（全站页头登录态）+ avatar.service.ts（头像：
+    │                              #     悬停菜单/拖拽缩放圆形裁剪/上传）+ signin/signup.ts（表单）
     ├── administrator/             # 管理员登录页（深色控制台风格，独立工具页）
     │   ├── index.html
     │   └── assets/administrator.ts
@@ -125,9 +130,9 @@ shuimu-web/
 | 板块页正式内容 | 对应 `site/<板块>/index.html` 的 `.placeholder-zone` 区域 |
 | 板块主题标签（子主题入口） | 对应 `site/<板块>/index.html` 的 `.topic-list` |
 | 板块图片/附件 | 放在对应板块文件夹内（如 `site/languages/images/`），页内相对引用 |
-| 联系方式 / 版权 / 友情链接 | 各页 `.footer`（八页共用同一份标记，改时全局替换） |
+| 联系方式 / 版权 / 友情链接 | 六个内容页的 `.footer`（同一份标记，改时全局替换；user 登录/注册为裸页、admin/administrator 为独立工具页，均无页脚） |
 | 站点参数（轮播间隔、日志级别等） | `site/assets/js/config/site.config.ts`（唯一配置源，改后需重新编译） |
-| 配色 / 字号 / 间距 | `site/assets/css/base.css` 的 CSS 变量（全站令牌） |
+| 配色 / 字号 / 间距 | `site/assets/css/common/base.css` 的 CSS 变量（全站令牌） |
 
 注意：新增板块页面时，建立 `site/<板块名>/index.html`，在 `body` 上写
 `data-page="板块id"`，并在 `#nav-list` 增加对应 `<li data-page>`，`nav.service.ts`
@@ -135,8 +140,8 @@ shuimu-web/
 
 ## 开发协议
 
-本仓库开发遵循 `agent.md` 主协议（契约先行两阶段法、文档注释基线、
-架构分层、≤250 行/文件、统一日志、禁 console.log 等）。改动前请先阅读。
+本仓库开发遵循 `agent.md` 主协议（契约先行两阶段法、文档注释基线、架构分层、
+无行数上限（不为拆而拆）、统一日志、禁 console.log、延迟提交等）。改动前请先阅读。
 
 ## 风格参考
 

@@ -3,7 +3,7 @@
 > **文档定位**：本文件是全站架构的唯一权威记录。每个演进阶段开始前在此更新该阶段的
 > 详细要求，完成后更新状态标记（`[ ]` → `[x]`），实现与本文不一致时**先改文档再改代码**。
 > 前端门户的接口契约细节见 [PHASE1-架构设计.md](PHASE1-架构设计.md)（历史文档，仍有效）。
-> 开发行为规范（分层/注释/≤250 行/统一日志等）以仓库根目录 `agent.md` 为准，本文不重复。
+> 开发行为规范（分层/注释/无行数上限/统一日志等）以仓库根目录 `agent.md` 为准，本文不重复。
 
 ---
 
@@ -39,7 +39,7 @@
 | 官网门户 | 现有静态站（`site/`） | 已建成，Nginx 直接托管，与后端解耦 | — |
 | 管理后台 | 单页应用（阶段3再建） | 只服务干事，不承担门户 SEO | — |
 | 部署 | Docker Compose（nginx+app+db） | 换服务器/换届交接=拷 compose 文件 | systemd 直跑——若服务器不支持 Docker |
-| 认证 | 学校邮箱验证 + JWT | 报名先做邮箱收集验证；账号体系阶段3引入 | — |
+| 认证 | 账号密码 + 服务端令牌会话（2026-09-28 已落地：`api/user` 与 `api/administrator`，scrypt 哈希 + 文件会话，双体系前缀隔离）；JWT 暂不引入 | 复用现成方案，零新依赖；报名环节后续叠加学校邮箱验证 | FastAPI——若团队 Python 力量明显更强 |
 
 ## 3. 仓库目录结构（现状 + 规划）
 
@@ -60,7 +60,8 @@ shuimu-web/
 │   ├── index/                   #   首页板块（自包含：index.html + assets/banner.service.ts
 │   │                            #   + data/banners.js 轮播数据——2026-09-28 归位）
 │   ├── user/                    #   用户板块（2026-09-28）：signin.html / signup.html
-│   │                            #   + assets/{auth.service,signin,signup}.ts（登录注册）
+│   │                            #   + assets/{auth.service,avatar.service,signin,signup}.ts
+│   │                            #   （登录注册 + 头像：悬停菜单/圆形裁剪上传）
 │   ├── administrator/           #   管理员登录页（2026-09-28，深色控制台，独立工具页）
 │   ├── admin/                   #   轮播管理页（需管理员登录；index.html + assets/admin.ts）
 │   ├── <板块>/index.html         # 【2026-09-28 纯资料站】languages/ tools/ web/
@@ -134,7 +135,7 @@ shuimu-web/
 
 | 环节 | 约定 |
 | :--- | :--- |
-| 源码 | `site/assets/js/**/*.ts` + `site/admin/assets/admin.ts` 入库；`types.d.ts` 集中声明 `window.SMSK` 命名空间与共享契约（全局脚本、无模块化，`module: none` 禁止引入 import/export） |
+| 源码 | 全站 `.ts` 入库：`site/assets/js/**/*.ts`（公用层）+ 各板块 `site/<板块>/assets/*.ts`（index/user/administrator/admin）；`types.d.ts` 集中声明 `window.SMSK` 命名空间与共享契约（经典全局脚本、无 import/export，跨文件靠 `window.SMSK` 挂载 + 全局类型契约） |
 | 编译 | `npm run build:site`（根 `package.json`，TypeScript 5.9，strict 全开 + `noEmitOnError`），`.ts` 原位产出同名 `.js`，**所有 HTML 的 `<script src>` 引用名不变** |
 | 产物 | 编译 `.js` **不入库**（`.gitignore` 拦截）；克隆/拉取后需先构建才能本地预览（README 有说明）。例外：`site/index/data/banners.js` 是数据文件（后端读写、管理员维护），正常入库 |
 | 检查 | `npm run typecheck` = site + server 双工程 `--noEmit` |
@@ -146,6 +147,12 @@ shuimu-web/
 > 再评估升级 Vite + 框架整体重构。
 
 ## 6. 安全设计（定案原则）
+
+> **2026-09-28 实况**：账号体系已按「服务端令牌会话」落地（非 JWT）：普通用户
+> `u.` 令牌 / 管理员 `a.` 令牌，双体系核心类独立实现、会话分文件存储，
+> `PUT /api/banners` 等写接口已挂管理员令牌强校验（401 拒绝）；密码 scrypt 加盐哈希，
+> 运行时数据目录（user_data/、administrator_data/）已 gitignore 永不入库。
+> 下文 JWT/角色分级/限流等为阶段 2~3 的目标形态，届时按需引入。
 
 1. `/admin` 页面公网可达是**既定假设**，安全不靠藏路径：
    - 所有管理操作走 `/api/admin/*`，每个请求校验 JWT，未登录一律 401；
@@ -167,6 +174,7 @@ shuimu-web/
 
 ### 阶段 0：门户上线【已完成 ✅ 2026-09-27】
 - [x] 静态门户（首页 + 七板块占位页）建成，紫色书院风格，本地验证通过
+      （注：七板块为阶段0 形态；2026-09-28 按"纯资料站"方案精简为首页 + 五板块 + 关于我们）
 - [x] 仓库建立，dev/main 分支策略确立，第一版推送 dev
 - [x] 总体架构定案并写入本文档
 
@@ -183,6 +191,9 @@ shuimu-web/
       admin/admin123456 首次运行种子，"a." 前缀令牌，数据落 administrator_data/；
       两套核心类完全独立，PUT /api/banners 仅认管理员令牌）；
       前端 `site/user/`（登录/注册极简卡 + 全站页头登录态）+ `site/administrator/`（深色登录页）
+- [x] 头像上传（2026-09-28）：`api/user` 增 GET/PUT `/api/user/avatar`（魔数校验
+      仅 PNG/JPEG、解码 ≤1MB、存 user_data/avatars/）；前端 avatar.service.ts 提供
+      页头头像展示 + 悬停下拉菜单 + 拖拽/滚轮缩放的圆形裁剪编辑器（输出 256×256 PNG）
 - [x] 前端全量 TypeScript 化：9 个源文件迁 `.ts` + `types.d.ts` 命名空间契约 +
       管理页脚本抽出；`hooks/pre-push` 类型检查硬门禁上线（详见 §5.1）
 - [ ] `GET /api/health` 健康检查接口 + 单元测试（jest 待接入）
@@ -238,12 +249,21 @@ shuimu-web/
 存储：`user_data/accounts.json`（scrypt 盐+哈希，绝不落明文）+ `user_data/sessions.json`
 （令牌 "u."+randomBytes(32).hex，7 天有效，登出即删）。
 
+**头像契约**（2026-09-28 新增）：仅 JPG/JPEG/PNG（服务端魔数校验，杜绝伪造扩展名）；
+裁剪输出 256×256 PNG，base64 传输（解码后 ≤1MB，JSON body 上限 2MB 见 main.ts）；
+存 `user_data/avatars/<account>.{png|jpg}`（换格式上传自动清旧文件，GET 即时 no-store）。
+前端 `user/avatar.service.ts`：页头默认字母头像（auth.service 渲染）→ 拉取替换 →
+悬停白框菜单"更改头像" → 文件选择（前端预验类型/大小）→ 拖拽平移 + 滚轮/滑杆
+缩放的圆形裁剪弹层 → 确认上传即时刷新页头。
+
 | 方法 | 路径 | 入参 | 出参 | 错误 |
 | :--- | :--- | :--- | :--- | :--- |
 | POST | /api/user/signup | { account, password } | { saved: true, token, account }（注册即登录） | 400 格式非法；409 账号已注册 |
 | POST | /api/user/signin | { account, password } | { success: true, token, account } | 401 账号或密码错误 |
 | POST | /api/user/signout | { token } | { success: true } | — |
 | GET | /api/user/me | ?token= | { account } | 401 令牌无效/过期 |
+| GET | /api/user/avatar | ?token= | PNG/JPEG 图片字节（Cache-Control: no-store） | 401 令牌无效；404 尚未设置 |
+| PUT | /api/user/avatar | { token, image: base64 } | { saved: true } | 400 非 PNG/JPG 魔数或解码后 >1MB；401 令牌无效 |
 
 ### 9.3 管理员（2026-09-28 · 已上线本地验证）
 
