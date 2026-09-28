@@ -12,5 +12,11 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["assets/js/**/*.ts", "index/assets/**/*.ts", "admin/assets/**/*.ts"]
+  "include": [
+    "assets/js/**/*.ts",
+    "index/assets/**/*.ts",
+    "user/assets/**/*.ts",
+    "administrator/assets/**/*.ts",
+    "admin/assets/**/*.ts"
+  ]
 }

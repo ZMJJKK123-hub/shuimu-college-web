@@ -27,7 +27,8 @@ async function bootstrap(): Promise<void> {
   app.enableCors({ origin: config.corsOrigins });
   await app.listen(config.port);
   new Logger('Bootstrap').log(
-    `后端已启动: http://localhost:${config.port} | 轮播数据文件: ${config.bannersFile}`,
+    `后端已启动: http://localhost:${config.port} | 轮播数据文件: ${config.bannersFile}` +
+      ` | 用户数据目录: ${config.userDataDir} | 管理员数据目录: ${config.adminDataDir}`,
   );
 }
 

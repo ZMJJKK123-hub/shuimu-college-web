@@ -48,7 +48,7 @@ export class BannerSlideDto {
   link?: BannerLinkDto | null;
 }
 
-/** UpdateBannersDto —— 保存请求体：幻灯片数组（1~8 张） */
+/** UpdateBannersDto —— 保存请求体：幻灯片数组（1~8 张）+ 管理员令牌 */
 export class UpdateBannersDto {
   @IsArray()
   @ArrayMinSize(1)
@@ -56,4 +56,10 @@ export class UpdateBannersDto {
   @ValidateNested({ each: true })
   @Type(() => BannerSlideDto)
   slides!: BannerSlideDto[];
+
+  /** 管理员令牌（"是否登录"参数：所有写操作统一携带，控制器先做强校验） */
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  token?: string;
 }

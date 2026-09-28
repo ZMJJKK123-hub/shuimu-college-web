@@ -16,6 +16,10 @@ export interface ServerConfig {
   port: number;
   /** 轮播数据文件绝对路径（env BANNERS_FILE，默认 <仓库根>/site/index/data/banners.js） */
   bannersFile: string;
+  /** 普通用户数据目录（env USER_DATA_DIR，默认 <仓库根>/user_data；仓储按需自动创建） */
+  userDataDir: string;
+  /** 管理员数据目录（env ADMIN_DATA_DIR，默认 <仓库根>/administrator_data；仓储按需自动创建） */
+  adminDataDir: string;
   /** 允许跨域调用的来源（env CORS_ORIGINS 逗号分隔，默认本机静态服务） */
   corsOrigins: string[];
 }
@@ -47,8 +51,15 @@ export function loadConfig(): ServerConfig {
   if (!fs.existsSync(bannersFile)) {
     throw new Error(`[ConfigError] 轮播数据文件不存在: ${bannersFile}`);
   }
+  // 用户/管理员数据目录：不做存在性强校验（区别于 banners.js），由各板块仓储按需自动创建
+  const userDataDir = process.env.USER_DATA_DIR
+    ? path.resolve(process.env.USER_DATA_DIR)
+    : path.resolve(__dirname, '../../../user_data');
+  const adminDataDir = process.env.ADMIN_DATA_DIR
+    ? path.resolve(process.env.ADMIN_DATA_DIR)
+    : path.resolve(__dirname, '../../../administrator_data');
   const corsOrigins = (process.env.CORS_ORIGINS ||
     'http://localhost:8123,http://localhost:8080,http://127.0.0.1:8123')
     .split(',').map((s) => s.trim()).filter(Boolean);
-  return { port, bannersFile, corsOrigins };
+  return { port, bannersFile, userDataDir, adminDataDir, corsOrigins };
 }

@@ -8,12 +8,14 @@
  */
 import { Module } from '@nestjs/common';
 import { ServerConfig } from '../../config/configuration';
+import { AdministratorModule } from '../administrator/administrator.module';
 import { BannersFileRepository, BANNER_SLIDES_REPOSITORY } from './banners.repository';
 import { BannersController } from './banners.controller';
 import { BannersService } from './banners.service';
 
-/** BannersModule —— 轮播内容模块（controller + service + 仓储绑定） */
+/** BannersModule —— 轮播内容模块（导入管理员模块以获得令牌强校验能力） */
 @Module({
+  imports: [AdministratorModule],
   controllers: [BannersController],
   providers: [
     BannersService,

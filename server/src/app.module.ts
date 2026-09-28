@@ -8,9 +8,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from './config/config.module';
 import { BannersModule } from './api/banners/banners.module';
+import { UserModule } from './api/user/user.module';
+import { AdministratorModule } from './api/administrator/administrator.module';
 
 /** AppModule —— 应用根模块：配置注入点 + 业务模块注册表 */
 @Module({
-  imports: [ConfigModule, BannersModule],
+  imports: [ConfigModule, BannersModule, UserModule, AdministratorModule],
 })
 export class AppModule {}
