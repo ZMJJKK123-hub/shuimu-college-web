@@ -1,28 +1,33 @@
 /* ==========================================================================
-   user.css —— 用户板块专属：登录/注册卡片（极简组合输入框风格）
+   user.css —— 用户板块专属：登录/注册裸页卡片
    归属：css/user/（仅 site/user/signin.html 与 site/user/signup.html 引入）
-   依赖：common/base.css 的清华紫设计令牌 + common/layout.css 的页面框架
-   说明：管理员登录页为独立深色风格（css/administrator/），与本文件刻意区分
+   依赖：common/base.css 的清华紫设计令牌
+   说明：裸页版（无站点骨架）——整页清华紫渐变底（与子页横幅 page-banner
+         同族色：#3e0646 → #660874 → #a01e76）+ 居中白卡；
+         管理员登录页为独立深色控制台风（css/administrator/），仍与本页区分
    ========================================================================== */
 
-/* ---- 登录/注册内容区：浅紫晕染底 + 居中卡片 ---- */
-.auth-zone {
-  padding: 72px 20px 100px;
-  background:
-    radial-gradient(circle at 12% 20%, rgba(102, 8, 116, 0.06), transparent 40%),
-    radial-gradient(circle at 88% 80%, rgba(217, 51, 121, 0.06), transparent 45%),
-    #fff;
+/* ---- 裸页背景：清华紫渐变，卡片水平垂直居中 ---- */
+body.auth-bare {
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.06), transparent 35%),
+    radial-gradient(circle at 12% 85%, rgba(217, 51, 121, 0.14), transparent 45%),
+    linear-gradient(150deg, #3e0646 0%, #660874 55%, #a01e76 100%);
 }
+
+/* ---- 卡片：极简白卡（深色底上用深投影） ---- */
 .auth-card {
   width: 400px;
   max-width: 100%;
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 14px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
   padding: 40px 36px 30px;
 }
 
@@ -120,8 +125,8 @@
 .auth-foot a { color: var(--purple); }
 .auth-foot a:hover { text-decoration: underline; }
 
-/* ---- 响应式（登录/注册卡片） ---- */
+/* ---- 响应式（登录/注册裸页） ---- */
 @media (max-width: 480px) {
-  .auth-zone { padding: 44px 14px 64px; }
+  body.auth-bare { padding: 24px 14px; align-items: flex-start; }
   .auth-card { padding: 30px 22px 22px; }
 }
