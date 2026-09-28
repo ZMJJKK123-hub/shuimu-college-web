@@ -1,8 +1,9 @@
 /**
  * ============================================================================
- * 模块：基础设施层 / 轮播数据文件仓储（server/src/infrastructure/banners-file.repository.ts）
- * 职责：site/data/banners.js 的读/序列化/原子写——上层（banners.service）
+ * 模块：API 板块 / 轮播数据文件仓储（server/src/api/banners/banners.repository.ts）
+ * 职责：site/data/banners.js 的读/序列化/原子写——同板块的 banners.service
  *       只依赖本仓储的抽象接口，不直接触碰文件系统。
+ *       （当前为文件存储实现；阶段2 接 Prisma 时仅替换本文件，接口不变。）
  * 依赖：node:fs / @nestjs/common Logger（写操作的关键节点日志）。
  * 导出：BannersFileRepository（实现）、BANNER_SLIDES_REPOSITORY（DI 令牌）。
  * ============================================================================

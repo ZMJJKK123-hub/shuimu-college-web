@@ -1,14 +1,14 @@
 /**
  * ============================================================================
- * 模块：表现层 / 轮播内容控制器（server/src/modules/banners/banners.controller.ts）
+ * 模块：API 板块 / 轮播内容控制器（server/src/api/banners/banners.controller.ts）
  * 职责：/api/banners 的路由分发与 DTO 入参接收——仅做协议转换，
  *       业务规则全部下沉 banners.service（禁止在控制器写业务）。
- * 依赖：banners.service / update-banners.dto。
+ * 依赖：banners.service / update-banners.dto（均在本板块目录内）。
  * ============================================================================
  */
 import { Body, Controller, Get, Put } from '@nestjs/common';
 import { BannersService } from './banners.service';
-import { UpdateBannersDto } from './dto/update-banners.dto';
+import { UpdateBannersDto } from './update-banners.dto';
 
 /**
  * BannersController —— 轮播内容接口

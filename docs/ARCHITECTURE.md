@@ -60,8 +60,8 @@ shuimu-web/
 │   ├── tsconfig.json            #   前端 TS 编译配置（strict，原位产出 .js）
 │   ├── data/banners.js          #   数据层：轮播内容（后端读写，非编译产物）
 │   ├── admin/                   #   轮播管理页（index.html + assets/admin.ts）
-│   ├── <板块>/index.html         # about/ languages/ tools/ game/ web/
-│   │                            # machine-learning/ contests/
+│   ├── <板块>/index.html         # 【2026-09-28 精简为纯资料站】languages/ tools/
+│   │                            # web/ essentials/（书院主页+四板块导航）
 │   └── assets/{css,js}/         #   样式分层 + 行为层（js/ 内 .ts 源码入库，
 │                                #   types.d.ts 声明 window.SMSK 命名空间契约）
 ├── server/                      # 【阶段1新建】后端应用（NestJS）
@@ -69,14 +69,17 @@ shuimu-web/
 │   │   ├── main.ts              #   启动装配
 │   │   ├── app.module.ts        #   根模块
 │   │   ├── config/              #   配置层：环境变量注入（零硬编码）
-│   │   ├── common/              #   横切：统一日志、异常过滤器、拦截器
-│   │   ├── modules/
-│   │   │   ├── health/          #   阶段1：健康检查
-│   │   │   ├── registrations/   #   阶段2：报名（controller/service/dto/repo）
-│   │   │   ├── events/          #   阶段2：活动/赛事管理
-│   │   │   ├── auth/            #   阶段3：账号与 JWT
-│   │   │   └── admin/           #   阶段3：管理端聚合接口
-│   │   └── infrastructure/      #   Prisma client、邮件服务、存储
+│   │   ├── common/              #   通用横切件：统一异常过滤器（将来日志/拦截器）
+│   │   └── api/                 #   【2026-09-28 重构】按前端使用的 API 板块
+│   │       │                    #   垂直切分（package-by-feature）：
+│   │       │                    #   一个 API 的 controller/service/repository/dto
+│   │       │                    #   全部收拢在同目录，加新 API = 加新文件夹
+│   │       ├── banners/         #     已上线：轮播（文件仓储，阶段2 换 Prisma 仅改此夹）
+│   │       ├── health/          #     阶段1：健康检查
+│   │       ├── registrations/   #     阶段2：报名
+│   │       ├── events/          #     阶段2：活动/赛事管理
+│   │       ├── auth/            #     阶段3：账号与 JWT
+│   │       └── admin/           #     阶段3：管理端聚合接口
 │   ├── prisma/schema.prisma     #   数据库 schema（契约）
 │   ├── test/                    #   单元/接口测试
 │   └── Dockerfile
@@ -88,18 +91,26 @@ shuimu-web/
 
 > `server/` 建立前不预创建空目录；上表是目标形态，各阶段只建当期所需。
 
-## 4. 后端分层规范（对齐 agent.md Rule 2）
+## 4. 后端组织与分层规范（对齐 agent.md Rule 2）
 
-| 层 | 载体 | 职责 | 禁止 |
+**组织方式（2026-09-28 重构定案）**：`src/api/<板块>/` 按前端使用的 API 垂直切分，
+板块内四类文件同目录（`*.controller.ts` / `*.service.ts` / `*.repository.ts` / `*.dto.ts`），
+不再拆 modules/ + infrastructure/ 两个顶层目录；跨板块复用的横切件进 `common/`，
+配置进 `config/`。分层是**逻辑上的**（文件各司其职），物理上按板块收拢。
+依据用户新规则：无单文件/函数行数上限，不为拆而拆。
+
+| 层（逻辑） | 载体（物理位置） | 职责 | 禁止 |
 | :--- | :--- | :--- | :--- |
-| Presentation | `controller.ts` + `dto/` | 参数校验、路由分发、响应格式化 | 写业务逻辑 |
-| Service | `*.service.ts` | 纯业务规则（报名校验、名额控制、权限判断） | 直接调数据库驱动/第三方 SDK |
+| Presentation | `api/<板块>/*.controller.ts` + `*.dto.ts` | 参数校验、路由分发、响应格式化 | 写业务逻辑 |
+| Service | `api/<板块>/*.service.ts` | 纯业务规则（报名校验、名额控制、权限判断） | 直接调数据库驱动/第三方 SDK |
 | Infrastructure | `*.repository.ts`、`mail.service.ts` | 数据读写、邮件、存储；向上暴露抽象接口 | 被 Controller 直接调用 |
 | Config | `config/` | 端口、数据库路径、邮箱密钥等唯一取值处 | 业务代码出现硬编码配置 |
 
 硬性要求：DTO 先行（接口契约见各阶段章节）；统一 Logger（禁 console.log）；
-自定义业务异常带上下文（禁静默吞错）；单文件核心代码 ≤250 行、函数 ≤40 行；
+自定义业务异常带上下文（禁静默吞错）；
 模块间只经接口通信，仓储实例经 DI 注入。
+（2026-09-28 起：按用户新规则取消单文件 ≤250 行/函数 ≤40 行上限——
+不必为拆而拆，同类强关联代码可合并在板块目录内。）
 
 ## 5. 前端门户规范（现状维持）
 

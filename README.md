@@ -4,7 +4,7 @@
 **视觉与语言风格**严格遵循[水木书院官网](https://smc.tsinghua.edu.cn/)（清华紫 `#660874`（PANTONE 259C）门户风格，渐变辅助玫红 `#D93379`：
 中文主标题 + 英文副标题、“更多”链接、正式书院语体）。
 
-当前版本：**首页完整可用，七个板块页均为占位页**，内容待科协成员按下方指引补充。
+当前版本：**首页完整可用，四个资料板块页均为占位页**（书院主页 + 编程语言介绍/开发工具/Web开发/学校必备），内容待科协成员按下方指引补充。
 
 > **架构总纲**：全站采用「静态门户 + 后端 API + 渐进业务」架构，部署于自建服务器
 >（Nginx 同域反代，阶段2起提供报名等业务接口）。总体设计、演进路线与各阶段验收
@@ -62,20 +62,17 @@ shuimu-web/
 │   ├── ARCHITECTURE.md            # 总体架构设计（活文档：后端/部署/演进路线/TS 工具链）
 │   └── PHASE1-架构设计.md          # 前端门户接口契约
 ├── tests/selftest.html            # 纯函数自测页（浏览器原生断言）
-├── server/                        # 后端（阶段1起）：NestJS，四层结构，/api/banners
+├── server/                        # 后端（阶段1起）：NestJS，按 API 板块组织（src/api/），/api/banners
 └── site/                          # 站点部署单元（可整体拷贝部署）
-    ├── index.html                 # 首页
+    ├── index.html                 # 首页（书院主页）
     ├── data/banners.js            # 数据层：首页轮播内容（管理员维护入口，非编译产物）
     ├── admin/                     # 轮播管理页（表单 → PUT /api/banners）
     │   ├── index.html
     │   └── assets/admin.ts        # 管理页脚本源码（编译产物 admin.js 不入库）
-    ├── about/index.html           # 科协介绍（占位页）
-    ├── languages/index.html       # 编程语言（占位页）
+    ├── languages/index.html       # 编程语言介绍（占位页）
     ├── tools/index.html           # 开发工具（占位页）
-    ├── game/index.html            # 游戏开发（占位页）
     ├── web/index.html             # Web 开发（占位页）
-    ├── machine-learning/index.html# 机器学习（占位页）
-    ├── contests/index.html        # 科创竞赛（占位页）
+    ├── essentials/index.html      # 学校必备（占位页）
     ├── tsconfig.json              # 前端 TS 编译配置（strict 全开，原位产出 .js）
     └── assets/                    # 全站共享资源（各板块如需图片，放各自文件夹内）
         ├── css/                   # 样式层（单一职责拆分，均 ≤250 行核心代码）

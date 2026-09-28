@@ -1,15 +1,15 @@
 /**
  * ============================================================================
- * 模块：业务模块 / 轮播内容服务（server/src/modules/banners/banners.service.ts）
+ * 模块：API 板块 / 轮播内容服务（server/src/api/banners/banners.service.ts）
  * 职责：轮播内容的业务规则——读取、保存（经仓储持久化），并对数据做
  *       业务级校验（标题去空白、链接补协议等 DTO 覆盖不到的规则）。
- * 依赖：@nestjs/common（Logger）；BANNER_SLIDES_REPOSITORY（基础设施抽象）。
+ * 依赖：@nestjs/common（Logger）；BANNER_SLIDES_REPOSITORY（同目录仓储抽象）。
  * ============================================================================
  */
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import {
   BANNER_SLIDES_REPOSITORY, BannerSlideRecord,
-} from '../../infrastructure/banners-file.repository';
+} from './banners.repository';
 
 /**
  * BannersService —— 轮播内容业务服务
