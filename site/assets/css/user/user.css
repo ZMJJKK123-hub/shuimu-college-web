@@ -1,0 +1,127 @@
+/* ==========================================================================
+   user.css —— 用户板块专属：登录/注册卡片（极简组合输入框风格）
+   归属：css/user/（仅 site/user/signin.html 与 site/user/signup.html 引入）
+   依赖：common/base.css 的清华紫设计令牌 + common/layout.css 的页面框架
+   说明：管理员登录页为独立深色风格（css/administrator/），与本文件刻意区分
+   ========================================================================== */
+
+/* ---- 登录/注册内容区：浅紫晕染底 + 居中卡片 ---- */
+.auth-zone {
+  padding: 72px 20px 100px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(102, 8, 116, 0.06), transparent 40%),
+    radial-gradient(circle at 88% 80%, rgba(217, 51, 121, 0.06), transparent 45%),
+    #fff;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.auth-card {
+  width: 400px;
+  max-width: 100%;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 40px 36px 30px;
+}
+
+/* ---- 卡片头：标题（中文 + 英文副题） ---- */
+.auth-head { text-align: center; margin-bottom: 28px; }
+.auth-head h1 {
+  font-size: 24px;
+  color: var(--text-dark);
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+.auth-head .sub {
+  font-size: 12px;
+  color: var(--text-sub);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 7px;
+}
+
+/* ---- 组合输入框：多框合一（浅紫底 + 左侧图标 + 占位文字即标签） ---- */
+.auth-fields {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #faf7fb;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.auth-fields:focus-within {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(102, 8, 116, 0.08);
+}
+.auth-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+}
+.auth-field + .auth-field { border-top: 1px solid var(--line); }
+.auth-field svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-sub);
+  flex: none;
+  transition: color 0.2s;
+}
+.auth-field:focus-within svg { color: var(--purple); }
+.auth-field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  height: 46px;
+  font-size: 14px;
+  color: var(--text-main);
+  font-family: inherit;
+}
+
+/* ---- 错误条（后端 401/409 文案或本地预校验文案） ---- */
+.auth-msg {
+  font-size: 13px;
+  margin-top: 12px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  line-height: 1.6;
+}
+.auth-msg.err { color: #c0392b; background: #fdf0ef; }
+
+/* ---- 提交按钮：100% 宽清华紫实色 ---- */
+.auth-submit {
+  width: 100%;
+  height: 44px;
+  margin-top: 22px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--purple);
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: 4px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.auth-submit:hover { background: var(--purple-hover); }
+.auth-submit:disabled { opacity: 0.6; cursor: default; }
+
+/* ---- 卡片底部：注册/登录互链 + 管理员登录入口 ---- */
+.auth-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+.auth-foot a { color: var(--purple); }
+.auth-foot a:hover { text-decoration: underline; }
+
+/* ---- 响应式（登录/注册卡片） ---- */
+@media (max-width: 480px) {
+  .auth-zone { padding: 44px 14px 64px; }
+  .auth-card { padding: 30px 22px 22px; }
+}

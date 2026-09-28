@@ -8,6 +8,7 @@
  *   → infrastructure/dom.js → infrastructure/logger.js
  *   → services/nav.service.js → services/nav-collapse.service.js
  *   → services/backtop.service.js
+ *   → 各内容页另载 user/assets/auth.service.js（登录态，全站内容页）
  *   → 首页另载 index/assets/banner.service.js（板块专属）
  *     与 data/banners.js（轮播数据）→ 本文件
  * Globals Used: window.SMSK.CONFIG（配置层注入）、document（DOM 根）
@@ -48,7 +49,8 @@ function validateConfig(cfg: SiteConfig | null | undefined): asserts cfg is Site
  * 职责：校验配置 → 建日志器 → 装配导航/导航收起/轮播/返回顶部四个服务并启动
  * Globals Used: window.SMSK.CONFIG、document.body（data-page 页面标识）
  * Calls: SMSK.createLogger / createBannerService / createNavService /
- *        createNavCollapseService / createBacktopService / validateConfig
+ *        createNavCollapseService / createAuthService / createBacktopService /
+ *        validateConfig
  */
 function bootstrap(): void {
   const cfg = window.SMSK.CONFIG;
@@ -74,6 +76,14 @@ function bootstrap(): void {
         SMSK.qs('.banner'), cfg.banner, logger, window.SMSK.DATA_BANNERS || [])
     : { start: function () {}, destroy: function () {} };
   bannerService.start();
+
+  // 登录态：user 板块专属服务（user/assets/auth.service.js 由全站内容页加载），
+  // 未加载该服务的页面（如 admin 工具页）降级为空实现
+  const authService: ServiceLifecycle = SMSK.createAuthService
+    ? SMSK.createAuthService(SMSK.qs('.header-tools'), logger)
+    : { start: function () {}, destroy: function () {} };
+  authService.start();
+
   const backtopService =
     SMSK.createBacktopService(SMSK.qs('.backtop'), cfg.backtopThresholdPx, logger);
   backtopService.start();
@@ -84,6 +94,7 @@ function bootstrap(): void {
       nav: navService,
       navCollapse: navCollapseService,
       banner: bannerService,
+      auth: authService,
       backtop: backtopService
     }
   };

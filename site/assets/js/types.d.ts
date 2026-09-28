@@ -23,6 +23,12 @@ type Unbind = () => void;
 /** NavState —— 主导航滚动收起状态机取值 */
 type NavState = 'collapsed' | 'expanded';
 
+/** AuthState —— localStorage 持久化的登录态（键 SMSK_AUTH，auth.service.ts 维护） */
+interface AuthState {
+  token: string;
+  account: string;
+}
+
 /* ---------- 数据契约 ---------- */
 
 /** BannerLink —— 轮播跳转链接（label 选填，href 必填） */
@@ -83,6 +89,15 @@ interface NavServiceApi {
   bindMobileToggle(): void;
 }
 
+/** AuthApi —— 登录态助手（auth.service.ts 挂载到 window.SMSK.auth，供页面脚本调用） */
+interface AuthApi {
+  isLoggedin(): boolean;
+  getAccount(): string;
+  getToken(): string;
+  save(state: AuthState): void;
+  logout(): void;
+}
+
 /** AppHandle —— main.ts 装配完成后的运行时句柄（调试/销毁入口） */
 interface AppHandle {
   logger: Logger;
@@ -90,6 +105,7 @@ interface AppHandle {
     nav: NavServiceApi;
     navCollapse: ServiceLifecycle;
     banner: ServiceLifecycle;
+    auth: ServiceLifecycle;
     backtop: ServiceLifecycle;
   };
 }
@@ -124,6 +140,10 @@ interface SMSKNamespace {
   createNavCollapseService: typeof createNavCollapseService;
   /** 返回顶部（services/backtop.service.ts 挂载） */
   createBacktopService: typeof createBacktopService;
+  /** 登录态（user/assets/auth.service.ts，全站内容页加载；main.ts 对未加载页降级空实现） */
+  validateCredential: typeof validateCredential;
+  createAuthService?: typeof createAuthService;
+  auth?: AuthApi;
   /** 运行时句柄（main.ts 装配完成后挂载） */
   app?: AppHandle;
 }

@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <!-- ============================================================
-     页面：关于我们板块页（about）｜页面标识 data-page="about"
-     内容：科协简介（自首页迁入：左文案 + 右数据统计卡）
-     依赖：assets/css/{base,layout,subpage}.css + assets/js/main.js 装配
+     页面：用户板块 / 账号登录页（user/signin.html）｜页面标识 data-page="user"
+     内容：极简风登录卡片（账号 + 密码，无任何手机/邮箱验证渠道）；
+           卡片底部挂"管理员登录"入口 → ../administrator/index.html
+     依赖：assets/css/{base,layout,footer,user/user}.css
+           + assets/js 公用脚本 + assets/auth.service.js + assets/signin.js
      ============================================================ -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>关于我们 - 清华大学水木书院学生科学技术协会</title>
-  <meta name="description" content="水木书院学生科学技术协会简介：组织定位、服务板块与成长路径。">
+  <title>账号登录 - 清华大学水木书院学生科学技术协会</title>
+  <meta name="description" content="水木书院科协官网账号登录：账号密码登录，注册后可使用更多功能。">
   <link rel="stylesheet" href="../assets/css/common/base.css">
   <link rel="stylesheet" href="../assets/css/common/layout.css">
   <link rel="stylesheet" href="../assets/css/common/footer.css">
-  <link rel="stylesheet" href="../assets/css/common/subpage.css">
-  <link rel="stylesheet" href="../assets/css/about/about.css">
+  <link rel="stylesheet" href="../assets/css/user/user.css">
 </head>
-<body data-page="about">
+<body data-page="user">
 
   <!-- 顶部欢迎条 -->
   <div class="topbar">
@@ -30,7 +31,7 @@
     </div>
   </div>
 
-  <!-- 页头：徽标 + 站名 + 右侧工具（搜索/English 为占位入口） -->
+  <!-- 页头：徽标 + 站名 + 右侧工具（登录态由 auth.service.js 渲染于 .auth-area） -->
   <header class="header">
     <div class="container">
       <img class="thu-mark" src="../assets/img/thu-logo.png" alt="清华大学">
@@ -51,11 +52,11 @@
           搜索
         </a>
         <span class="auth-area">
-          <a class="tool-btn" href="../user/signin.html" title="账号登录">
+          <a class="tool-btn" href="signin.html" title="账号登录">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
             登录
           </a>
-          <a class="tool-btn" href="../user/signup.html" title="注册新账号">
+          <a class="tool-btn" href="signup.html" title="注册新账号">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/><path d="M19 8v6M16 11h6"/></svg>
             注册
           </a>
@@ -65,7 +66,7 @@
     </div>
   </header>
 
-  <!-- 主导航（nav.service.js 依 data-page 高亮） -->
+  <!-- 主导航（nav.service.js 依 data-page 高亮；本页为工具页，无对应导航项） -->
   <nav class="mainnav">
     <div class="container">
       <ul id="nav-list">
@@ -81,38 +82,30 @@
   <div class="nav-mask"></div>
 
   <main>
-    <!-- 子页横幅：面包屑 + 板块名（中英双语） -->
-    <section class="page-banner">
-      <div class="container inner">
-        <div class="crumbs"><a href="../index/index.html">书院主页</a> / 关于我们</div>
-        <h1>关于我们</h1>
-        <div class="sub">About Us</div>
-      </div>
-    </section>
-
-    <!-- 科协简介（自首页迁入：左文案 + 右数据统计卡，文案均为占位待补充） -->
-    <section class="section" id="about">
-      <div class="container">
-        <div class="sec-head">
-          <div class="left">
-            <div class="bar"></div>
-            <span class="cn">科协简介</span>
-            <div class="en">Who We Are</div>
-          </div>
+    <!-- 登录卡片：极简组合输入框（浅底 + 图标 + 占位文字即标签） -->
+    <section class="auth-zone">
+      <div class="auth-card">
+        <div class="auth-head">
+          <h1>账号登录</h1>
+          <div class="sub">Sign In</div>
         </div>
-        <div class="about-flex">
-          <div class="text">
-            <p class="lead">立足水木书院，服务书院学子科创成长。（占位导语）</p>
-            <p>水木书院学生科学技术协会是面向书院全体学生的科创组织，围绕编程语言介绍、开发工具、Web 开发与学校资源四大资料板块，持续整理学习指南与实用资料，服务书院学子的学业与科创需求。（简介正文占位，待补充）</p>
-            <p>协会秉持“实践·分享·创造”的理念，为书院学子提供从入门到进阶的技术成长路径，助力书院“AI 驱动的工程+管理”特色人才培养。（简介正文占位，待补充）</p>
-            <a class="btn" href="../index/index.html">返回书院主页</a>
+        <form id="auth-form" novalidate>
+          <div class="auth-fields">
+            <div class="auth-field">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+              <input id="account" type="text" placeholder="账号（4~30 位字母或数字）" autocomplete="username" maxlength="30">
+            </div>
+            <div class="auth-field">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <input id="password" type="password" placeholder="密码（6~64 位）" autocomplete="current-password" maxlength="64">
+            </div>
           </div>
-          <div class="stats">
-            <div class="stat-card"><div class="num">4</div><div class="label">资料板块（已搭建）</div></div>
-            <div class="stat-card"><div class="num">20<small>+</small></div><div class="label">知识主题（占位）</div></div>
-            <div class="stat-card"><div class="num">100<small>+</small></div><div class="label">科协成员（占位）</div></div>
-            <div class="stat-card"><div class="num">每学期</div><div class="label">多场技术沙龙（占位）</div></div>
-          </div>
+          <p class="auth-msg" id="msg" hidden></p>
+          <button class="auth-submit" id="submit" type="submit">登 录</button>
+        </form>
+        <div class="auth-foot">
+          <span>还没有账号？<a href="signup.html">免费注册</a></span>
+          <a class="admin-entry" href="../administrator/index.html">管理员登录 →</a>
         </div>
       </div>
     </section>
@@ -175,7 +168,9 @@
   <script src="../assets/js/services/nav.service.js"></script>
   <script src="../assets/js/services/backtop.service.js"></script>
   <script src="../assets/js/services/nav-collapse.service.js"></script>
-  <script src="../user/assets/auth.service.js"></script>
+  <script src="assets/auth.service.js"></script>
   <script src="../assets/js/main.js"></script>
+  <!-- 本页专属表单脚本（编译产物 signin.js 由 assets/signin.ts 原位编译，不入库） -->
+  <script src="assets/signin.js"></script>
 </body>
 </html>

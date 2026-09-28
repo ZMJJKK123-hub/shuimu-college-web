@@ -26,14 +26,15 @@
 </head>
 <body>
   <h1>纯函数自测（Selftest）</h1>
-  <p class="summary">覆盖 nextIndex / resolveNavState / validateBannerSlides / createLogger 契约的输入边界与分支路径。</p>
+  <p class="summary">覆盖 nextIndex / resolveNavState / validateBannerSlides / validateCredential / createLogger 契约的输入边界与分支路径。</p>
   <div id="results"></div>
 
   <!-- 被测模块：仅引入纯函数与契约所需文件（加载顺序见各文件头注） -->
   <script src="../site/assets/js/infrastructure/errors.js"></script>
   <script src="../site/assets/js/infrastructure/logger.js"></script>
-  <script src="../site/index/assets/banner.service.js"></script>
   <script src="../site/assets/js/services/nav-collapse.service.js"></script>
+  <script src="../site/index/assets/banner.service.js"></script>
+  <script src="../site/user/assets/auth.service.js"></script>
   <script src="../site/index/data/banners.js"></script>
 
   <script>
@@ -109,6 +110,13 @@
       run('validate(缺 title) 返回字段路径', function () { assertSame(SMSK.validateBannerSlides([{ organizer: 'x' }]), 'banners[0].title 缺失或为空'); });
       run('validate(link 缺 href) 返回字段路径', function () { assertSame(SMSK.validateBannerSlides([{ title: 'x', link: { label: 'a' } }]), 'banners[0].link.href 缺失'); });
       run('validate(选填项全空) 仅标题也合法', function () { assertSame(SMSK.validateBannerSlides([{ title: 'x' }]), null); });
+
+      // ---- validateCredential：账号/密码格式契约（前后端同规则） ----
+      run('credential(user2026, tsinghua) 合法', function () { assertSame(SMSK.validateCredential('user2026', 'tsinghua'), null); });
+      run('credential(abc, ...) 账号过短报错', function () { assertSame(SMSK.validateCredential('abc', 'tsinghua'), '账号须为 4~30 位字母或数字'); });
+      run('credential(含中文, ...) 账号含非法字符报错', function () { assertSame(SMSK.validateCredential('水木user', 'tsinghua'), '账号须为 4~30 位字母或数字'); });
+      run('credential(..., 12345) 密码过短报错', function () { assertSame(SMSK.validateCredential('user2026', '12345'), '密码长度须为 6~64 位'); });
+      run('credential(..., 65位) 密码过长报错', function () { assertSame(SMSK.validateCredential('user2026', 'a'.repeat(65)), '密码长度须为 6~64 位'); });
 
       // ---- createLogger：配置契约校验 ----
       run('createLogger("info") 合法级别可创建', function () { assertSame(typeof SMSK.createLogger('info').info, 'function'); });
