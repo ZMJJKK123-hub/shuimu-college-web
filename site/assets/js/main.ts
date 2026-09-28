@@ -4,11 +4,12 @@
  * 职责：读取 SiteConfig → 校验 → 创建统一 Logger → 依当前页面装配
  *       所需服务（导航/导航收起/轮播/返回顶部）并启动；全站唯一装配点。
  * 加载依赖顺序（HTML 中 script 引入顺序，缺一不可）：
- *   config/site.config.js → infrastructure/errors.js → infrastructure/dom.js
- *   → infrastructure/logger.js → services/banner.service.js
+ *   assets/js: config/site.config.js → infrastructure/errors.js
+ *   → infrastructure/dom.js → infrastructure/logger.js
  *   → services/nav.service.js → services/nav-collapse.service.js
- *   → services/backtop.service.js → data/banners.js（首页轮播数据）→ 本文件
- *   （以上均为 .ts 编译产物的同名 .js，HTML 引用名不变）
+ *   → services/backtop.service.js
+ *   → 首页另载 index/assets/banner.service.js（板块专属）
+ *     与 data/banners.js（轮播数据）→ 本文件
  * Globals Used: window.SMSK.CONFIG（配置层注入）、document（DOM 根）
  * 挂载：window.SMSK.app（运行时句柄：logger 与服务实例，便于调试/销毁）
  * ============================================================================
@@ -66,9 +67,12 @@ function bootstrap(): void {
     SMSK.createNavCollapseService(SMSK.qs('.mainnav'), cfg.navCollapse, logger);
   navCollapseService.start();
 
-  // 轮播/返回顶部：非首页或无节点时工厂内部降级为空实现（warn 日志）
-  const bannerService = SMSK.createBannerService(
-    SMSK.qs('.banner'), cfg.banner, logger, window.SMSK.DATA_BANNERS || []);
+  // 轮播：首页专属服务（index/assets/banner.service.js 与 data/banners.js 仅首页加载），
+  // 未加载该服务的页面降级为空实现（与"无轮播节点返回空实现"同语义）
+  const bannerService: ServiceLifecycle = SMSK.createBannerService
+    ? SMSK.createBannerService(
+        SMSK.qs('.banner'), cfg.banner, logger, window.SMSK.DATA_BANNERS || [])
+    : { start: function () {}, destroy: function () {} };
   bannerService.start();
   const backtopService =
     SMSK.createBacktopService(SMSK.qs('.backtop'), cfg.backtopThresholdPx, logger);

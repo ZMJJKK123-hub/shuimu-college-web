@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * 模块：服务层 / 首页轮播服务（assets/js/services/banner.service.ts）
+ * 模块：首页板块专属 / 轮播服务（index/assets/banner.service.ts）
  * 职责：按数据层（site/data/banners.js，四接口契约）渲染首页 .banner 的
  *       幻灯片，并接管自动播放与指示点交互（切换 .slide.active）。
  *       契约：organizer(选填)/title(必填)/description(选填)/link(选填)；

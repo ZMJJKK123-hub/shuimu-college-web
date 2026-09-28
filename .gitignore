@@ -25,6 +25,7 @@ coverage/
 # 前端 TS 编译产物（源码 .ts 入库；.js 由 tsc 本地原位编译生成，不入库。
 # 注意：site/data/banners.js 是数据文件不是编译产物，正常入库，不受影响）
 site/assets/js/**/*.js
+site/index/assets/*.js
 site/admin/assets/*.js
 
 # 后端敏感配置与本地数据（只存服务器，绝不入库）

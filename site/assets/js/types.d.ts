@@ -113,10 +113,10 @@ interface SMSKNamespace {
   on: typeof on;
   /** 日志（infrastructure/logger.ts 挂载） */
   createLogger: typeof createLogger;
-  /** 轮播（services/banner.service.ts 挂载） */
+  /** 轮播（index/assets/banner.service.ts，仅首页加载；main.ts 对未加载页降级空实现） */
   nextIndex: typeof nextIndex;
   validateBannerSlides: typeof validateBannerSlides;
-  createBannerService: typeof createBannerService;
+  createBannerService?: typeof createBannerService;
   /** 导航（services/nav.service.ts 挂载） */
   createNavService: typeof createNavService;
   /** 导航收起（services/nav-collapse.service.ts 挂载） */

@@ -65,6 +65,7 @@ shuimu-web/
 ├── server/                        # 后端（阶段1起）：NestJS，按 API 板块组织（src/api/），/api/banners
 └── site/                          # 站点部署单元（可整体拷贝部署）
     ├── index.html                 # 首页（书院主页）
+    ├── index/assets/banner.ts     # 首页专属脚本：轮播服务（板块下沉，产物 .js 不入库）
     ├── data/banners.js            # 数据层：首页轮播内容（管理员维护入口，非编译产物）
     ├── admin/                     # 轮播管理页（表单 → PUT /api/banners）
     │   ├── index.html
@@ -76,20 +77,16 @@ shuimu-web/
     ├── about/index.html           # 关于我们（科协简介，自首页迁入）
     ├── tsconfig.json              # 前端 TS 编译配置（strict 全开，原位产出 .js）
     └── assets/                    # 全站共享资源（各板块如需图片，放各自文件夹内）
-        ├── css/                   # 样式层（2026-09-28 板块化目录：同名文件夹 + common 公用）
-        │   ├── common/            #   全站公用
-        │   │   ├── base.css       #     设计令牌 + reset + 通用组件
-        │   │   ├── layout.css     #     顶条/页头/主导航/移动端抽屉
-        │   │   └── footer.css     #     页脚/版权条/返回顶部
-        │   ├── home/              #   首页板块
-        │   │   └── home.css       #     轮播横幅/新闻公告
-        │   ├── subpage/           #   板块占位子页共用
-        │   │   └── subpage.css    #     子页横幅/占位卡片/主题标签
-        │   ├── about/             #   关于我们板块
-        │   │   └── about.css      #     科协简介双栏/统计卡
-        │   └── admin/             #   管理页板块
-        │       └── admin.css      #     管理表单样式（自内联抽出）
-        └── js/                    # 行为层（TS 源码入库，编译 .js 不入库）
+        ├── css/                   # 样式层（板块同名文件夹 + common 公用）
+        │   ├── common/            #   公用：base / layout / footer / subpage（子页横幅占位卡）
+        │   ├── index/             #   首页板块：index.css（轮播/新闻公告）
+        │   ├── languages/         #   编程语言介绍板块：languages.css（空占位）
+        │   ├── tools/             #   开发工具板块：tools.css（空占位）
+        │   ├── web/               #   Web 开发板块：web.css（空占位）
+        │   ├── essentials/        #   学校资源板块：essentials.css（空占位）
+        │   ├── about/             #   关于我们板块：about.css（简介双栏/统计卡）
+        │   └── admin/             #   管理页板块：admin.css（自内联抽出）
+        └── js/                    # 全站公用行为层（TS 源码入库，编译 .js 不入库）
             ├── types.d.ts             # 类型层：window.SMSK 命名空间与共享契约
             ├── config/site.config.ts  # 配置层：站点唯一配置源
             ├── infrastructure/        # 基础设施层：errors / dom / logger
