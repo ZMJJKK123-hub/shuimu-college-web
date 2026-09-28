@@ -16,6 +16,11 @@
   align-items: center;
   height: 34px;
 }
+/* 通栏：欢迎语贴视口左缘、右侧链接贴右缘（覆盖通用容器限宽，随分辨率自适应；
+   移动端窄屏由下方媒体查询接管：居中并隐藏欢迎语） */
+@media (min-width: 901px) {
+  .topbar .container { width: 100%; }
+}
 .topbar a { color: rgba(255, 255, 255, 0.85); transition: color 0.2s; }
 .topbar a:hover { color: #fff; }
 
