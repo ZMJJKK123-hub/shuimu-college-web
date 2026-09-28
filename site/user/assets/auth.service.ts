@@ -4,7 +4,10 @@
  * 职责：全站页头登录态的存取与渲染——登录态持久化于 localStorage（键
  *       SMSK_AUTH：{ token, account }）；启动时向后端 GET /api/user/me
  *       校验令牌（失效即清除并回落未登录视图），并把页头 .header-tools
- *       内的 .auth-area 在「登录/注册」与「账号名/退出」两种视图间切换。
+ *       内的 .auth-area 在两种视图间切换：未登录=「登录/注册」链接；
+ *       已登录=默认头像（首字母圆标，悬停提示"更改头像"）+ 用户名
+ *       （悬停下拉：用户信息/个人信息设置/粗分界线/退出登录，个人信息
+ *       类入口为占位空跳转，样式见 common/layout.css 页头用户菜单区块）。
  *       另暴露纯函数 validateCredential（账号/密码格式校验，前后端同规则）
  *       与 SMSK.auth 助手（signin/signup 页面脚本调用）。
  * 说明：本服务挂载于全部内容页（与公用脚本同载，先于 main.js 加载），
@@ -102,12 +105,19 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
     }
     if (state) {
       area.innerHTML =
-        '<span class="tool-btn auth-account" title="已登录账号">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>' +
-        escapeHtml(state.account) + '</span>' +
-        '<a class="tool-btn" href="#" data-act="logout" title="退出登录">' +
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>' +
-        '退出</a>';
+        '<div class="header-user">' +
+        '<a class="user-avatar" href="#" data-act="placeholder" data-tip="更改头像" title="更改头像（建设中，点击暂无跳转）">' +
+        escapeHtml(state.account.charAt(0).toUpperCase()) + '</a>' +
+        '<div class="user-name" tabindex="0">' +
+        escapeHtml(state.account) +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>' +
+        '<div class="user-menu">' +
+        '<a href="#" data-act="placeholder" title="建设中，点击暂无跳转">用户信息</a>' +
+        '<a href="#" data-act="placeholder" title="建设中，点击暂无跳转">个人信息设置</a>' +
+        '<a class="menu-logout" href="#" data-act="logout" title="退出登录">退出登录</a>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
     } else {
       area.innerHTML =
         '<a class="tool-btn" href="../user/signin.html" title="账号登录">' +
@@ -136,13 +146,20 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
 
   return {
     start: function (): void {
-      // 退出按钮点击（事件委托，两种视图切换后无需重复绑定）
+      // 菜单点击（事件委托）：退出登录执行登出；占位入口（用户信息/设置/更改头像）仅阻止默认行为
       unbinds.push(SMSK.on(root, 'click', function (ev: Event): void {
         const target = ev.target as Element | null;
-        const btn = target && target.closest ? target.closest('[data-act="logout"]') : null;
-        if (btn) {
+        const closest = target && target.closest ? target.closest.bind(target) : null;
+        if (!closest) { return; }
+        const logoutBtn = closest('[data-act="logout"]');
+        if (logoutBtn) {
           ev.preventDefault();
           doLogout();
+          return;
+        }
+        const placeholder = closest('[data-act="placeholder"]');
+        if (placeholder) {
+          ev.preventDefault();
         }
       }));
       if (state) {

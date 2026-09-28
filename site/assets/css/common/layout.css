@@ -231,3 +231,110 @@
   .topbar .container { justify-content: center; }
   .topbar .slogan { display: none; }
 }
+
+
+/* ---- 页头用户菜单（登录态，auth.service.js 渲染于 .auth-area；纯追加区块） ---- */
+.header-user { display: flex; align-items: center; gap: 8px; padding: 4px 10px; }
+
+/* 默认头像：紫色渐变圆 + 账号首字母（无上传功能时的默认形象） */
+.user-avatar {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--purple-bright));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  transition: filter 0.2s;
+}
+.user-avatar:hover { filter: brightness(1.12); }
+
+/* 头像悬停提示："更改头像"气泡 */
+.user-avatar::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--purple-dark);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s, visibility 0.15s;
+  z-index: 60;
+}
+.user-avatar:hover::after { opacity: 1; visibility: visible; }
+
+/* 用户名：悬停触发器（下拉菜单挂在名下） */
+.user-name {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-main);
+  padding: 4px 2px;
+  cursor: pointer;
+  outline: none;
+}
+.user-name svg {
+  width: 10px;
+  height: 10px;
+  color: var(--text-sub);
+  transition: transform 0.2s;
+}
+.user-name:hover, .user-name:focus-within { color: var(--purple); }
+.user-name:hover svg, .user-name:focus-within svg { transform: rotate(180deg); }
+
+/* 下拉菜单：悬停/聚焦用户名展开 */
+.user-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 150px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(102, 8, 116, 0.16);
+  padding: 6px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+  z-index: 50;
+}
+.user-name:hover .user-menu,
+.user-name:focus-within .user-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.user-menu a {
+  display: block;
+  padding: 9px 18px;
+  font-size: 13.5px;
+  color: var(--text-main);
+  transition: background 0.15s, color 0.15s;
+}
+.user-menu a:hover { background: var(--purple-bg); color: var(--purple); }
+
+/* 退出登录与普通选项之间：明显的粗分界线（区别于条目自身的细悬停底色） */
+.user-menu .menu-logout {
+  border-top: 2px solid var(--line);
+  margin-top: 5px;
+  padding-top: 11px;
+  border-radius: 0;
+  color: var(--text-sub);
+}
+.user-menu .menu-logout:hover { background: #fdf2f2; color: #d34141; }
