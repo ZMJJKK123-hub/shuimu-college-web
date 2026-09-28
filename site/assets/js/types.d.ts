@@ -40,13 +40,6 @@ interface BannerSlide {
   link?: BannerLink | null;
 }
 
-/** NavItem —— 主航单项契约（与 HTML 中 <li data-page> 对应） */
-interface NavItem {
-  id: string;
-  label: string;
-  href: string;
-}
-
 /* ---------- 配置契约 ---------- */
 
 /** BannerConfig —— 轮播行为配置（SiteConfig.banner） */
@@ -125,7 +118,6 @@ interface SMSKNamespace {
   validateBannerSlides: typeof validateBannerSlides;
   createBannerService: typeof createBannerService;
   /** 导航（services/nav.service.ts 挂载） */
-  resolveActivePage: typeof resolveActivePage;
   createNavService: typeof createNavService;
   /** 导航收起（services/nav-collapse.service.ts 挂载） */
   resolveNavState: typeof resolveNavState;

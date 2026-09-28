@@ -62,14 +62,11 @@ shuimu-web/
     ├── machine-learning/index.html# 机器学习 Machine Learning（占位页）
     ├── contests/index.html        # 科创竞赛 Contests（占位页）
     └── assets/                    # 全站共享资源（板块私有资源放各板块文件夹）
-        ├── css/                   # 样式层（按职责物理拆分，单文件 ≤250 行核心代码）
+        ├── css/                   # 样式层（2026-09-28 合并精简：无行数上限，不为拆而拆）
         │   ├── base.css           #   设计令牌（CSS 变量）+ reset + 通用组件
         │   ├── layout.css         #   顶栏/页头/主导航/移动端抽屉
         │   ├── footer.css         #   页脚四栏/版权条/返回顶部
-        │   ├── home.css           #   首页：轮播横幅
-        │   ├── home-about.css     #   首页：科协简介与统计卡
-        │   ├── home-tech.css      #   首页：技术板块六宫格
-        │   ├── home-news.css      #   首页：新闻/通知双栏面板
+        │   ├── home.css           #   首页合一：轮播/简介/板块宫格/新闻公告
         │   └── subpage.css        #   子页：page-banner/占位卡片/主题标签
         └── js/                        # TS 源码入库，编译产物 .js 不入库（2026-09-27 起）
             ├── types.d.ts          # 类型层：window.SMSK 命名空间与共享契约声明
@@ -96,14 +93,6 @@ shuimu-web/
 ### 3.1 配置实体（config 层）
 
 ```js
-/**
- * NavItem —— 导航项契约
- * @typedef {Object} NavItem
- * @property {string} id      页面标识，与 HTML 中 <li data-page> 对应，如 "languages"
- * @property {string} label   中文显示名，如 "编程语言"
- * @property {string} href    页面相对路径，如 "languages.html"
- */
-
 /**
  * BannerConfig —— 轮播配置契约
  * @typedef {Object} BannerConfig
@@ -176,7 +165,8 @@ shuimu-web/
  * @param {string}        pageId    当前页面标识（取自 <body data-page>）
  * @param {Logger}        logger
  * @returns {{ highlight(): void, bindMobileToggle(): void }}
- * 行为：resolveActivePage(pathname, navItems) 为导出纯函数（路径→id 映射）供自测
+ * 行为：按 <body data-page> 直接高亮对应 <li data-page>（2026-09-28 移除
+ *      运行时未使用的 resolveActivePage 纯函数及其 NavItem 契约）
  */
 
 /**
@@ -200,15 +190,17 @@ shuimu-web/
 ## 4. 全局基线落地（Rule 1 / Rule 2）
 
 1. **文档注释**：所有 JS 文件顶部标注模块职责与加载依赖顺序；每个工厂/纯函数按契约格式注释（职责 / Globals Used / Calls / Args / Returns）。
-2. **文件与函数尺寸**：CSS/JS 单文件核心代码 ≤250 行；函数 ≤40 行（注释不计）。
+2. **文件与函数尺寸**：（2026-09-28 起按新协议取消行数上限，不为拆而拆；
+   首页样式已由 4 文件合并回 home.css。）
 3. **零硬编码**：轮播间隔、日志级别、滚动阈值等全部经 `site.config.ts` 注入。
 4. **日志**：全程使用 `Logger`（info/warn/error 语义化），页面生命周期关键节点输出 INFO。
 5. **错误处理**：配置缺失、关键 DOM 缺失抛自定义异常并附上下文，不静默吞错。
-6. **纯逻辑可测**：`nextIndex`、`resolveActivePage` 独立导出，`tests/selftest.html` 以浏览器原生断言覆盖边界（空列表/越界/路径大小写等）。
+6. **纯逻辑可测**：`nextIndex`、`resolveNavState`、`validateBannerSlides` 独立导出，
+   `tests/selftest.html` 以浏览器原生断言覆盖边界（空列表/越界/契约违约等）。
 
 ## 5. Phase 2 交付清单（确认后执行）
 
-1. 拆分样式为 4 个分层 CSS 模块（风格与既有草稿一致：紫色书院门户风）。
+1. 样式模块（紫色书院门户风；2026-09-28 已按新规则合并精简）。
 2. 按契约实现 config / infrastructure / services / main.ts（2026-09-27 起为 TypeScript 源码，编译产物 .js 不入库）。
 3. 首页 `index.html` + 7 个板块占位页（同头部导航/页脚，占位卡片 + 主题标签）。
 4. `tests/selftest.html` 纯函数自测；本地起服务验证渲染并截图自检。

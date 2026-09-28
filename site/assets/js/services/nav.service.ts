@@ -3,41 +3,17 @@
  * 模块：服务层 / 导航服务（assets/js/services/nav.service.ts）
  * 职责：主导航当前页高亮（.active）与移动端抽屉菜单的开关交互。
  * 依赖：errors.ts / dom.ts / logger.ts（均需先于本文件加载）。
- * 类型：NavItem / NavServiceApi 见 assets/js/types.d.ts。
- * 挂载：window.SMSK.createNavService（工厂）、
- *       window.SMSK.resolveActivePage（纯函数，供自测）
+ * 类型：NavServiceApi 见 assets/js/types.d.ts。
+ * 挂载：window.SMSK.createNavService（工厂）
  * ============================================================================
  */
 window.SMSK = window.SMSK || ({} as SMSKNamespace);
 
 /**
- * resolveActivePage —— 纯函数：由路径解析当前导航项 id
- * 输入：pathname 页面路径（如 "/languages.html"、"/"、"/index.html"）；
- *       navItems 导航契约数组
- * 返回：匹配的 NavItem.id；根路径/index.html 归一化为 "index"；未匹配返回 null
- * 单一职责：路径→id 映射推算，不做 DOM 操作（tests/selftest.html 覆盖）
- */
-function resolveActivePage(pathname: string | null | undefined,
-                           navItems: NavItem[]): string | null {
-  let file = String(pathname ?? '').split('/').pop() || '';
-  file = file.toLowerCase();
-  if (file === '' || file === 'index.html') { file = 'index'; }
-  const base = file.replace(/\.html?$/, '');
-  for (let i = 0; i < navItems.length; i++) {
-    const item = navItems[i];
-    if (item.id === base) { return item.id; }
-    const hrefBase = (String(item.href || '').split('/').pop() || '')
-      .replace(/\.html?$/, '').toLowerCase();
-    if (hrefBase === base) { return item.id; }
-  }
-  return null;
-}
-
-/**
  * createNavService —— 导航服务工厂
  * 职责：高亮当前页对应的 <li data-page>；绑定移动端汉堡/遮罩开关
  * Globals Used: 无（依赖全部经参数注入）
- * Calls: SMSK.qs / resolveActivePage
+ * Calls: SMSK.qs
  * @param navEl  主导航 <ul> 节点（#nav-list）
  * @param pageId 当前页面标识（取自 <body data-page>）
  * @param logger 统一日志器
@@ -83,5 +59,4 @@ function createNavService(navEl: HTMLElement | null, pageId: string,
   };
 }
 
-window.SMSK.resolveActivePage = resolveActivePage;
 window.SMSK.createNavService = createNavService;

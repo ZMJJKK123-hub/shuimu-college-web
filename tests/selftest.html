@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <!-- ============================================================
      页面：纯函数自测页（tests/selftest.html）——不属于正式站点页面
-     职责：对 banner/nav 服务导出的纯函数与 logger 契约做边界断言，
+     职责：对 banner/nav-collapse 服务导出的纯函数与 logger 契约做边界断言，
            结果渲染到页面（零依赖，双击即可运行）。
-     依赖：../site/assets/js/services/{banner,nav}.service.js 的纯函数导出；
+     依赖：../site/assets/js/services/{banner,nav-collapse}.service.js 的纯函数导出；
            ../site/assets/js/infrastructure/{errors,logger}.js 的契约校验。
      ============================================================ -->
 <html lang="zh-CN">
@@ -26,14 +26,13 @@
 </head>
 <body>
   <h1>纯函数自测（Selftest）</h1>
-  <p class="summary">覆盖 nextIndex / resolveActivePage / createLogger 契约的输入边界与分支路径。</p>
+  <p class="summary">覆盖 nextIndex / resolveNavState / validateBannerSlides / createLogger 契约的输入边界与分支路径。</p>
   <div id="results"></div>
 
   <!-- 被测模块：仅引入纯函数与契约所需文件（加载顺序见各文件头注） -->
   <script src="../site/assets/js/infrastructure/errors.js"></script>
   <script src="../site/assets/js/infrastructure/logger.js"></script>
   <script src="../site/assets/js/services/banner.service.js"></script>
-  <script src="../site/assets/js/services/nav.service.js"></script>
   <script src="../site/assets/js/services/nav-collapse.service.js"></script>
   <script src="../site/data/banners.js"></script>
 
@@ -91,26 +90,12 @@
         throw new Error('未抛出异常，期望 ' + ErrorType.name);
       }
 
-      var NAV_ITEMS = [
-        { id: 'index', label: '首页', href: 'index.html' },
-        { id: 'languages', label: '编程语言', href: 'languages.html' },
-        { id: 'machine-learning', label: '机器学习', href: 'machine-learning.html' }
-      ];
-
       // ---- nextIndex：环形索引推算 ----
       run('nextIndex(0, 3) 常规前进', function () { assertSame(SMSK.nextIndex(0, 3), 1); });
       run('nextIndex(2, 3) 末尾回绕', function () { assertSame(SMSK.nextIndex(2, 3), 0); });
       run('nextIndex(0, 1) 单张恒为 0', function () { assertSame(SMSK.nextIndex(0, 1), 0); });
       run('nextIndex(0, 0) 空列表返回 -1', function () { assertSame(SMSK.nextIndex(0, 0), -1); });
       run('nextIndex(5, -2) 非法总数返回 -1', function () { assertSame(SMSK.nextIndex(5, -2), -1); });
-
-      // ---- resolveActivePage：路径 → 导航 id 映射 ----
-      run('resolve("/languages.html") 命中板块页', function () { assertSame(SMSK.resolveActivePage('/languages.html', NAV_ITEMS), 'languages'); });
-      run('resolve("/") 根路径归一为 index', function () { assertSame(SMSK.resolveActivePage('/', NAV_ITEMS), 'index'); });
-      run('resolve("/index.html") 归一为 index', function () { assertSame(SMSK.resolveActivePage('/index.html', NAV_ITEMS), 'index'); });
-      run('resolve("") 空路径归一为 index', function () { assertSame(SMSK.resolveActivePage('', NAV_ITEMS), 'index'); });
-      run('resolve("/Machine-Learning.HTML") 大小写不敏感', function () { assertSame(SMSK.resolveActivePage('/Machine-Learning.HTML', NAV_ITEMS), 'machine-learning'); });
-      run('resolve("/unknown.html") 未命中返回 null', function () { assertSame(SMSK.resolveActivePage('/unknown.html', NAV_ITEMS), null); });
 
       // ---- resolveNavState：滚动方向 → 导航状态映射 ----
       run('resolve(+120, expanded) 下滑 → 收起', function () { assertSame(SMSK.resolveNavState(120, 'expanded'), 'collapsed'); });

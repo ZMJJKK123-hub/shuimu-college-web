@@ -75,14 +75,11 @@ shuimu-web/
     ├── essentials/index.html      # 学校必备（占位页）
     ├── tsconfig.json              # 前端 TS 编译配置（strict 全开，原位产出 .js）
     └── assets/                    # 全站共享资源（各板块如需图片，放各自文件夹内）
-        ├── css/                   # 样式层（单一职责拆分，均 ≤250 行核心代码）
+        ├── css/                   # 样式层（2026-09-28 合并精简，无行数上限规则）
         │   ├── base.css           #   设计令牌 + reset + 通用板块标题
         │   ├── layout.css         #   顶条/页头/主导航/移动端抽屉
         │   ├── footer.css         #   页脚/版权条/返回顶部
-        │   ├── home.css           #   首页：轮播横幅
-        │   ├── home-about.css     #   首页：科协简介与统计卡
-        │   ├── home-tech.css      #   首页：技术板块六宫格
-        │   ├── home-news.css      #   首页：新闻/通知双栏
+        │   ├── home.css           #   首页合一：轮播/科协简介/资料板块/新闻公告
         │   └── subpage.css        #   子页：横幅与占位卡片
         └── js/                    # 行为层（TS 源码入库，编译 .js 不入库）
             ├── types.d.ts             # 类型层：window.SMSK 命名空间与共享契约
