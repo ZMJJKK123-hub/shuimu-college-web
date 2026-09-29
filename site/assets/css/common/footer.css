@@ -4,8 +4,14 @@
    引入顺序：base.css → layout.css → 本文件 →（首页或子页专属模块）
    ========================================================================== */
 
-/* ---- 页脚（深紫）：四栏信息 ---- */
-.footer { background: var(--purple-footer); color: rgba(255, 255, 255, 0.82); }
+/* ---- 页脚（深紫）：四栏信息；叠原站"页脚白色渐变"纹理（同色罩 88%，透出微弱光感） ---- */
+.footer {
+  background:
+    linear-gradient(rgba(41, 5, 46, 0.88), rgba(41, 5, 46, 0.88)),
+    url("../img/texture/背景-页脚白色渐变_1880x394.png") no-repeat center top / cover;
+  background-color: var(--purple-footer);
+  color: rgba(255, 255, 255, 0.82);
+}
 .footer-main { padding: 56px 0 40px; }
 .footer-grid {
   display: grid;

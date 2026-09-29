@@ -1,7 +1,29 @@
 /* ==========================================================================
-   languages.css —— 编程语言介绍板块专属样式（空占位）
+   languages.css —— 编程语言介绍板块专属样式：背景图接线
    归属：css/languages/（仅 site/languages/index.html 引入）
-   依赖：common/{base,layout,footer,subpage}.css
-   说明：本板块当前使用公用子页样式，暂无专属样式；
-         后续为板块定制样式时写在此文件即可，页面无需改动引入。
+   依赖：common/{base,layout,footer,subpage}.css + ../img/bg/ 压缩背景副本
+   说明：对公用组件（.page-banner / .placeholder-zone）做本板块专属背景覆盖；
+         深色横幅 = 紫罩渐变压图（透出约 15%），浅色占位区 = 白罩淡化（约 12%）
    ========================================================================== */
+
+/* ---- 子页横幅背景：机器人机械手（1802 宽横幅原图，紫罩淡化） ---- */
+body[data-page="languages"] .page-banner {
+  background-image:
+    radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.10), transparent 32%),
+    linear-gradient(120deg, rgba(62, 6, 70, 0.90) 0%, rgba(102, 8, 116, 0.84) 55%, rgba(160, 30, 118, 0.78) 100%),
+    url("../../img/bg/banner-languages.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* ---- 占位区背景：AI 电路插图（白罩淡化成右侧幽灵水印，不抢占位卡） ---- */
+body[data-page="languages"] .placeholder-zone {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
+    radial-gradient(circle at 12% 20%, rgba(102, 8, 116, 0.06), transparent 40%),
+    url("../../img/bg/zone-languages.jpg");
+  background-position: center, center, right 10% center;
+  background-repeat: no-repeat;
+  background-size: auto, auto, 480px auto;
+}

@@ -1,8 +1,32 @@
 /* ==========================================================================
    about.css —— 关于我们板块专属：科协简介双栏 + 数据统计卡（自首页迁入）
    归属：css/about/（仅 site/about/index.html 引入）
-   依赖：common/base.css + common/layout.css + common/subpage.css
+   依赖：common/base.css + common/layout.css + common/subpage.css + ../img/bg/
+   说明：另含本板块背景图接线——横幅压二校门照片（紫罩约 15% 透出）、
+         简介区右衬二校门线稿水印（白罩约 14% 透出）
    ========================================================================== */
+
+/* ---- 子页横幅背景：清华二校门（校史意象，紫罩淡化） ---- */
+body[data-page="about"] .page-banner {
+  background-image:
+    radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.10), transparent 32%),
+    linear-gradient(120deg, rgba(62, 6, 70, 0.90) 0%, rgba(102, 8, 116, 0.84) 55%, rgba(160, 30, 118, 0.78) 100%),
+    url("../../img/bg/banner-about.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* ---- 简介区：右侧二校门线稿水印（白罩 86% 淡化，衬统计卡不抢正文） ---- */
+body[data-page="about"] #about {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.86)),
+    url("../../img/bg/zone-about.jpg");
+  background-position: right 6% center;
+  background-repeat: no-repeat;
+  background-size: auto, min(46vw, 560px) auto;
+}
+
 /* ---- 科协简介双栏（自首页迁入关于我们页：左文案 + 右统计卡） ---- */
 
 /* ---- 简介双栏：左文案 + 右统计 ---- */

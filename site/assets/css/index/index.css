@@ -212,7 +212,25 @@
 .notice-item a:hover { color: var(--purple); }
 .notice-item .date { flex: none; font-size: 13px; color: var(--text-sub); }
 
-/* ######################## 3. 首页响应式汇总 ######################## */
+/* ######################## 3. 背景纹理（原站同款，淡化处理） ######################## */
+
+/* 页面底：原站"页面白色长渐变"（近白无图案：顶部淡紫晕染 → 底部极淡暖粉），
+   100% 宽等比下铺、不循环；超出图高或超宽的部分落回 #fff，衔接无缝 */
+body {
+  background: #fff url("../../img/texture/背景-页面白色长渐变_1920x6685.png") no-repeat center top;
+  background-size: 100% auto;
+}
+
+/* 新闻区：原站浅灰网格纹理（270px 平铺，白罩 80% 淡化成隐约纸感） */
+.section {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.80), rgba(255, 255, 255, 0.80)),
+    url("../../img/texture/纹理-浅灰网格_270x226.png");
+  background-size: auto, 270px auto;
+  background-repeat: repeat;
+}
+
+/* ######################## 4. 首页响应式汇总 ######################## */
 
 @media (max-width: 900px) {
   .banner { height: 420px; }

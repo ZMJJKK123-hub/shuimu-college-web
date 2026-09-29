@@ -2,22 +2,41 @@
    user.css —— 用户板块专属：登录/注册裸页卡片
    归属：css/user/（仅 site/user/signin.html 与 site/user/signup.html 引入）
    依赖：common/base.css 的清华紫设计令牌
-   说明：裸页版（无站点骨架）——整页清华紫渐变底（与子页横幅 page-banner
-         同族色：#3e0646 → #660874 → #a01e76）+ 居中白卡；
+   说明：裸页版（无站点骨架）——整页清华紫渐变压校园摄影（图片经
+         bg/ 压缩副本 + 高透明紫罩淡化，仅透出约 15%；与子页横幅
+         page-banner 同族色：#3e0646 → #660874 → #a01e76）+ 居中白卡；
          管理员登录页为独立深色控制台风（css/administrator/），仍与本页区分
    ========================================================================== */
 
-/* ---- 裸页背景：清华紫渐变，卡片水平垂直居中 ---- */
+/* ---- 裸页背景：清华紫渐变压校园摄影，卡片水平垂直居中 ----
+   图层自上而下：高光 radial → 半透明紫渐变（淡化主力）→ 摄影图；
+   图片未加载/加载失败时前两层渐变兜底，观感即纯渐变 */
 body.auth-bare {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 40px 20px;
-  background:
+  background-color: #3e0646;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* 登录页：清华二校门日晷（暖色校园晨光，原图较小，深罩下作纹理使用） */
+body.auth-bare.page-signin {
+  background-image:
     radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.06), transparent 35%),
+    linear-gradient(150deg, rgba(62, 6, 70, 0.90) 0%, rgba(102, 8, 116, 0.84) 55%, rgba(160, 30, 118, 0.78) 100%),
+    url("../../img/bg/signin.jpg");
+}
+
+/* 注册页：林荫大道尽头的二校门晨光（AI 生成图，迎接新成员意象） */
+body.auth-bare.page-signup {
+  background-image:
     radial-gradient(circle at 12% 85%, rgba(217, 51, 121, 0.14), transparent 45%),
-    linear-gradient(150deg, #3e0646 0%, #660874 55%, #a01e76 100%);
+    linear-gradient(150deg, rgba(62, 6, 70, 0.92) 0%, rgba(102, 8, 116, 0.86) 55%, rgba(160, 30, 118, 0.80) 100%),
+    url("../../img/bg/signup.jpg");
 }
 
 /* ---- 卡片：极简白卡（深色底上用深投影） ---- */

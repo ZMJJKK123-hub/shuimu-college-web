@@ -5,17 +5,22 @@
    说明：与普通用户登录（css/user/ 的浅色极简卡）刻意形成明显风格差异
    ========================================================================== */
 
-/* ---- 整页深紫渐变底 ---- */
+/* ---- 整页深紫渐变底（压 AI 生成夜景校园全息图，深罩只透出约 12%；图挂则回退纯渐变） ---- */
 body.admin-login {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 40px 20px;
-  background:
+  background-color: #29052e;
+  background-image:
     radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.06), transparent 35%),
     radial-gradient(circle at 12% 85%, rgba(217, 51, 121, 0.14), transparent 45%),
-    linear-gradient(150deg, #29052e 0%, #3e0646 45%, #660874 100%);
+    linear-gradient(150deg, rgba(41, 5, 46, 0.90) 0%, rgba(62, 6, 70, 0.86) 45%, rgba(102, 8, 116, 0.82) 100%),
+    url("../../img/bg/admin-login.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* ---- 登录卡片：暗色半透明 + 细亮边 ---- */

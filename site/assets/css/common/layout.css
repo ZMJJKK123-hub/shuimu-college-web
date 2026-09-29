@@ -49,21 +49,9 @@
 }
 
 .brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
-.brand .logo {
-  width: 56px;
-  height: 56px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--purple);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 12px rgba(102, 8, 116, 0.35);
-}
+/* 品牌标志：书法题字图（logo/书法题字-水木-带印章.png，透明底竖幅）；
+   原紫色圆形占位样式已随占位一并移除；移动端 72px 页头下缩至 56px（见文末媒体查询） */
+.logo-art { height: 64px; width: auto; flex: none; }
 .brand-titles { min-width: 0; }
 .brand-titles .cn {
   font-size: 26px;
@@ -207,7 +195,7 @@
 @media (max-width: 900px) {
   :root { --header-h: 72px; }
   .brand-titles .cn { font-size: 20px; }
-  .brand .logo { width: 44px; height: 44px; font-size: 15px; }
+  .logo-art { height: 56px; }
   .header-tools { margin: 10px 14px 0 auto; }
 
   .thu-mark { margin-right: 12px; }

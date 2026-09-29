@@ -1,7 +1,29 @@
 /* ==========================================================================
-   essentials.css —— 学校资源板块专属样式（空占位）
+   essentials.css —— 学校资源板块专属样式：背景图接线
    归属：css/essentials/（仅 site/essentials/index.html 引入）
-   依赖：common/{base,layout,footer,subpage}.css
-   说明：本板块当前使用公用子页样式，暂无专属样式；
-         后续为板块定制样式时写在此文件即可，页面无需改动引入。
+   依赖：common/{base,layout,footer,subpage}.css + ../img/bg/ 压缩背景副本
+   说明：对公用组件（.page-banner / .placeholder-zone）做本板块专属背景覆盖；
+         深色横幅 = 紫罩渐变压图（透出约 15%），浅色占位区 = 白罩淡化（约 12%）
    ========================================================================== */
+
+/* ---- 子页横幅背景：清华荷塘晨景与发光书页（AI 生成图，紫罩淡化） ---- */
+body[data-page="essentials"] .page-banner {
+  background-image:
+    radial-gradient(circle at 85% 25%, rgba(255, 255, 255, 0.10), transparent 32%),
+    linear-gradient(120deg, rgba(62, 6, 70, 0.90) 0%, rgba(102, 8, 116, 0.84) 55%, rgba(160, 30, 118, 0.78) 100%),
+    url("../../img/bg/banner-essentials.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* ---- 占位区背景：绿色生态-建筑与树插图（白罩淡化成右侧幽灵水印） ---- */
+body[data-page="essentials"] .placeholder-zone {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
+    radial-gradient(circle at 88% 80%, rgba(217, 51, 121, 0.06), transparent 45%),
+    url("../../img/bg/zone-essentials.jpg");
+  background-position: center, center, right 10% center;
+  background-repeat: no-repeat;
+  background-size: auto, auto, 480px auto;
+}

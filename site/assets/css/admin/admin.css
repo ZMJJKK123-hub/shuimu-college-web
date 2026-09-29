@@ -4,7 +4,14 @@
    依赖：common/base.css 的清华紫设计令牌
    ========================================================================== */
     /* 管理页专属样式（复用 base.css 的清华紫令牌） */
-    body { background: var(--purple-bg); min-height: 100vh; }
+    /* 整页浅紫底 + 原站"淡紫渐变"纹理（同色罩 40~60% 淡化，保持浅色工作台观感） */
+    body {
+      background:
+        linear-gradient(rgba(248, 240, 249, 0.40), rgba(248, 240, 249, 0.60)),
+        url("../img/texture/背景-淡紫渐变_1497x986.png") no-repeat center top / cover;
+      background-color: var(--purple-bg);
+      min-height: 100vh;
+    }
     .admin-wrap { width: min(860px, 94%); margin: 40px auto 80px; }
     .admin-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
     .admin-head h1 { font-size: 26px; color: var(--text-dark); letter-spacing: 2px; }
