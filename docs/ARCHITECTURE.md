@@ -194,7 +194,9 @@ shuimu-web/
 - [x] 头像上传（2026-09-28）：`api/user` 增 GET/PUT `/api/user/avatar`（魔数校验
       仅 PNG/JPEG、解码 ≤1MB、存 user_data/avatars/）；前端 avatar.service.ts 提供
       页头头像展示 + 悬停下拉菜单 + 拖拽/滚轮缩放的圆形裁剪编辑器（输出 256×256 PNG）
-- [x] 前端全量 TypeScript 化：9 个源文件迁 `.ts` + `types.d.ts` 命名空间契约 +
+- [x] 前端全量 TypeScript 化：公用层 9 个源文件迁 `.ts`，随后板块专属脚本
+      （index/user/administrator/admin 共 7 个）一并纳入，**现为 16 个 `.ts` 源文件**
+      + `types.d.ts` 命名空间契约 +
       管理页脚本抽出；`hooks/pre-push` 类型检查硬门禁上线（详见 §5.1）
 - [ ] `GET /api/health` 健康检查接口 + 单元测试（jest 待接入）
 - [ ] Prisma 接入 SQLite，schema 迁移机制跑通（阶段2 报名系统前完成）
@@ -241,6 +243,9 @@ shuimu-web/
 | PUT | /api/banners | { slides: BannerSlide[1..8], token: 管理员令牌 } | { saved: true, count, slides } | 400 校验失败；401 非管理员令牌/未登录 |
 
 统一错误体：{ code, message, timestamp, path }；写入为原子写（临时文件+改名）。
+`message` 为可直接展示的中文文案：DTO 校验失败时由 `common/unified-exception.filter.ts`
+聚合全部字段级提示（多条以「；」连接，如「账号须为 4~30 位字母或数字」），
+不再回落到框架默认的「Bad Request Exception」（2026-09-29 修正）。
 
 ### 9.2 普通用户（2026-09-28 · 已上线本地验证）
 

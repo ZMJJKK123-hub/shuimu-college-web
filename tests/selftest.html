@@ -3,8 +3,11 @@
      页面：纯函数自测页（tests/selftest.html）——不属于正式站点页面
      职责：对 banner/nav-collapse 服务导出的纯函数与 logger 契约做边界断言，
            结果渲染到页面（零依赖，双击即可运行）。
-     依赖：../site/assets/js/services/{banner,nav-collapse}.service.js 的纯函数导出；
-           ../site/assets/js/infrastructure/{errors,logger}.js 的契约校验。
+     依赖：../site/assets/js/infrastructure/{errors,logger}.js（异常与日志契约）、
+           ../site/assets/js/services/nav-collapse.service.js（resolveNavState）、
+           ../site/index/assets/banner.service.js（nextIndex / validateBannerSlides）、
+           ../site/user/assets/auth.service.js（validateCredential）、
+           ../site/index/data/banners.js（真实轮播数据，供契约用例断言）。
      ============================================================ -->
 <html lang="zh-CN">
 <head>

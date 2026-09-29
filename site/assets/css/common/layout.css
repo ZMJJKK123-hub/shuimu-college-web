@@ -82,8 +82,10 @@
   text-overflow: ellipsis;
 }
 
-/* ---- 页头右上角工具按键（English / 搜索，均为占位入口）----
-   贴框上侧不悬浮：去掉圆角边框，三根短竖线隔出文字按键 | English | 搜索 | */
+/* ---- 页头右上角工具按键（登录态入口）----
+   内容由 user/assets/auth.service.js 渲染进 .auth-area：未登录为「登录 / 注册」链接，
+   已登录为头像（悬停出「更改头像」）+ 用户名下拉菜单；
+   贴框上侧不悬浮：按键之间以细竖线分隔，随分辨率自适应 */
 .header-tools {
   display: flex;
   align-items: center;

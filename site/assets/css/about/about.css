@@ -1,7 +1,7 @@
 /* ==========================================================================
    about.css —— 关于我们板块专属：科协简介双栏 + 数据统计卡（自首页迁入）
    归属：css/about/（仅 site/about/index.html 引入）
-   依赖：common/base.css + common/layout.css + subpage/subpage.css
+   依赖：common/base.css + common/layout.css + common/subpage.css
    ========================================================================== */
 /* ---- 科协简介双栏（自首页迁入关于我们页：左文案 + 右统计卡） ---- */
 

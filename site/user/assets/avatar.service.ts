@@ -35,8 +35,22 @@ const AVATAR_MAX_PICK_BYTES = 8 * 1024 * 1024;
 const AVATAR_ZOOM_MIN = 1;
 const AVATAR_ZOOM_MAX = 4;
 
-/** avatarLogger —— 本服务独立日志器（级别跟随站点配置 info） */
-const avatarLogger = SMSK.createLogger('info');
+/**
+ * resolveLogLevel —— 内部辅助：读取站点配置的日志级别
+ * 单一职责：只做"配置 → LogLevel"的取值与缺失防御，不创建日志器、不写日志。
+ * 返回：SiteConfig.logLevel（配置层是唯一取值源，本服务不再写死级别）。
+ * 边界：本文件在全部内容页均晚于 config/site.config.js 加载（见各页 script 顺序），
+ *       若被单独引入导致 CONFIG 缺失，即显式抛 ConfigError（杜绝静默回退到写死级别）。
+ */
+function resolveLogLevel(): LogLevel {
+  if (!SMSK.CONFIG) {
+    throw new SMSK.ConfigError('CONFIG', SMSK.CONFIG);
+  }
+  return SMSK.CONFIG.logLevel;
+}
+
+/** avatarLogger —— 本服务独立日志器（级别随站点配置 CONFIG.logLevel 生效） */
+const avatarLogger = SMSK.createLogger(resolveLogLevel());
 
 /** avatarUrl —— 当前已加载头像的 objectURL（null=无头像/未加载） */
 let avatarUrl: string | null = null;

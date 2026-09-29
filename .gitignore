@@ -9,6 +9,9 @@ desktop.ini
 .idea/
 *.swp
 
+# AI 助手工作缓存（会话计划等本机产物，不入库）
+.zcode/
+
 # 日志与临时文件
 *.log
 *.tmp

@@ -11,7 +11,7 @@
 
 本项目为**清华大学水木书院学生科学技术协会官网**，纯静态站点（HTML/CSS/JS，零构建依赖），内容架构参照电子系科协文档站（eesast/docs），视觉与语言风格严格遵循水木书院官网（smc.tsinghua.edu.cn，清华紫 `#660874`（PANTONE 259C）+ 渐变辅助玫红 `#D93379`）。
 
-站点定位为「展示 + 导航」型门户：首页承担书院门户式版面（横幅、简介、六大技术板块、新闻/公告），七个板块页为占位页，内容后续由科协成员补充。
+站点定位为「展示 + 导航」型门户：首页承担书院门户式版面（横幅、新闻/公告），四个资料板块页（编程语言介绍 / 开发工具 / Web 开发 / 学校资源）为占位页，内容后续由科协成员补充；关于我们页承载科协简介，用户/管理员账号体系与轮播管理页见 [ARCHITECTURE.md](ARCHITECTURE.md) §9。
 
 ### 1.2 分层映射（Rule 2 对静态站点的适配）
 
@@ -31,7 +31,7 @@ flowchart LR
     C["config/site.config.ts<br/>SiteConfig 契约"] --> M
     M --> L["infrastructure/logger.ts<br/>统一日志 Logger"]
     M --> E["infrastructure/errors.ts<br/>自定义异常"]
-    M --> S1["services/banner.service.ts<br/>轮播"]
+    M --> S1["index/assets/banner.service.ts<br/>轮播（首页板块专属，2026-09-28 归位）"]
     M --> S2["services/nav.service.ts<br/>导航高亮/移动菜单"]
     M --> S4["services/nav-collapse.service.ts<br/>下滑收起/上滑展开"]
     M --> S3["services/backtop.service.ts<br/>返回顶部"]
@@ -51,42 +51,44 @@ shuimu-web/
 │   └── PHASE1-架构设计.md          # 本文档
 ├── tests/
 │   └── selftest.html              # 纯函数轻量自测页（浏览器原生断言，零依赖）
-└── site/                          # 站点部署单元（重构后：页面与资源统一收拢于此）
-    ├── index.html                 # 首页（书院门户式版面）
-    ├── data/banners.js            # 数据层：首页轮播内容（管理员维护入口）
-    ├── about/index.html           # 科协介绍 About（占位页）
+└── site/                          # 站点部署单元（页面与资源统一收拢于此）
+    ├── index/                     # 首页板块（自包含：页面 + 专属脚本 + 专属数据）
+    │   ├── index.html             #   首页（书院门户式版面）
+    │   ├── assets/banner.service.ts   #   首页专属脚本：轮播服务
+    │   └── data/banners.js        #   首页专属数据：轮播内容（后端读写，正常入库）
+    ├── user/                      # 用户板块：signin.html / signup.html（裸页）
+    │   └── assets/{auth,avatar,signin,signup}.ts  # 全站登录态 / 头像 / 两个表单脚本
+    ├── administrator/index.html   # 管理员登录页（深色控制台，独立工具页）
+    │   └── assets/administrator.ts    #   管理员登录表单脚本
+    ├── admin/index.html           # 轮播管理页（需管理员登录）
+    │   └── assets/admin.ts        #   管理页脚本（表单 ↔ PUT /api/banners）
     ├── languages/index.html       # 编程语言 Languages（占位页）
     ├── tools/index.html           # 开发工具 Tools（占位页）
     ├── web/index.html             # Web 开发 Web（占位页）
     ├── essentials/index.html      # 学校资源 School Resources（占位页）
     ├── about/index.html           # 关于我们 About Us（科协简介）
+    ├── tsconfig.json              # 前端 TS 编译配置（strict，原位产出 .js）
     └── assets/                    # 全站共享资源（板块私有资源放各板块文件夹）
         ├── css/                   # 样式层（板块同名文件夹 + common 公用）
-        │   ├── common/            #   公用：base / layout / footer / subpage（子页横幅占位卡）
+        │   ├── common/            #   公用：base / layout / footer / subpage
         │   ├── index/             #   首页板块：index.css（轮播/新闻公告）
-        │   ├── languages/         #   编程语言介绍板块：languages.css（空占位）
-        │   ├── tools/             #   开发工具板块：tools.css（空占位）
-        │   ├── web/               #   Web 开发板块：web.css（空占位）
-        │   ├── essentials/        #   学校资源板块：essentials.css（空占位）
+        │   ├── user/              #   用户板块：user.css（登录/注册裸页卡片）
+        │   ├── administrator/     #   管理员板块：administrator.css（深色控制台）
+        │   ├── admin/             #   管理页板块：admin.css（自内联抽出）
         │   ├── about/             #   关于我们板块：about.css（简介双栏/统计卡）
-        │   └── admin/             #   管理页板块：admin.css（自内联抽出）
-        └── js/                        # TS 源码入库，编译产物 .js 不入库（2026-09-27 起）
-            ├── types.d.ts          # 类型层：window.SMSK 命名空间与共享契约声明
-            ├── config/
-            │   └── site.config.ts     # 配置层：SiteConfig 契约唯一实现
-            ├── infrastructure/
-            │   ├── logger.ts          # 统一日志器（级别语义，替代 console.log）
-            │   ├── dom.ts             # DOM 查询/事件绑定工具（纯函数）
-            │   └── errors.ts          # 自定义异常（ConfigError/DomError）
-            ├── services/
-            │   ├── banner.service.ts  # 首页轮播（含索引纯函数，可自测）
-            │   ├── nav.service.ts     # 当前页高亮 + 移动端抽屉菜单
-            │   ├── nav-collapse.service.ts # 下滑收起/上滑展开（时长经配置注入）
-            │   └── backtop.service.ts # 返回顶部（显隐阈值经配置注入）
-            └── main.ts                # 组装根：读配置 → 建 Logger → 装配并启动服务
+        │   └── languages|tools|web|essentials/   # 四个资料板块：同名 css（空占位）
+        └── js/                    # 公用行为层：TS 源码入库，编译产物 .js 不入库
+            ├── types.d.ts         #   类型层：window.SMSK 命名空间与共享契约声明
+            ├── config/site.config.ts  #   配置层：SiteConfig 契约唯一实现
+            ├── infrastructure/    #   logger / dom / errors（横切工具与自定义异常）
+            ├── services/          #   nav / nav-collapse / topbar / backtop
+            └── main.ts            #   组装根：读配置 → 建 Logger → 装配并启动服务
 ```
 
-> 说明：收到协议前产出的 `assets/css/style.css` 草稿已在 Phase 2 拆分为上述 8 个样式模块（原计划 4 个，因 250 行红线进一步细分），内容风格不变，旧文件已删除。
+> 说明：收到协议前产出的 `assets/css/style.css` 草稿已在 Phase 2 拆分为上述样式模块；
+> 2026-09-28 起样式按板块归入 `css/common/` + `css/<板块>/`，2026-09-29 起取消单文件
+> 行数上限（不为拆而拆，见 `agent.md` Rule 2 §3），旧文件已删除。
+> **目录现状的权威描述见 [ARCHITECTURE.md](ARCHITECTURE.md) §3，本文档目录树仅保留板块划分语义。**
 
 ## 3. 核心实体与接口契约
 
@@ -153,12 +155,15 @@ shuimu-web/
 
 ```js
 /**
- * createBannerService —— 首页轮播服务
+ * createBannerService —— 首页轮播服务（2026-09-29 契约补全：数据改为经参数注入）
  * @param {HTMLElement|null} root     轮播根节点（.banner）；非首页为 null，直接空实现
  * @param {BannerConfig}    config    轮播配置
  * @param {Logger}          logger    统一日志器
+ * @param {unknown}         slides    轮播数据（来自 index/data/banners.js，按不可信输入校验）
  * @returns {{ start(): void, destroy(): void }}
- * 行为：切换 .slide.active 与指示点；nextIndex(current, total) 为导出纯函数供自测
+ * 行为：按数据渲染幻灯片并切换 .slide.active 与指示点（s1/s2/s3 底色按序自动轮换）；
+ *       nextIndex(current, total) 与 validateBannerSlides(input) 为导出纯函数供自测；
+ *       配置或数据契约违约时抛 ConfigError（带字段路径），不静默降级。
  */
 
 /**
@@ -193,7 +198,7 @@ shuimu-web/
 
 1. **文档注释**：所有 JS 文件顶部标注模块职责与加载依赖顺序；每个工厂/纯函数按契约格式注释（职责 / Globals Used / Calls / Args / Returns）。
 2. **文件与函数尺寸**：（2026-09-28 起按新协议取消行数上限，不为拆而拆；
-   首页样式已由 4 文件合并回 home.css。）
+   首页样式已由 4 文件合并回 `css/index/index.css`。）
 3. **零硬编码**：轮播间隔、日志级别、滚动阈值等全部经 `site.config.ts` 注入。
 4. **日志**：全程使用 `Logger`（info/warn/error 语义化），页面生命周期关键节点输出 INFO。
 5. **错误处理**：配置缺失、关键 DOM 缺失抛自定义异常并附上下文，不静默吞错。
@@ -204,6 +209,7 @@ shuimu-web/
 
 1. 样式模块（紫色书院门户风；2026-09-28 已按新规则合并精简）。
 2. 按契约实现 config / infrastructure / services / main.ts（2026-09-27 起为 TypeScript 源码，编译产物 .js 不入库）。
-3. 首页 `index.html` + 7 个板块占位页（同头部导航/页脚，占位卡片 + 主题标签）。
+3. 首页 `index.html` + 板块占位页（同头部导航/页脚，占位卡片 + 主题标签；
+   2026-09-28 精简为首页 + 四个资料板块页，另加关于我们与账号/管理页）。
 4. `tests/selftest.html` 纯函数自测；本地起服务验证渲染并截图自检。
 5. `README.md`：目录说明、本地预览方式、后续内容补充指南。
