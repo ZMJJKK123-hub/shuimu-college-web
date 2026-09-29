@@ -71,6 +71,8 @@ shuimu-web/
 │   ├── ARCHITECTURE.md            # 总体架构设计（活文档：后端/部署/演进路线/TS 工具链）
 │   └── PHASE1-架构设计.md          # 前端门户接口契约
 ├── tests/selftest.html            # 纯函数自测页（浏览器原生断言）
+├── assets/                        # 素材检索工具（素材总览.html 缩略图检索页 + _preview + _work，
+│                                  #   依赖根目录相对路径，不入 site/ 部署单元；素材本体在 site/assets/）
 ├── user_data/                     # 普通用户运行时数据（账号哈希+会话，服务端自动创建，不入库）
 ├── administrator_data/            # 管理员运行时数据（账号哈希+会话，服务端自动创建，不入库）
 ├── server/                        # 后端（阶段1起）：NestJS，按 API 板块组织（src/api/）
@@ -98,6 +100,20 @@ shuimu-web/
     ├── about/index.html           # 关于我们（科协简介，自首页迁入）
     ├── tsconfig.json              # 前端 TS 编译配置（strict 全开，原位产出 .js）
     └── assets/                    # 全站共享资源（各板块如需图片，放各自文件夹内）
+        ├── img/                   # 图片素材库（2026-09-29 自水木书院官网镜像分类归位）
+        │   ├── logo/                  # 品牌标识（页头/页脚/内页 logo、题字、印章标题）
+        │   ├── slides/                # 首页轮播大图（1880×970）
+        │   ├── banner/                # 内页横幅头图
+        │   ├── icons/{arrow,func}/    # 箭头 / 功能图标
+        │   ├── qrcode/ texture/ deco/ # 二维码 / 背景纹理 / 装饰形状
+        │   ├── photos/{people,events,campus}/  # 内容照片（人物/活动/校园风景）
+        │   ├── illustration/ diagram/ poster/  # 插图 / 图表示意 / 海报
+        │   └── thu-logo.png           # 页头清华徽标（在用）
+        ├── fonts/                 # 字体（方正光钉粗简体、DINCond-Black）
+        ├── reference/             # 原站参考物（不可直接渲染，仅供设计语言参考）
+        │   ├── css/                   # 水木书院官网样式表（依赖原站 JS，勿引入本站）
+        │   └── html/                  # 官网首页 DOM 结构参考
+        ├── 说明.md                # 素材库说明（含分类映射与检索工具位置）
         ├── css/                   # 样式层（板块同名文件夹 + common 公用）
         │   ├── common/            #   公用：base / layout / footer / subpage（子页横幅占位卡）
         │   ├── index/             #   首页板块：index.css（轮播/新闻公告）

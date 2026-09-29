@@ -66,8 +66,16 @@ shuimu-web/
 │   ├── admin/                   #   轮播管理页（需管理员登录；index.html + assets/admin.ts）
 │   ├── <板块>/index.html         # 【2026-09-28 纯资料站】languages/ tools/ web/
 │   │                            # essentials/（学校资源）about/（关于我们）
-│   └── assets/{css,js}/         #   样式分层 + 行为层（js/ 内 .ts 源码入库，
-│                                #   types.d.ts 声明 window.SMSK 命名空间契约）
+│   └── assets/                  #   共享资源区：
+│       ├── css/{common,<板块>}/ #     样式分层；js/ 行为层（.ts 源码入库，
+│       │                        #     types.d.ts 声明 window.SMSK 命名空间契约）
+│       ├── img/                 #     图片素材库（2026-09-29 官网镜像 319 张分类归位：
+│       │                        #     logo/slides/banner/icons/qrcode/texture/deco/
+│       │                        #     photos/{people,events,campus}/illustration/
+│       │                        #     diagram/poster + thu-logo.png）
+│       ├── fonts/               #     字体（方正光钉粗简体 / DINCond-Black）
+│       └── reference/           #     原站参考物（官网 CSS/HTML，不可直接渲染，
+│                                #     仅供设计语言参考；检索工具在根 assets/）
 ├── user_data/                   # 普通用户运行时数据（服务端自动创建，不入库）
 ├── administrator_data/          # 管理员运行时数据（服务端自动创建，不入库）
 ├── server/                      # 【阶段1新建】后端应用（NestJS）
