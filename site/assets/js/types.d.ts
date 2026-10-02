@@ -59,11 +59,19 @@ interface NavCollapseConfig {
   durationMs: number;
 }
 
+/** RevealConfig —— 滚动逐层显现配置（SiteConfig.reveal）
+ * durationMs：单元淡入上浮的单体过渡时长；staggerMs：同组单元逐个错开的步进 */
+interface RevealConfig {
+  durationMs: number;
+  staggerMs: number;
+}
+
 /** SiteConfig —— 站点全局配置契约（site.config.ts 的产出物） */
 interface SiteConfig {
   logLevel: LogLevel;
   banner: BannerConfig;
   navCollapse: NavCollapseConfig;
+  reveal: RevealConfig;
   backtopThresholdPx: number;
 }
 
@@ -119,6 +127,7 @@ interface AppHandle {
     topbar: ServiceLifecycle;
     banner: ServiceLifecycle;
     auth: ServiceLifecycle;
+    reveal: ServiceLifecycle;
     backtop: ServiceLifecycle;
   };
 }
@@ -155,6 +164,8 @@ interface SMSKNamespace {
   createTopbarService: typeof createTopbarService;
   /** 返回顶部（services/backtop.service.ts 挂载） */
   createBacktopService: typeof createBacktopService;
+  /** 滚动逐层显现（services/reveal.service.ts 挂载；main.ts 对未加载页降级空实现） */
+  createRevealService?: typeof createRevealService;
   /** 登录态（user/assets/auth.service.ts，全站内容页加载；main.ts 对未加载页降级空实现） */
   validateCredential: typeof validateCredential;
   createAuthService?: typeof createAuthService;

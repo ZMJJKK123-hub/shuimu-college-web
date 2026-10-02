@@ -8,6 +8,7 @@
  *   → infrastructure/dom.js → infrastructure/logger.js
  *   → services/nav.service.js → services/nav-collapse.service.js
  *   → services/topbar.service.js → services/backtop.service.js
+ *   → services/reveal.service.js
  *   → 各内容页另载 user/assets/auth.service.js（登录态，全站内容页）
  *   → 首页另载 index/assets/banner.service.js（板块专属）
  *     与 data/banners.js（轮播数据）→ 本文件
@@ -41,6 +42,11 @@ function validateConfig(cfg: SiteConfig | null | undefined): asserts cfg is Site
   }
   if (typeof cfg.backtopThresholdPx !== 'number' || cfg.backtopThresholdPx < 0) {
     throw new SMSK.ConfigError('backtopThresholdPx', cfg && cfg.backtopThresholdPx);
+  }
+  if (!cfg.reveal || typeof cfg.reveal.durationMs !== 'number' ||
+      cfg.reveal.durationMs <= 0 || typeof cfg.reveal.staggerMs !== 'number' ||
+      cfg.reveal.staggerMs < 0) {
+    throw new SMSK.ConfigError('reveal', cfg && cfg.reveal);
   }
 }
 
@@ -88,6 +94,13 @@ function bootstrap(): void {
     : { start: function () {}, destroy: function () {} };
   authService.start();
 
+  // 逐层显现：内容页区块滚动到视口才入场（首屏单元进页即播一次）；
+  // 未加载该服务的页面（登录/注册/管理员登录等）降级为空实现
+  const revealService: ServiceLifecycle = SMSK.createRevealService
+    ? SMSK.createRevealService(cfg.reveal, logger)
+    : { start: function () {}, destroy: function () {} };
+  revealService.start();
+
   const backtopService =
     SMSK.createBacktopService(SMSK.qs('.backtop'), cfg.backtopThresholdPx, logger);
   backtopService.start();
@@ -100,6 +113,7 @@ function bootstrap(): void {
       topbar: topbarService,
       banner: bannerService,
       auth: authService,
+      reveal: revealService,
       backtop: backtopService
     }
   };

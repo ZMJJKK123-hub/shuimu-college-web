@@ -104,3 +104,20 @@ button { font-family: inherit; cursor: pointer; border: 0; background: none; }
   .section { padding: 52px 0; }
   .sec-head .cn { font-size: 24px; }
 }
+
+/* ---- 滚动逐层显现（reveal.service.js 控制的通用入场效果）----
+   隐藏态由服务在首帧绘制前挂 .reveal-unit（JS 失效则不挂、内容照常显示）；
+   进入视口后挂 .revealed 触发淡入上浮，一次性；过渡时长由服务从配置注入
+   --reveal-duration（配置层是唯一取值源）；同组单元的错开用行内
+   transition-delay；减弱动态偏好（无障碍）直接呈现终态 */
+.reveal-unit {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity var(--reveal-duration, 600ms) ease,
+              transform var(--reveal-duration, 600ms) ease;
+}
+.reveal-unit.revealed { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-unit { opacity: 1; transform: none; transition: none; }
+}

@@ -20,5 +20,9 @@ window.SMSK.CONFIG = {
   navCollapse: {
     durationMs: 500
   },
+  reveal: {
+    durationMs: 600,
+    staggerMs: 90
+  },
   backtopThresholdPx: 320
 } satisfies SiteConfig;
