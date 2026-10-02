@@ -6,8 +6,8 @@
  *       校验令牌（失效即清除并回落未登录视图），并把页头 .header-tools
  *       内的 .auth-area 在两种视图间切换：未登录=「登录/注册」链接；
  *       已登录=默认头像（首字母圆标，悬停提示"更改头像"）+ 用户名
- *       （悬停下拉：用户信息/个人信息设置/粗分界线/退出登录，个人信息
- *       类入口为占位空跳转，样式见 common/layout.css 页头用户菜单区块）。
+ *       （悬停下拉：个人信息设置（跳 site/profile/）/粗分界线/退出登录，
+ *       样式见 common/layout.css 页头用户菜单区块）。
  *       另暴露纯函数 validateCredential（账号/密码格式校验，前后端同规则）
  *       与 SMSK.auth 助手（signin/signup 页面脚本调用）。
  * 说明：本服务挂载于全部内容页（与公用脚本同载，先于 main.js 加载），
@@ -117,8 +117,7 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
         escapeHtml(state.account) +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>' +
         '<div class="user-menu">' +
-        '<a href="#" data-act="placeholder" title="建设中，点击暂无跳转">用户信息</a>' +
-        '<a href="#" data-act="placeholder" title="建设中，点击暂无跳转">个人信息设置</a>' +
+        '<a href="../profile/index.html" title="维护头像、姓名、邮箱等资料">个人信息设置</a>' +
         '<a class="menu-logout" href="#" data-act="logout" title="退出登录">退出登录</a>' +
         '</div>' +
         '</div>' +
@@ -176,11 +175,6 @@ function _createAuthController(root: HTMLElement, logger: Logger): ServiceLifecy
         if (changeAvatarBtn) {
           ev.preventDefault();
           if (SMSK.avatar) { SMSK.avatar.openEditor(); }
-          return;
-        }
-        const placeholder = closest('[data-act="placeholder"]');
-        if (placeholder) {
-          ev.preventDefault();
         }
       }));
       if (state) {

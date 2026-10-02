@@ -27,6 +27,15 @@ export interface SessionRecord {
   expiresAt: number;
 }
 
+/** UserProfile —— <account>/profile.json 的资料契约（全字段字符串，空串=未填写） */
+export interface UserProfile {
+  name: string;
+  email: string;
+  studentId: string;
+  bio: string;
+  updatedAt: string;
+}
+
 /**
  * UserFileRepository —— user_data/ 文件仓储实现
  * 类职责：账号/会话记录与 JSON 文件两种形态互转，读取带结构防御；
@@ -114,6 +123,49 @@ export class UserFileRepository {
   private _avatarFile(account: string, ext: 'png' | 'jpg'): string {
     // 账号已过 DTO 层 ^[A-Za-z0-9]{4,30}$ 校验，作文件名无路径穿越风险
     return path.join(this.userDataDir, 'avatars', account + '.' + ext);
+  }
+
+  /** ensureUserDir —— 创建用户专属目录 <account>/（注册时调用，此后该用户数据落此处） */
+  ensureUserDir(account: string): string {
+    const dir = this._userDir(account);
+    fs.mkdirSync(dir, { recursive: true });
+    this.logger.log(`已创建用户目录: ${dir}`);
+    return dir;
+  }
+
+  /**
+   * readProfile —— 读取用户资料 <account>/profile.json
+   * 返回：UserProfile；文件尚不存在时返回 null（视为尚未填写资料）
+   * @throws Error 文件存在但 JSON 非法时
+   */
+  readProfile(account: string): UserProfile | null {
+    const file = path.join(this._userDir(account), 'profile.json');
+    if (!fs.existsSync(file)) {
+      return null;
+    }
+    const parsed: unknown = JSON.parse(fs.readFileSync(file, 'utf-8'));
+    const p = parsed as Partial<UserProfile>;
+    return {
+      name: typeof p.name === 'string' ? p.name : '',
+      email: typeof p.email === 'string' ? p.email : '',
+      studentId: typeof p.studentId === 'string' ? p.studentId : '',
+      bio: typeof p.bio === 'string' ? p.bio : '',
+      updatedAt: typeof p.updatedAt === 'string' ? p.updatedAt : '',
+    };
+  }
+
+  /** writeProfile —— 原子写回用户资料 <account>/profile.json */
+  writeProfile(account: string, profile: UserProfile): void {
+    this._atomicWrite(
+      path.join(this._userDir(account), 'profile.json'),
+      JSON.stringify(profile, null, 2) + '\n',
+    );
+    this.logger.log(`已写回用户资料 ${account}（updatedAt=${profile.updatedAt}）`);
+  }
+
+  private _userDir(account: string): string {
+    // 账号已过 DTO 层 ^[A-Za-z0-9]{4,30}$ 校验，作目录名无路径穿越风险
+    return path.join(this.userDataDir, account);
   }
 
   private _accountsFile(): string {

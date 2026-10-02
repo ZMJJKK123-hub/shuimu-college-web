@@ -13,7 +13,7 @@ import {
   NotFoundException, UnauthorizedException,
 } from '@nestjs/common';
 import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
-import { AccountRecord, SessionRecord, USER_REPOSITORY } from './user.repository';
+import { AccountRecord, SessionRecord, UserProfile, USER_REPOSITORY } from './user.repository';
 
 /** SESSION_TTL_MS —— 会话有效期（7 天） */
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -23,6 +23,9 @@ const TOKEN_PREFIX = 'u.';
 
 /** AVATAR_MAX_BYTES —— 头像解码后大小上限（1MB；裁剪输出 256×256 PNG 通常远小于此） */
 const AVATAR_MAX_BYTES = 1024 * 1024;
+
+/** EMAIL_PATTERN —— 资料邮箱格式（空串放行=清空，非空须合法） */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * UserService —— 普通用户业务服务
@@ -42,13 +45,16 @@ export class UserService {
       writeSessions(sessions: SessionRecord[]): void;
       readAvatar(account: string): { data: Buffer; mime: string } | null;
       writeAvatar(account: string, data: Buffer, ext: 'png' | 'jpg'): void;
+      ensureUserDir(account: string): string;
+      readProfile(account: string): UserProfile | null;
+      writeProfile(account: string, profile: UserProfile): void;
     },
   ) {}
 
   /**
    * signup —— 注册
-   * 流程：查重 → 加盐哈希落盘 → 自动登录（签发令牌）
-   * @throws ConflictException 账号已被注册
+   * 流程：查重 → 加盐哈希落盘 → 创建用户专属目录 → 自动登录（签发令牌）
+   * @throws ConflictException 账号已被注册（重名拦截）
    */
   signup(account: string, password: string): { saved: boolean; token: string; account: string } {
     const accounts = this.repository.readAccounts();
@@ -60,6 +66,7 @@ export class UserService {
       ...accounts,
       { account, salt, hash: this._hashPassword(password, salt), createdAt: new Date().toISOString() },
     ]);
+    this.repository.ensureUserDir(account);
     this.logger.log(`新用户注册: ${account}`);
     return { saved: true, token: this._openSession(account), account };
   }
@@ -131,6 +138,37 @@ export class UserService {
     }
     this.repository.writeAvatar(account, data, isPng ? 'png' : 'jpg');
     this.logger.log(`用户头像已更新: ${account}（${data.length}B）`);
+    return { saved: true };
+  }
+
+  /**
+   * getProfile —— 读取当前用户资料（仅本人，凭令牌）
+   * 返回：profile 为 null 表示尚未填写（前端按空表单处理）
+   * @throws UnauthorizedException 令牌无效
+   */
+  getProfile(token: string): { account: string; profile: UserProfile | null } {
+    const { account } = this.requireSession(token);
+    return { account, profile: this.repository.readProfile(account) };
+  }
+
+  /**
+   * saveProfile —— 保存当前用户资料（DTO 已限长度；邮箱格式在本层校验，空串=清空放行）
+   * @throws UnauthorizedException 令牌无效；BadRequestException 邮箱格式非法
+   */
+  saveProfile(token: string, raw: { name?: string; email?: string; studentId?: string; bio?: string }): { saved: boolean } {
+    const { account } = this.requireSession(token);
+    const profile: UserProfile = {
+      name: raw.name || '',
+      email: raw.email || '',
+      studentId: raw.studentId || '',
+      bio: raw.bio || '',
+      updatedAt: new Date().toISOString(),
+    };
+    if (profile.email && !EMAIL_PATTERN.test(profile.email)) {
+      throw new BadRequestException('邮箱格式不正确');
+    }
+    this.repository.writeProfile(account, profile);
+    this.logger.log(`用户资料已更新: ${account}`);
     return { saved: true };
   }
 

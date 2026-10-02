@@ -8,13 +8,15 @@
  */
 import { Body, Controller, Get, Header, Post, Put, Query, StreamableFile } from '@nestjs/common';
 import { UserService } from './user.service';
-import { SigninDto, SignoutDto, SignupDto, UpdateAvatarDto } from './user.dto';
+import { SigninDto, SignoutDto, SignupDto, UpdateAvatarDto, UpdateProfileDto } from './user.dto';
+import { UserProfile } from './user.repository';
 
 /**
  * UserController —— 普通用户账号接口
  * 路由：POST /api/user/signup（注册即登录）；POST /api/user/signin；
  *       POST /api/user/signout；GET /api/user/me?token=（会话校验）；
- *       GET /api/user/avatar?token=（本人头像图片）；PUT /api/user/avatar（更新头像）
+ *       GET /api/user/avatar?token=（本人头像图片）；PUT /api/user/avatar（更新头像）；
+ *       GET /api/user/profile?token=（读资料）；PUT /api/user/profile（存资料）
  */
 @Controller('api/user')
 export class UserController {
@@ -56,5 +58,19 @@ export class UserController {
   @Put('avatar')
   saveAvatar(@Body() dto: UpdateAvatarDto): { saved: boolean } {
     return this.userService.saveAvatar(dto.token, dto.image);
+  }
+
+  /** GET /api/user/profile —— 读取本人资料（profile 为 null 表示尚未填写） */
+  @Get('profile')
+  getProfile(@Query('token') token?: string): { account: string; profile: UserProfile | null } {
+    return this.userService.getProfile(token || '');
+  }
+
+  /** PUT /api/user/profile —— 保存本人资料（长度与邮箱格式校验后落 <account>/profile.json） */
+  @Put('profile')
+  saveProfile(@Body() dto: UpdateProfileDto): { saved: boolean } {
+    return this.userService.saveProfile(dto.token, {
+      name: dto.name, email: dto.email, studentId: dto.studentId, bio: dto.bio,
+    });
   }
 }

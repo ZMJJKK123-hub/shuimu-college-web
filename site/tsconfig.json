@@ -17,6 +17,7 @@
     "index/assets/**/*.ts",
     "user/assets/**/*.ts",
     "administrator/assets/**/*.ts",
-    "admin/assets/**/*.ts"
+    "admin/assets/**/*.ts",
+    "profile/assets/**/*.ts"
   ]
 }

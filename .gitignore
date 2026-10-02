@@ -32,6 +32,7 @@ site/index/assets/*.js
 site/user/assets/*.js
 site/administrator/assets/*.js
 site/admin/assets/*.js
+site/profile/assets/*.js
 
 # 后端敏感配置与本地数据（只存服务器，绝不入库）
 .env

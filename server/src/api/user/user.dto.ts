@@ -7,7 +7,7 @@
  * 依赖：class-validator（声明式校验）。
  * ============================================================================
  */
-import { IsNotEmpty, IsString, Length, Matches, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator';
 
 /** ACCOUNT_PATTERN —— 账号格式契约（前后端共用规则：4~30 位字母数字） */
 const ACCOUNT_PATTERN = /^[A-Za-z0-9]{4,30}$/;
@@ -54,4 +54,33 @@ export class UpdateAvatarDto {
   @IsNotEmpty()
   @MaxLength(1400000)
   image!: string;
+}
+
+/** UpdateProfileDto —— PUT /api/user/profile 请求体：更新资料
+ * 字段全部可选（空串=清空该项）；长度在此约束，邮箱格式由 service 再校验 */
+export class UpdateProfileDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(128)
+  token!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(30, { message: '姓名长度须不超过 30 字' })
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120, { message: '邮箱长度须不超过 120 字符' })
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(20, { message: '学号长度须不超过 20 字符' })
+  studentId?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500, { message: '个人简介长度须不超过 500 字' })
+  bio?: string;
 }

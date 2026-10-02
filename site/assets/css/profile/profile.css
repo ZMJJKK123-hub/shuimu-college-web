@@ -1,0 +1,215 @@
+/* ==========================================================================
+   profile.css —— 个人信息设置板块专属样式：左头像卡 + 右表单卡
+   归属：css/profile/（仅 site/profile/index.html 引入）
+   依赖：common/{base,layout,footer,subpage}.css 的清华紫设计令牌
+   说明：布局仿设计稿——左栏约 1/4（圆形大头像 + 相机角标 + 账号名 +
+         更换头像按钮），右栏约 3/4（「基本信息」页签 + 纵向表单，
+         标签在输入框上方 + 右下「重置 / 保存修改」）；≤900px 单栏堆叠
+   ========================================================================== */
+
+/* ---- 主体两栏（浅紫晕染底上放两张白卡） ---- */
+.profile-zone {
+  background:
+    radial-gradient(circle at 12% 20%, rgba(102, 8, 116, 0.06), transparent 40%),
+    radial-gradient(circle at 88% 80%, rgba(217, 51, 121, 0.06), transparent 45%),
+    #fff;
+}
+.profile-flex {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ---- 左栏：头像卡 ---- */
+.profile-side {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 36px 28px 30px;
+  text-align: center;
+}
+.avatar-box { position: relative; width: 104px; margin: 0 auto 18px; }
+.big-avatar {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--purple-bright));
+  color: #fff;
+  font-size: 40px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(102, 8, 116, 0.28);
+}
+.big-avatar-img {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(102, 8, 116, 0.28);
+}
+.avatar-camera {
+  position: absolute;
+  right: -2px;
+  bottom: 2px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: var(--purple);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.avatar-camera:hover { background: var(--purple-hover); }
+.avatar-camera svg { width: 16px; height: 16px; }
+.side-account {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: 1px;
+  word-break: break-all;
+}
+.side-sub { font-size: 13px; color: var(--text-sub); margin-top: 6px; }
+.btn-outline {
+  margin-top: 20px;
+  width: 100%;
+  height: 38px;
+  border-radius: 20px;
+  border: 1px solid var(--purple);
+  background: #fff;
+  color: var(--purple);
+  font-size: 14px;
+  letter-spacing: 2px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
+}
+.btn-outline:hover { background: var(--purple); color: #fff; }
+.side-tip { margin-top: 14px; font-size: 12px; color: var(--text-sub); line-height: 1.7; }
+
+/* ---- 右栏：资料表单卡 ---- */
+.profile-main {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 0 34px 30px;
+}
+.profile-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  margin: 0 -34px 26px;
+  padding: 0 34px;
+}
+.profile-tabs .tab {
+  position: relative;
+  padding: 18px 4px;
+  margin-right: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  letter-spacing: 1px;
+}
+.profile-tabs .tab.active { color: var(--purple); }
+.profile-tabs .tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--purple);
+}
+
+/* ---- 表单：标签在输入框上方（浅紫底圆角输入框） ---- */
+.profile-main .field { margin-bottom: 20px; }
+.profile-main .field label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-bottom: 7px;
+  letter-spacing: 1px;
+}
+.profile-main .field input,
+.profile-main .field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--purple-bg);
+  padding: 11px 14px;
+  font-size: 14px;
+  color: var(--text-main);
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.profile-main .field textarea { resize: vertical; min-height: 96px; line-height: 1.7; }
+.profile-main .field input:focus,
+.profile-main .field textarea:focus {
+  outline: none;
+  border-color: var(--purple);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(102, 8, 116, 0.08);
+}
+.bio-count { margin-top: 5px; font-size: 12px; color: var(--text-sub); text-align: right; }
+
+/* ---- 表单底部：提示 + 重置 / 保存修改（右对齐） ---- */
+.form-ops {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 28px;
+}
+.form-msg { margin-right: auto; font-size: 13px; }
+.form-msg.ok { color: #1d9e4a; }
+.form-msg.err { color: #c0392b; }
+.btn-ghost {
+  height: 40px;
+  padding: 0 26px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text-sub);
+  font-size: 14px;
+  letter-spacing: 2px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover { color: var(--purple); border-color: var(--purple); }
+.btn-primary {
+  height: 40px;
+  padding: 0 30px;
+  border-radius: 20px;
+  border: 0;
+  background: var(--purple);
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 2px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.btn-primary:hover { background: var(--purple-hover); }
+.btn-primary:disabled { opacity: 0.6; cursor: default; }
+
+/* ---- 响应式（个人信息页）：≤900px 单栏堆叠 ---- */
+@media (max-width: 900px) {
+  .profile-flex { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .profile-main { padding: 0 20px 22px; }
+  .profile-tabs { margin: 0 -20px 20px; padding: 0 20px; }
+  .form-ops { flex-wrap: wrap; }
+  .form-msg { width: 100%; margin: 0 0 4px; }
+}

@@ -73,7 +73,8 @@ shuimu-web/
 ├── tests/selftest.html            # 纯函数自测页（浏览器原生断言）
 ├── assets/                        # 素材检索工具（素材总览.html 缩略图检索页 + _preview + _work，
 │                                  #   依赖根目录相对路径，不入 site/ 部署单元；素材本体在 site/assets/）
-├── user_data/                     # 普通用户运行时数据（账号哈希+会话，服务端自动创建，不入库）
+├── user_data/                     # 普通用户运行时数据（账号哈希+会话，服务端自动创建，不入库；
+│                                  #   注册时按账号建 <账号>/ 专属目录，存 profile.json 等用户数据）
 ├── administrator_data/            # 管理员运行时数据（账号哈希+会话，服务端自动创建，不入库）
 ├── server/                        # 后端（阶段1起）：NestJS，按 API 板块组织（src/api/）
 │   │                              #   现有板块：banners（轮播）/ user（用户）/ administrator（管理员）
@@ -93,6 +94,9 @@ shuimu-web/
     ├── admin/                     # 轮播管理页（需管理员登录；表单 → PUT /api/banners 附令牌）
     │   ├── index.html
     │   └── assets/admin.ts        # 管理页脚本源码（编译产物 admin.js 不入库）
+    ├── profile/                   # 个人信息设置页（登录用户；页头菜单进入，未登录跳登录页）
+    │   ├── index.html             #   左头像卡 + 右资料表单（姓名/邮箱/学号/个人简介）
+    │   └── assets/profile.ts      #   资料脚本：GET/PUT /api/user/profile（产物 .js 不入库）
     ├── languages/index.html       # 编程语言介绍（占位页）
     ├── tools/index.html           # 开发工具（占位页）
     ├── web/index.html             # Web 开发（占位页）
