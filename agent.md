@@ -334,21 +334,24 @@ Repository root: runtime data lives in dedicated top-level folders (`user_data/`
 - Plain language throughout: no bare identifier-only parameter names ("cts"); describe arguments by meaning ("the global site config", "the clicked button"). A reader who does not know TypeScript must be able to follow.
 - Include a "what can actually crash" statement per file (the only real crash points vs. everything routed through safe branches), and a status-message lookup table when the UI surfaces state as text.
 
-## 4. Lean Style (Owner Calibration, 2026-10-02)
-- **Why**: the document is written for the owner, who already knows web fundamentals — padding it with basic explanations or meta-commentary buries the branch details that actually aid debugging. Lean and dense wins.
-- **No basics glossary**: never explain tokens, localStorage, IIFE, or compiled-artifact builds. The only allowed glossary items are genuinely non-obvious conventions (currently just: 401 = not logged in / expired; 400 = invalid input; 409 = conflict such as duplicate name).
-- **Reading-conventions section is fixed and minimal** — exactly these items, nothing more:
-  1. every file section opens with its repo-root-relative path;
-  2. interactive scripts follow the formula "who triggers → which branches → what request → what result shown where → what logs", safe/fallback branches mandatory;
-  3. function arguments are described in plain words — what is passed in and what it achieves, never bare variable names;
-  4. the site-wide endpoint rule (local preview → `http://localhost:3000`, production → same-origin `/api`).
-- No elaboration on why a convention exists, no redundant restatements, no "this saves debugging time" narration. The shared-layer quick table stays as content, not as convention prose.
+## 4. Owner Calibration — Accumulated Doc-Writing Requirements (Review Rounds 1–4)
 
-## 5. Content Calibration (Owner Review Round 2, 2026-10-03)
-- **CSS entries = reference lists only.** Never describe what a stylesheet styles or implements — CSS contains no business logic. For each stylesheet, list exactly WHICH pages reference it; that list IS the debug map for UI bugs. Board-specific stylesheets get the same treatment in their section's chapter.
-- **Folder names must visibly match their content label.** When a section folder's English name and its on-site Chinese section name don't correspond (e.g., `essentials/` = 学校资源 School Resources), rename the FOLDER to the content's English name (hyphenated lowercase, e.g. `school-resources/`). Do NOT touch page identifiers/attributes (e.g. `data-page`) unless explicitly told; sweep all path references (links, CSS folder/file, asset file names, comments, README/docs trees) in the same round and verify zero stale references.
-- **Shared JS quick table is split by folder into numbered sub-sections** (config / infrastructure / services / cross-section user assets / composition root) — never one flat table.
-- **Config layer entry** must also enumerate the adjustable knobs (what can be changed there), not just say "it's the config".
-- **Infrastructure files** (called by everything): for each file, document its global mounting (`window.SMSK.*`), the exact call convention (signature: what to pass, what comes back, e.g. `throw new SMSK.ConfigError(field, actualValue)`), when it is used, and what callers must watch out for (e.g., qs may return null; unbind functions must be called on destroy) — so a fault in these can be located from the doc alone.
-- **Leaf services** (auto-run UI behavior, no exposed API): describe ONLY the intuitive on-screen behavior in plain words (what appears / disappears / moves, and when it reverts). No implementation vocabulary (e.g., "highlights per the body page identifier"), no concrete numeric parameters (no "320px") — thresholds live in the config entry.
-- **Composition root (main.ts)**: state the assembly ORDER (what is created/started in which sequence) — it mirrors the `<script>` load order in page HTML.
+Distilled from four rounds of owner review of the root ARCHITECTURE.md; these refine §1–§3 and win where stricter.
+
+### 4.1 Global Style
+- **Lean and dense**: the reader is the owner, who already knows web basics. Never glossary-explain tokens, localStorage, IIFE, or compiled artifacts; the only allowed glossary items are status codes (401 = not logged in / expired; 400 = invalid input; 409 = conflict such as duplicate name).
+- **Reading-conventions section is fixed and minimal** — exactly: (1) every file section opens with its repo-root-relative path; (2) interactive scripts follow the formula "who triggers → which branches → what request → what result shown where → what logs", safe/fallback branches mandatory; (3) function arguments are described in plain words — what is passed in and what it achieves, never bare variable names; (4) the site-wide endpoint rule (local preview → `http://localhost:3000`, production → same-origin `/api`).
+- **No meta-commentary**: state each convention once; never elaborate on why it exists.
+- **Enumeration lists are never summarized by count** ("all 11 pages"): one entry per line, each line = repo-root-relative path + a one-sentence description of what that page/file is.
+
+### 4.2 Stylesheets (CSS)
+- Reference lists only — never describe what a stylesheet styles or implements (CSS has no business logic). Shared CSS enumerated in the shared-layer quick table; section-specific stylesheets get the same treatment ("referenced solely by …") in their own section chapter.
+
+### 4.3 Shared Behavior Scripts — quick table split by folder into numbered sub-sections
+- **Config layer**: enumerate the adjustable knobs, not just "it's the config source".
+- **Infrastructure** (called by everything): per file document the global mounting (`window.SMSK.*`), the exact call convention (signature — what to pass, what returns, e.g. `throw new SMSK.ConfigError(field, actualValue)`), when it is used, what the error/output looks like, and caller cautions (qs null-check; on unbind on destroy).
+- **Leaf services** (auto-run UI, no exposed API): intuitive on-screen behavior in plain words only (what appears / disappears / moves, when it reverts); no implementation vocabulary, no concrete numeric parameters — thresholds live in the config entry.
+- **Cross-section user assets (auth/avatar)**: page-visible behavior + global mounting + the methods pages call (plain-word semantics) + the automatic behaviors and backend calls the service performs on its own.
+- **Composition root (main.ts)**: state the assembly order (mirrors the `<script>` load order) and what it mounts (the debug handle).
+- **Standalone page scripts that mount nothing**: state that explicitly ("mounts no global interface; the on-page entries are its entire external surface").
+- **Section folder names must visibly match their content label**; when they don't, rename the FOLDER to the content's English name (hyphenated lowercase). Do NOT touch page identifiers (`data-page`) unless told; sweep all path references (links, CSS folder/file, asset file names, comments, README/docs trees) in the same round and verify zero stale references.
