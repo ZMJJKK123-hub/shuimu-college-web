@@ -37,16 +37,49 @@ site/
 CSS 不含业务逻辑，这里只登记"被谁引用"——UI 出了问题，按引用名单直接进对应文件排查。
 
 **base.css** —— 被以下 11 个页面引用：
-site/index/index.html、site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html、site/user/signin.html、site/user/signup.html、site/administrator/index.html、site/admin/index.html
+
+- site/index/index.html —— 首页（书院主页：轮播 + 新闻公告）
+- site/languages/index.html —— 编程语言介绍（占位页）
+- site/tools/index.html —— 开发工具（占位页）
+- site/web/index.html —— Web 开发（占位页）
+- site/school-resources/index.html —— 学校资源（占位页）
+- site/about/index.html —— 关于我们（科协简介）
+- site/profile/index.html —— 个人信息设置页
+- site/user/signin.html —— 账号登录页（无站点骨架的裸页）
+- site/user/signup.html —— 注册页（裸页）
+- site/administrator/index.html —— 管理员登录页（独立深色页）
+- site/admin/index.html —— 轮播管理工具页（独立页）
 
 **layout.css** —— 被以下 8 个页面引用：
-site/index/index.html、site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html、site/admin/index.html
+
+- site/index/index.html —— 首页（书院主页：轮播 + 新闻公告）
+- site/languages/index.html —— 编程语言介绍（占位页）
+- site/tools/index.html —— 开发工具（占位页）
+- site/web/index.html —— Web 开发（占位页）
+- site/school-resources/index.html —— 学校资源（占位页）
+- site/about/index.html —— 关于我们（科协简介）
+- site/profile/index.html —— 个人信息设置页
+- site/admin/index.html —— 轮播管理工具页（独立页，只借设计令牌与按钮样式）
 
 **footer.css** —— 被以下 8 个页面引用（名单与 layout.css 相同）：
-site/index/index.html、site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html、site/admin/index.html
+
+- site/index/index.html —— 首页（书院主页：轮播 + 新闻公告）
+- site/languages/index.html —— 编程语言介绍（占位页）
+- site/tools/index.html —— 开发工具（占位页）
+- site/web/index.html —— Web 开发（占位页）
+- site/school-resources/index.html —— 学校资源（占位页）
+- site/about/index.html —— 关于我们（科协简介）
+- site/profile/index.html —— 个人信息设置页
+- site/admin/index.html —— 轮播管理工具页（独立页，只借设计令牌与按钮样式）
 
 **subpage.css** —— 被以下 6 个页面引用：
-site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html
+
+- site/languages/index.html —— 编程语言介绍（占位页）
+- site/tools/index.html —— 开发工具（占位页）
+- site/web/index.html —— Web 开发（占位页）
+- site/school-resources/index.html —— 学校资源（占位页）
+- site/about/index.html —— 关于我们（科协简介）
+- site/profile/index.html —— 个人信息设置页
 
 > 各板块专属样式（css/\<板块\>/\<板块\>.css）只被本板块页面引用，在各板块章节里登记。
 
