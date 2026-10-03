@@ -13,7 +13,6 @@ Upon receiving a user prompt, it is strictly forbidden to output code in an unst
 | **Scenario A: New Feature / Module Development** | 0-to-1 requirements, creating new modules, designing new systems | **[Rule 3: New Feature Development (Contract-First Two-Phase Method)]** | **Strictly forbidden to output complete business code directly.** You must output Phase 1 first (architecture / directory structure / interface contracts) and **proactively pause** to await user confirmation. |
 | **Scenario B: Legacy Code Refactoring** | Spaghetti code cleanup, decoupling, design optimization, architectural noise reduction | **[Rule 4: Code Refactoring & Decoupling]** | You must first provide an "Architectural Code Smell Diagnosis" and the "Selected Design Patterns," and physically decouple into multiple files/modules for delivery. |
 | **Scenario C: Daily Coding / Local Modifications** | Bug fixes, localized code additions, configuration adjustments | **[Rule 1: Code Documentation & Quality Constraints]** + **[Rule 2: System Baseline Rules]** | Every line of code delivered must satisfy strong typing, physical layering, and explicit error handling requirements. |
-| **Scenario D: Architecture Documentation & Sync** | Architecture diagrams, module-tree building, structure overviews, syncing architecture after code changes, plan-before-code development | **[Rule 5: Normify Architecture Tree Protocol]** | `validate` must reach 0 error before `build`; engine-maintained fields are never hand-written; committing code whose architecture tree has drifted is forbidden. |
 
 ---
 
@@ -22,12 +21,12 @@ Upon receiving a user prompt, it is strictly forbidden to output code in an unst
 Regardless of whether the current task is routed to Scenario A, B, or C, **the following two baseline standards apply globally as non-negotiable hard constraints**:
 
 1. **Documentation & Comment Baseline**: Any code produced must unconditionally follow **[Rule 1]**.
-   - Module imports at the top of files must annotate imported objects and their specific purposes.
-   - Classes and public functions must use standard docstrings detailing responsibilities, global variable dependencies (`Globals Used`), and invocation chains (`Calls`).
-   - Internal helper functions must state parameters, return values, and their single responsibility.
+   - Module imports at the top of files must annotate imported objects and their specific purposes. **Strictly forbid importing modules inside functions or methods; all imports must be declared at the file header.**
+   - Classes and public functions must use humanized, architectural docstrings detailing system role, parameter semantics, **explicit boundary conditions & constraints**, global variable dependencies (`Globals Used`), and invocation chains (`Calls`).
+   - Internal helper functions must state parameters, return values, single responsibility, and local boundary constraints.
 2. **Architecture & Quality Baseline**: Any code organization must unconditionally follow **[Rule 2]**.
    - Strictly forbid mixing business logic with storage/persistence in a single file (presentation, business, and infrastructure layers must be strictly separated).
-   - Strictly forbid writing files longer than 250 lines and functions longer than 40 lines. Comment and docstring lines are **not counted** toward these limits; the line limits apply to core code only.
+   - Maintain high cohesion and low coupling; avoid bloated God Classes.
    - Strictly forbid passing weakly typed raw dictionaries, and strictly forbid silently swallowing exceptions.
 
 ---
@@ -56,6 +55,7 @@ Execute routine development, injecting [Rule 1] documentation rules + [Rule 2] g
 Every piece of code you write or refactor must strictly adhere to the following documentation and commenting standards:
 
 ## 1. Module Imports Section (Imports)
+- **Top-Level Enforcement**: **Strictly forbid importing modules inside functions, methods, or nested scopes (no inline/deferred imports).** All dependencies must be imported uniformly at the very top of the file.
 - Every `import` or `from ... import` at the top of the file must be accompanied by explanatory comments.
 - **Comment Contents**:
   1. What module/object is being imported.
@@ -71,21 +71,23 @@ Every piece of code you write or refactor must strictly adhere to the following 
 
 ## 3. Class Definition Standards (Classes)
 Class-level docstrings must adopt a structured format containing the following three parts:
-1. **Class Responsibility**: Summarize the core purpose and application scenario of the class.
+1. **Class Responsibility**: Summarize the core purpose, system role, and application scenario of the class.
 2. **Class Variables / Properties Description**: Explain class variables and core instance attributes one by one (name, type, purpose).
 3. **Method Invocation Logic & Lifecycle**: Briefly outline internal collaboration mechanisms, lifecycle, or typical execution flow (e.g., `init() -> run() -> cleanup()`).
 
 ## 4. Top-Level & Public Functions
-Top-level functions and externally exposed public methods must provide comprehensive docstrings with an emphasis on dependencies:
-- **Function Description**: Briefly summarize the business logic.
+Top-level functions and externally exposed public methods must provide comprehensive, human-readable docstrings that clearly position the function within the broader application:
+- **System Role & Business Value (Function Purpose)**: Explain in clear, natural terms what this function actually achieves within the system and business flow. **Strictly avoid dry, robotic, mechanical summaries that merely repeat parameter names (e.g., avoid tautologies like `get_user: gets the user`).** The reader must immediately understand why this function exists and how it participates in the system workflow.
+- **Boundary Conditions & Business Constraints (Boundaries & Edge Cases)**: Explicitly state all domain limits and handling rules. If there are numerical ranges, capacity restrictions, or array constraints (e.g., *"Item count must strictly be between 1 and 8"*, *"String length ≤ 64"*, *"Timeout must be positive"*), explicitly document them along with the expected fallback or error handling when boundaries are breached.
+- **Parameters (Args)**: Explain each parameter's semantic meaning, expected units/format, and role in the operation (not just retyping the variable name).
+- **Return Values (Returns)**: Explain the semantic meaning and structure of the return payload under both normal and edge conditions.
 - **Global Variable Dependencies (Globals Used)**: Explicitly list any global variables read or mutated; if none, explicitly write `None`.
 - **Reference Relationships (Calls/Dependencies)**: Explicitly list external global functions, internal class methods, or core third-party APIs called by this function.
-- **Parameters (Args) & Return Values (Returns)**: Follow standard typing and semantic descriptions.
 
 ## 5. Internal Helper Functions (Internal/Helper Functions)
-For private helper functions (`_helper`) or nested closure functions, use lightweight comments:
-- Only document: **Input arguments**, **Return values**, and the **Specific single responsibility implemented**.
-- **No need** to list global dependencies or call chains; keep them concise and clean.
+For private helper functions (`_helper`) or nested closure functions, use clear, practical comments:
+- Document: **Specific single responsibility implemented**, **Input arguments & Return values**, and **Boundary/Precondition assumptions**.
+- Keep them concise while ensuring the reader understands the internal logic without guessing.
 
 ## 6. Code Architecture & Quality Constraints
 ### 6.1 Architectural Organization & Single Responsibility
@@ -101,9 +103,9 @@ For private helper functions (`_helper`) or nested closure functions, use lightw
 - Explicitly raise and catch custom exceptions containing contextual information; silently ignoring errors is prohibited.
 
 ## 7. Architecture-Oriented Commenting (Supplementary Mandate)
-- The purpose of comments goes beyond explaining individual statements: comments must help readers **understand the codebase as a whole**.
-- On core architectural code, provide richer comments explaining **what this block is responsible for and how it connects to the rest of the project** (upstream callers, downstream dependencies, data flow) — never isolated explanations detached from other modules.
-- The ultimate goal is always to let a reader grasp the project architecture faster. Audit and improve existing comments according to this rule, not just newly written ones.
+- Comments must help readers **understand the codebase as a coherent whole**, not just isolated statements.
+- On core architectural code, provide rich context explaining **what this block is responsible for and how it connects to the rest of the project** (upstream callers, downstream dependencies, data flow).
+- The ultimate goal is to let any developer grasp the architecture and operational constraints quickly. Audit and improve existing comments according to this rule, not just newly written ones.
 
 ---
 
@@ -128,11 +130,12 @@ You are a senior system architect and Clean Code practitioner. Your objective is
 - Both high-level modules and low-level modules must depend on abstractions (interfaces / abstract classes / protocols).
 - The business layer receives infrastructure instances via Dependency Injection (DI); hardcoding instantiations of external services within business logic is strictly forbidden.
 
-## 3. Size & Responsibility Control
-- Single file length must be kept within 250 lines; single function length must be kept within 40 lines. Comment and docstring lines are **not counted** toward these limits, nor are logger requirements; the limits apply to core code only.
-- Writing God Classes or bloated catch-all files (e.g., generic `utils` / `helpers`) is strictly forbidden; feature expansions must be broken down into sub-modules.
+## 3. Modularity & Responsibility Control
+- Maintain strict cohesion and single responsibility: classes and functions must focus on one well-defined responsibility.
+- Writing God Classes or bloated catch-all files (e.g., generic `utils` / `helpers`) is strictly forbidden — **but never split for splitting's sake**: there are no per-file or per-function line limits, and strongly-related code inside the same module directory may be merged into one file when cohesion demands it.
 
 ## 4. Hard Coding Constraints
+- **Unified Import Positioning**: Strictly forbid importing modules inside functions or methods; all imports must be declared at the file header.
 - **Strong Typing Requirement**: All class attributes, function parameters, and return values must include explicit type annotations.
 - **Contract-First**: Define DTO/Schema entities and abstract interfaces before writing concrete logic.
 - **Explicit Error Isolation**: Catching and swallowing exceptions is prohibited; core business boundaries must throw custom exceptions with business semantics.
@@ -197,7 +200,7 @@ You are a senior system architect and Clean Code practitioner. Your objective is
 ## 3. Refactored Delivery
 
 ### 3.1 Modularized Implementation
-- Deconstruct the original functionality into 2 to 3 independent classes or files with single responsibilities.
+- Decouple exactly the logic points diagnosed in §1 (I/O vs. pure computation, hidden dependencies); split into separate classes or files only where the diagnosis justifies it — strongly-related code may stay merged in the module directory (see Rule 2 §3).
 - Completely isolate side-effect operations (I/O, network requests, state mutation) from pure computational logic.
 - Fully apply the commenting standards of [Rule 1].
 
@@ -206,30 +209,146 @@ You are a senior system architect and Clean Code practitioner. Your objective is
 
 ---
 
-# Rule 5: Normify Architecture Tree Protocol
+# Rule 5: Project Architecture Conventions (shuimu-web)
 
-- **Role**: Architecture documentation maintainer
-- **Trigger**: The user asks for an architecture diagram, module tree, or structure overview; requests architecture sync after code changes; or plan-before-code development begins on a repo holding a `normify/` tree.
+- **Role**: Project-specific architecture baseline distilled from the repository owner's standing instructions.
+- **Trigger**: Applies to every task touching this repository's code or structure. **In any conflict with the generic rules above, THIS rule wins** unless the owner explicitly says otherwise.
 
-## 1. What Normify Is
-- A "fractal module tree" stored in `<repo>/normify/`: every module is one Markdown file whose frontmatter declares `id / parent / name / description / kind / state / apis / deps / source`. A deterministic engine validates, fingerprints, compiles, and renders a zero-dependency interactive single-file architecture diagram (`normify.html`).
-- Engine CLI: `python ~/.zcode/skills/normify/engine/normify.py <command>`; run `help` for topic cheatsheets; full usage lives in the normify skill (`references/commands.md`, 31 commands aligned one-to-one with the original dsh-normify tools).
+## 1. Directory Layout — Package-by-Feature, Self-Contained Sections
 
-## 2. First-Time Tree Building (Five Steps)
-1. `project_init` to scaffold the tree directory.
-2. Read the repo and split it into modules by responsibility — leaf modules hold `source` and `apis`, containers only group (engine-enforced).
-3. Write each module `.md` and register it via `module_upsert` (write-time validation).
-4. Encode layering rules into `policy.json` (`dependency-direction` / `forbid-dependency` / `acyclic` / `max-depth` / `cross-tree` / `naming`).
-5. `validate` (must reach 0 error) → `build` (tree.json / api-index.json / outline.md / receipt.json) → `render` (normify.html).
+Frontend `site/` (top level = section folders + one shared-asset area; no stray files):
 
-## 3. Companion Development Workflow (Tree Stays in Sync with Code)
-- **Before coding**: run `brief --ids <modules>` for target contracts and blast radius; open a change ticket with `change_open` for formal work.
-- **New modules**: write the module as `state: planned` first (`check` pre-validates it), then after the source lands run `module_refresh --id <m> --activate` — the engine verifies the source exists, so fake activation is impossible.
-- **After coding**: `sync` detects drifted modules (source fingerprint changed) → update the affected module `.md` → `validate && build && render`; `change_close` enforces refresh + 0 error + build before a ticket may be marked verified.
-- A git `pre-commit` hook may gate commits on drift detection: code and architecture tree must be updated together or the commit is rejected.
+```
+site/
+├── index/            Home section
+│   ├── index.html      page
+│   ├── assets/         section-exclusive script (banner.service.ts, loaded by this page only)
+│   └── data/           section-exclusive content data (banners.js — server read/writes it; committed)
+├── languages/        Content section (index.html + placeholder css)
+├── tools/              "
+├── web/                "
+├── essentials/         "
+├── about/            About section
+├── user/             User auth section: signin.html / signup.html
+│                     + assets/{auth.service, signin, signup}.ts
+├── administrator/    Admin-login section (index.html + assets/administrator.ts; standalone chrome)
+├── admin/            Banner-management tool page (index.html + assets/admin.ts; standalone chrome)
+├── assets/           ★ Shared area — ONLY resources used by multiple sections may live here
+│   ├── css/common/     shared styles (base design tokens / layout / footer / subpage)
+│   ├── css/<section>/  per-section stylesheet, centralized here (NOT inside section folders)
+│   ├── js/             shared behavior layer (infrastructure / services / config /
+│   │                   types.d.ts / main.ts composition root)
+│   └── img/            shared images
+└── tsconfig.json     in-place TS compilation config (.ts sources committed, .js artifacts ignored)
+```
 
-## 4. Red Lines
-- `uid` / `fingerprint` / `revision` / `updated_at` are engine-maintained fields; **never hand-write them**.
-- Validation errors must never be bypassed — fix the tree or amend the policy; deleting rules is forbidden.
-- The `normify/` directory is versioned with the repository.
-- After rendering, personally open `normify.html` and self-review its legibility — a diagram people cannot read is a failed deliverable.
+Backend `server/src/`:
+
+```
+server/src/
+├── main.ts / app.module.ts   bootstrap + root module (registration only, no business logic)
+├── config/                   the single configuration source (env vars; zero hardcoding)
+├── common/                   cross-section concerns only (unified exception filter)
+└── api/<section>/            one folder per frontend-consumed API: controller + service +
+                              repository + dto + module (five-piece set) live together;
+                              adding an API = adding a folder
+```
+
+Repository root: runtime data lives in dedicated top-level folders (`user_data/`, `administrator_data/` — gitignored, never committed); content data (banners.js) is committed; `docs/` holds living documents; `hooks/` the push gate; `tests/` the self-test page; machine-local tools (cloudflared.exe / start-tunnel.ps1) are never committed.
+
+## 2. Naming Discipline
+- Section folders use the exact, lowercase business name (index, about, user, administrator). Never invent abstract folder names (no "home" / "subpage"-style renames).
+- Data folders mirror their sections with symmetric naming (user_data / administrator_data).
+
+## 3. Mounting Principle — "Whoever Uses It, Mounts It"
+- A script used by one page lives in that page's section folder (`<section>/assets/`); only code shared by multiple pages sinks into the shared area (`assets/js/`).
+- New feature code stays inside its own new section folder; existing files receive **minimal wiring only** (a script tag, a module registration) — changes must not sprawl across unrelated files.
+- Sections without dedicated styles still get an empty placeholder stylesheet to preserve extensibility.
+- No forced splitting; no per-file line limits (see Rule 2 §3).
+
+## 4. Security by Isolation (Reuse Is Secondary)
+- Independent account systems implement their own core classes (service / repository / session store) even at the cost of deliberate duplication; role-prefixed tokens (`u.` / `a.`) and separate session files make cross-role privilege escalation structurally impossible.
+- Passwords are stored as salted hashes only — never plaintext, never committed; runtime credential data never enters the repository.
+- No public registration for privileged roles (the first admin is bootstrapped from a fixed default pair); write endpoints always validate tokens server-side — never trust client-declared login flags.
+
+## 5. Living Documentation & Quality Gates
+- ARCHITECTURE.md is the living document: architecture changes are written there first; the README directory tree stays in sync; API contracts are registered in the appendix.
+- Full-strict TypeScript + pre-push type-check hard gate; `.ts` sources committed, compiled `.js` artifacts ignored.
+- Zero tolerance for dead code: delete leftovers entirely (no backups, no `.bak` files), and grep for stale references after every relocation.
+- Verification is mandatory and layered: curl API flows + browser E2E + self-test page + site-wide link crawl.
+
+## 6. Visual Conventions
+- Functional UI (auth forms etc.) follows the minimal style approved by the owner (reference-image driven).
+- Different roles get visibly distinct interface styles (e.g., light minimal user login vs. dark console admin login).
+- Layout details are held to pixel-level acceptance: edge-flush means viewport-flush, resolution-adaptive, hover states symmetric — the owner reviews pixel by pixel.
+
+## 7. Deployment & Branching
+- `site/` is the pure deployment unit, copyable as a whole; the repo root and shared areas must not bloat with per-feature files.
+- Do not pre-create directories for phases that have not arrived; build only what the current phase needs.
+- `main` receives releases only; daily development happens on `dev`; production uses same-origin reverse proxy, local static preview points cross-port to backend `:3000`.
+
+---
+
+# Rule 6: Git Commit Timing Protocol (Deferred Commit)
+
+- **Role**: Version-control workflow constraint for all development tasks
+- **Trigger**: Applies globally to every task that modifies repository code
+
+## 1. Core Rule: No Immediate Commit After Coding
+- Upon finishing a coding task (including verification passes), **do NOT immediately `git commit` or `git push`**. Leave all changes uncommitted in the working tree so the user can review the diff first.
+
+## 2. Auto-Commit at the Start of the Next Task Round
+- When a **new task round begins** (the user issues the next instruction that involves code changes), the first action before making any new edits is to **automatically commit the previous round's pending changes**:
+  - This creates a clean restore point separating consecutive task rounds.
+  - Commit messages remain maximally detailed; multiple logical units are still split into multiple rounds of commits (分轮次提交) as before.
+  - Commit then push to `origin/dev` per the existing Git workflow (main branch remains release-only).
+- If the pending changes of the previous round were already rejected or superseded by the user's newest instruction, ask the user how to handle them before committing.
+
+## 3. Standing Exceptions (Unchanged)
+- `agent.md` itself is the user's own file: never stage, commit, or push it.
+- Secrets and local-only artifacts (`.env`, `cloudflared.exe`, `start-tunnel.ps1`, runtime data folders) are never committed regardless of timing.
+- The `hooks/pre-push` type-check gate still applies to every push.
+
+---
+
+# Rule 7: Frontend Architecture Documentation (ARCHITECTURE.md at Repo Root)
+
+- **Role**: Documentation constraint for the per-file frontend architecture document.
+- **Trigger**: Writing or updating the root `ARCHITECTURE.md` — the per-file frontend doc. This is a separate deliverable from `docs/ARCHITECTURE.md` (the overall/backend living document under Rule 5 §5); never merge them.
+- **Purpose**: Debugging. The owner reads it to know where code can go (which branch ran) before opening the code.
+
+## 1. Scope & Structure
+- One section per file under `site/`; every file section opens with its path relative to the repo root.
+- Coverage progress is tracked at the top of the document; unwritten sections follow the same template when added. The document is living: file behavior changes must be reflected there.
+
+## 2. Per-File Content Rules
+- State what the file renders as on screen, and what it links (stylesheets / scripts) — each linked shared asset gets ONE line plus a pointer to the shared-layer quick table (common CSS, common services); do not re-explain shared things per page.
+- State coupling explicitly: standalone page vs. which sections / localStorage keys / backend endpoints it touches. Uncoupled content is not dwelled on.
+- Pure-HTML pages with no interaction stay brief (what it shows, what it links). No per-div narration.
+
+## 3. Interactive Script Files (Mandatory Depth)
+- For every externally triggered or auto-run entry point: WHEN it fires (which button / what timing), what backend request it makes (endpoint + payload in plain words), and what comes back.
+- EVERY branch must be written out — including safe/fallback branches (e.g., "backend unreachable → stays on page with an error notice, does NOT redirect to login"), so the owner can map an observed behavior to the exact branch that produced it. An undocumented fallback branch is unacceptable: during debugging the owner must never wonder "where did the code silently go".
+- State where each result lands on screen (which element), and what logs are printed — or state explicitly that the file prints none and surfaces state elsewhere (e.g., a status strip).
+- Helper functions invoked by those entries: what they receive, what they do, what they return, and their possible branches — brief but complete.
+- Plain language throughout: no bare identifier-only parameter names ("cts"); describe arguments by meaning ("the global site config", "the clicked button"). A reader who does not know TypeScript must be able to follow.
+- Include a "what can actually crash" statement per file (the only real crash points vs. everything routed through safe branches), and a status-message lookup table when the UI surfaces state as text.
+
+## 4. Lean Style (Owner Calibration, 2026-10-02)
+- **Why**: the document is written for the owner, who already knows web fundamentals — padding it with basic explanations or meta-commentary buries the branch details that actually aid debugging. Lean and dense wins.
+- **No basics glossary**: never explain tokens, localStorage, IIFE, or compiled-artifact builds. The only allowed glossary items are genuinely non-obvious conventions (currently just: 401 = not logged in / expired; 400 = invalid input; 409 = conflict such as duplicate name).
+- **Reading-conventions section is fixed and minimal** — exactly these items, nothing more:
+  1. every file section opens with its repo-root-relative path;
+  2. interactive scripts follow the formula "who triggers → which branches → what request → what result shown where → what logs", safe/fallback branches mandatory;
+  3. function arguments are described in plain words — what is passed in and what it achieves, never bare variable names;
+  4. the site-wide endpoint rule (local preview → `http://localhost:3000`, production → same-origin `/api`).
+- No elaboration on why a convention exists, no redundant restatements, no "this saves debugging time" narration. The shared-layer quick table stays as content, not as convention prose.
+
+## 5. Content Calibration (Owner Review Round 2, 2026-10-03)
+- **CSS entries = reference lists only.** Never describe what a stylesheet styles or implements — CSS contains no business logic. For each stylesheet, list exactly WHICH pages reference it; that list IS the debug map for UI bugs. Board-specific stylesheets get the same treatment in their section's chapter.
+- **Folder names must visibly match their content label.** When a section folder's English name and its on-site Chinese section name don't correspond (e.g., `essentials/` = 学校资源 School Resources), rename the FOLDER to the content's English name (hyphenated lowercase, e.g. `school-resources/`). Do NOT touch page identifiers/attributes (e.g. `data-page`) unless explicitly told; sweep all path references (links, CSS folder/file, asset file names, comments, README/docs trees) in the same round and verify zero stale references.
+- **Shared JS quick table is split by folder into numbered sub-sections** (config / infrastructure / services / cross-section user assets / composition root) — never one flat table.
+- **Config layer entry** must also enumerate the adjustable knobs (what can be changed there), not just say "it's the config".
+- **Infrastructure files** (called by everything): for each file, list what it provides to callers AND what callers must watch out for (e.g., qs may return null; unbind functions must be called on destroy) — so a fault in these can be located from the doc alone.
+- **Leaf services** (auto-run UI behavior, no exposed API): describe ONLY the intuitive on-screen behavior in plain words (what appears / disappears / moves, and when it reverts). No implementation vocabulary (e.g., "highlights per the body page identifier"), no concrete numeric parameters (no "320px") — thresholds live in the config entry.
+- **Composition root (main.ts)**: state the assembly ORDER (what is created/started in which sequence) — it mirrors the `<script>` load order in page HTML.
