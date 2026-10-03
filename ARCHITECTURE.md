@@ -36,14 +36,19 @@ site/
 
 CSS 不含业务逻辑，这里只登记"被谁引用"——UI 出了问题，按引用名单直接进对应文件排查。
 
-| 文件 | 被哪些页面引用 |
-| :--- | :--- |
-| `base.css` | 全部 11 个页面（首页、六个子页、登录/注册、管理员登录、轮播管理页） |
-| `layout.css` | 8 个页面：首页、六个子页、轮播管理页（登录/注册/管理员登录三页无站点骨架，不引用） |
-| `footer.css` | 同 `layout.css` 的 8 个页面 |
-| `subpage.css` | 六个子页（languages / tools / web / school-resources / about / profile） |
+**base.css** —— 被以下 11 个页面引用：
+site/index/index.html、site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html、site/user/signin.html、site/user/signup.html、site/administrator/index.html、site/admin/index.html
 
-> 各板块专属样式（`css/<板块>/<板块>.css`）只被本板块页面引用，在各板块章节里登记。
+**layout.css** —— 被以下 8 个页面引用：
+site/index/index.html、site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html、site/admin/index.html
+
+**footer.css** —— 被以下 8 个页面引用（名单与 layout.css 相同）：
+site/index/index.html、site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html、site/admin/index.html
+
+**subpage.css** —— 被以下 6 个页面引用：
+site/languages/index.html、site/tools/index.html、site/web/index.html、site/school-resources/index.html、site/about/index.html、site/profile/index.html
+
+> 各板块专属样式（css/\<板块\>/\<板块\>.css）只被本板块页面引用，在各板块章节里登记。
 
 ### 2.2 公用行为脚本（site/assets/js/）
 
@@ -58,13 +63,36 @@ CSS 不含业务逻辑，这里只登记"被谁引用"——UI 出了问题，�
 
 #### 2.2.2 基础设施层：`infrastructure/`（errors.ts / dom.ts / logger.ts）
 
-全站所有服务都要调用它们——这三个文件出问题会表现为"所有服务一起不正常"，所以单独展开：
+全站所有服务都要调用它们——这三个文件出问题会表现为"所有服务一起不正常"。
+三者都把对外接口挂载在全局命名空间 **window.SMSK** 上，外部一律通过 `SMSK.名字` 调用。
 
-| 文件 | 对外提供什么 | 调用方要注意什么 |
-| :--- | :--- | :--- |
-| `errors.ts` | 两种自定义错误：ConfigError（配置不合法）、DomError（页面关键节点缺失等） | 控制台报这两个名字 = 先查配置项或 HTML 结构，不是服务本身的问题 |
-| `dom.ts` | 三个小工具：qs（找单个元素，找不到返回空）、qsa（找一批元素）、on（绑事件并返回解绑函数） | qs 找不到会返回空，调用方必须判空；on 返回的解绑函数要在服务销毁时调用，否则监听泄漏 |
-| `logger.ts` | 统一日志器 createLogger：按配置的级别往浏览器 F12 控制台分级输出，每条带 [模块名] 前缀 | 全站禁止直接写控制台输出；排障时把配置级别调到 debug 可看到完整过程 |
+**errors.ts —— 定义两种自定义错误类（完整的 class），排障时看控制台报错名字就知道是哪类问题**
+
+- 挂载位置：`SMSK.ConfigError`、`SMSK.DomError`。
+- **ConfigError（配置契约违反）**：什么时候用 = 配置缺失、类型不对、取值越界时抛出。
+  怎么调用 = `throw new SMSK.ConfigError('出问题的配置项名', 实际收到的值)`；
+  构造时会自动拼出报错文案 `[ConfigError] 配置字段 "xxx" 非法，实际值：…`，一眼定位到坏的字段。
+  谁在用：main.ts 的配置校验、各服务工厂的入参守卫（2.2.3/2.2.4 的服务启动时都先校验）。
+- **DomError（关键节点缺失）**：什么时候用 = 页面上必备的节点查不到（如导航列表被误删）。
+  怎么调用 = `throw new SMSK.DomError('没命中的选择器', '所在页面的 data-page 标识')`；
+  报错文案形如 `[DomError] 页面 "xxx" 未找到关键节点：…`。
+  谁在用：nav 等服务发现关键节点缺失时上抛（导航缺失属致命故障，不静默降级）。
+
+**dom.ts —— 三个 DOM 小工具（全站统一入口，禁止直接写 document.querySelector）**
+
+- 挂载位置：`SMSK.qs`、`SMSK.qsa`、`SMSK.on`。
+- `SMSK.qs('选择器', 可选的查找范围)`：返回第一个匹配的元素；**找不到返回 null，调用方必须判空再用**——null 上直接取属性会崩。
+- `SMSK.qsa('选择器', 可选的查找范围)`：返回全部匹配元素组成的真数组（找不到就是空数组），可直接判断数量、循环遍历。
+- `SMSK.on(元素, 事件名, 处理函数, 可选选项)`：绑定事件监听，**返回值是一个解绑函数**——服务销毁时调用它解除监听，防止监听越积越多；滚动这类高频事件要给第四个参数传 `{ passive: true }` 提升性能。
+
+**logger.ts —— 统一日志器（全站唯一日志出口，禁止直接写 console.log）**
+
+- 挂载位置：`SMSK.createLogger`（一个工厂函数，调用后返回日志器对象）。
+- 怎么调用：`SMSK.createLogger(级别字符串)`——级别来自 site.config 的 logLevel（2.2.1），
+  传进非法级别会直接抛 ConfigError。返回的日志器上有四个方法：`debug / info / warn / error`，
+  调用格式统一为 `(所属模块名, 一句话说明, 可选的附加信息)`；附加信息可以是一个键值对象，也可以直接传 Error（会连堆栈一起输出）。
+- 输出去向：浏览器 F12 控制台，每条格式为 `[SMSK][级别][模块名] 说明`；低于配置级别的不输出——
+  排障时把配置里的日志级别调成 debug 可看到完整运行过程。
 
 #### 2.2.3 服务层：`services/`（六个互不依赖的独立小服务，无对外接口，只有页面上看得见的表现）
 
