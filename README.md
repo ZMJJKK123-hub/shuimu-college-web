@@ -100,7 +100,7 @@ shuimu-web/
     ├── languages/index.html       # 编程语言介绍（占位页）
     ├── tools/index.html           # 开发工具（占位页）
     ├── web/index.html             # Web 开发（占位页）
-    ├── essentials/index.html      # 学校资源（占位页）
+    ├── school-resources/index.html  # 学校资源 School Resources（占位页）
     ├── about/index.html           # 关于我们（科协简介，自首页迁入）
     ├── tsconfig.json              # 前端 TS 编译配置（strict 全开，原位产出 .js）
     └── assets/                    # 全站共享资源（各板块如需图片，放各自文件夹内）
@@ -124,7 +124,7 @@ shuimu-web/
         │   ├── languages/         #   编程语言介绍板块：languages.css（空占位）
         │   ├── tools/             #   开发工具板块：tools.css（空占位）
         │   ├── web/               #   Web 开发板块：web.css（空占位）
-        │   ├── essentials/        #   学校资源板块：essentials.css（空占位）
+        │   ├── school-resources/  #   学校资源板块：横幅/占位区背景接线
         │   ├── about/             #   关于我们板块：about.css（简介双栏/统计卡）
         │   ├── user/              #   用户板块：user.css（登录/注册极简卡片）
         │   ├── administrator/     #   管理员板块：administrator.css（深色控制台登录卡）

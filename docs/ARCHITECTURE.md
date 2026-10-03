@@ -65,7 +65,7 @@ shuimu-web/
 │   ├── administrator/           #   管理员登录页（2026-09-28，深色控制台，独立工具页）
 │   ├── admin/                   #   轮播管理页（需管理员登录；index.html + assets/admin.ts）
 │   ├── <板块>/index.html         # 【2026-09-28 纯资料站】languages/ tools/ web/
-│   │                            # essentials/（学校资源）about/（关于我们）
+│   │                            # school-resources/（学校资源）about/（关于我们）
 │   └── assets/                  #   共享资源区：
 │       ├── css/{common,<板块>}/ #     样式分层；js/ 行为层（.ts 源码入库，
 │       │                        #     types.d.ts 声明 window.SMSK 命名空间契约）
