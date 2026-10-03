@@ -348,7 +348,8 @@ Distilled from four rounds of owner review of the root ARCHITECTURE.md; these re
 - Reference lists only — never describe what a stylesheet styles or implements (CSS has no business logic). Shared CSS enumerated in the shared-layer quick table; section-specific stylesheets get the same treatment ("referenced solely by …") in their own section chapter.
 
 ### 4.3 Shared Behavior Scripts — quick table split by folder into numbered sub-sections
-- **Config layer**: enumerate the adjustable knobs, not just "it's the config source".
+- **Every callable the doc mentions must state three things, not just its purpose**: (a) what parameters it takes (plain words), (b) what it returns — including the null/empty/failure cases, (c) which branches it may take (success / failure / fallback and what each looks like on screen). Applies across the whole quick table (config / infrastructure / services / user assets / composition root) and to every chapter.
+- **Config layer**: enumerate the adjustable knobs (with their legal value domains), not just "it's the config source".
 - **Infrastructure** (called by everything): per file document the global mounting (`window.SMSK.*`), the exact call convention (signature — what to pass, what returns, e.g. `throw new SMSK.ConfigError(field, actualValue)`), when it is used, what the error/output looks like, and caller cautions (qs null-check; on unbind on destroy).
 - **Leaf services** (auto-run UI, no exposed API): intuitive on-screen behavior in plain words only (what appears / disappears / moves, when it reverts); no implementation vocabulary, no concrete numeric parameters — thresholds live in the config entry.
 - **Cross-section user assets (auth/avatar)**: page-visible behavior + global mounting + the methods pages call (plain-word semantics) + the automatic behaviors and backend calls the service performs on its own.
